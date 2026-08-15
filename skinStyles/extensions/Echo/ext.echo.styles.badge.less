@@ -1,0 +1,80 @@
+/**
+ * Echo — notification badges in the header (no-JS + pre-init state)
+ */
+.ak-header__notifications-list {
+	li {
+		margin: 0;
+	}
+
+	#pt-notifications-alert .mw-echo-notifications-badge,
+	#pt-notifications-notice .mw-echo-notifications-badge {
+		width: 36px;
+		height: 36px;
+		margin: 0;
+		background-size: 20px;
+		background-position: center;
+		background-repeat: no-repeat;
+		border-radius: 0;
+		opacity: 0.8;
+
+		&:hover {
+			background-color: var( --ak-bg-hover );
+			opacity: 1;
+		}
+
+		&:focus {
+			box-shadow: none;
+			outline: 2px solid var( --ak-focus );
+			outline-offset: -2px;
+		}
+
+		&::after {
+			top: 4px;
+			left: 50%;
+			min-width: 8px;
+			height: 16px;
+			line-height: 16px;
+			padding: 0 4px;
+			font: 700 10px/16px var( --ak-font-label );
+			border: 0;
+			border-radius: var( --ak-radius-pill );
+			background-color: var( --ak-fg-subtle );
+			color: var( --ak-bg-surface );
+		}
+
+		&.mw-echo-notifications-badge-all-read::after {
+			visibility: hidden;
+		}
+	}
+
+	#pt-notifications-alert .mw-echo-notifications-badge.mw-echo-unseen-notifications::after,
+	#pt-notifications-alert .mw-echo-notifications-badge.oo-ui-flaggedElement-unseen::after {
+		background-color: var( --ak-red-600 );
+		color: #fff;
+	}
+
+	#pt-notifications-notice .mw-echo-notifications-badge.mw-echo-unseen-notifications::after,
+	#pt-notifications-notice .mw-echo-notifications-badge.oo-ui-flaggedElement-unseen::after {
+		background-color: var( --ak-accent );
+		color: var( --ak-accent-fg );
+	}
+}
+
+// Dark theme: the badge glyphs are black background images — invert them, keep the counter readable
+html.skin-theme-clientpref-night .ak-header__notifications-list .mw-echo-notifications-badge {
+	filter: invert( 1 ) hue-rotate( 180deg );
+
+	&::after {
+		filter: invert( 1 ) hue-rotate( 180deg );
+	}
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .ak-header__notifications-list .mw-echo-notifications-badge {
+		filter: invert( 1 ) hue-rotate( 180deg );
+
+		&::after {
+			filter: invert( 1 ) hue-rotate( 180deg );
+		}
+	}
+}

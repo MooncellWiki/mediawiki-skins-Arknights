@@ -1,0 +1,45 @@
+/**
+ * Theme toggle — 3-state segmented control: os / day / night
+ */
+.ak-theme-toggle {
+	display: inline-flex;
+	border: 1px solid var( --ak-border-strong );
+	margin: 0 4px;
+
+	> button {
+		all: unset;
+		box-sizing: border-box;
+		cursor: pointer;
+		width: 32px;
+		height: 28px;
+		display: grid;
+		place-items: center;
+		color: var( --ak-fg-muted );
+		transition: background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+		+ button {
+			border-left: 1px solid var( --ak-border );
+		}
+
+		&:hover {
+			color: var( --ak-fg );
+			background: var( --ak-bg-hover );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --ak-focus );
+			outline-offset: -2px;
+		}
+
+		&.is-active,
+		&[ aria-pressed='true' ] {
+			background: var( --ak-bg-inverse );
+			color: var( --ak-fg-inverse );
+		}
+
+		.ak-icon {
+			width: 15px;
+			height: 15px;
+		}
+	}
+}

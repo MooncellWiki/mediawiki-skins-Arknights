@@ -1,0 +1,31 @@
+/**
+ * Layout — sidebar | main | toc grid
+ */
+.ak-layout {
+	flex: 1;
+	display: grid;
+	grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr ) var( --ak-toc-w );
+	gap: var( --ak-gutter );
+	max-width: @ak-page-max;
+	width: 100%;
+	margin: 0 auto;
+	padding: var( --ak-space-6 ) var( --ak-gutter ) var( --ak-space-16 );
+	box-sizing: border-box;
+	align-items: start;
+
+	&--no-toc {
+		grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr );
+	}
+}
+
+.ak-main {
+	min-width: 0;
+	max-width: var( --ak-content-max );
+	width: 100%;
+	justify-self: start;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+// Body classes set by the skin: `.ak-toc-enabled` (sticky TOC rendered), `.ak-menusidebar-enabled`.

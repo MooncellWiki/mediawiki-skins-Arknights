@@ -1,0 +1,38 @@
+/**
+ * Arknights — mediawiki.skin.variables.less
+ *
+ * LESS @import match for "mediawiki.skin.variables.less" when Arknights is the
+ * active skin. Core and extension styles compile against these variables; the
+ * Codex tokens resolve to CSS custom properties which resources/design-system/tokens.css
+ * bridges to the AKDS semantic tokens (--ak-*), so core & extension UI follow the
+ * terminal / archive theme automatically.
+ */
+
+@import 'mediawiki.skin.defaults.less';
+@import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui.less';
+
+// Skin variables that are not Codex tokens — point them at the bridged custom properties.
+@color-link: var( --color-progressive );
+@color-link--visited: var( --color-visited );
+@color-link--active: var( --color-progressive--active );
+@color-link-new: var( --color-link-red );
+@color-link-new--visited: var( --color-link-red--visited );
+@color-link-external: var( --color-progressive );
+@color-link-external--visited: var( --color-visited );
+@color-link-external--active: var( --color-progressive--active );
+
+// Typography follows the design system.
+@font-family-base: var( --ak-font-body );
+@font-family-sans: var( --ak-font-body );
+@font-family-monospace: var( --ak-font-mono );
+@font-family-heading-main: var( --ak-font-body );
+
+// Arknights = square corners.
+@border-radius-base: 0;
+@border-radius-sharp: 0;
+
+// Breakpoints (Codex): 320 / 640 / 1120 / 1680 — kept as-is.
+// Helpers for max-width queries.
+@max-width-breakpoint-mobile: ( @min-width-breakpoint-tablet - 0.02px );
+@max-width-breakpoint-tablet: ( @min-width-breakpoint-desktop - 0.02px );
+@max-width-breakpoint-desktop: ( @min-width-breakpoint-desktop-wide - 0.02px );

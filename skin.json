@@ -1,0 +1,379 @@
+{
+	"name": "Arknights",
+	"version": "0.1.0",
+	"author": [
+		"PRTS.wiki",
+		"..."
+	],
+	"url": "https://github.com/MooncellWiki/mediawiki-skins-Arknights",
+	"descriptionmsg": "arknights-skin-desc",
+	"namemsg": "skinname-arknights",
+	"license-name": "GPL-3.0-or-later",
+	"type": "skin",
+	"requires": {
+		"MediaWiki": ">= 1.43.0"
+	},
+	"attributes": {
+		"DarkMode": {
+			"Disabled": [
+				"arknights"
+			]
+		},
+		"VisualEditor": {
+			"IconSkins": [
+				"arknights"
+			]
+		}
+	},
+	"ValidSkinNames": {
+		"arknights": {
+			"class": "MediaWiki\\Skins\\Arknights\\SkinArknights",
+			"services": [
+				"PermissionManager"
+			],
+			"args": [
+				{
+					"name": "arknights",
+					"responsive": true,
+					"supportsMwHeading": true,
+					"templateSectionLinks": "SectionLinks",
+					"toc": false,
+					"wrapSiteNotice": true,
+					"tempUserBanner": true,
+					"clientPrefEnabled": false,
+					"bodyClasses": [
+						"skin-arknights"
+					],
+					"link": {
+						"text-wrapper": {
+							"tag": "span"
+						}
+					},
+					"menus": [
+						"user-interface-preferences",
+						"user-menu",
+						"user-page",
+						"notifications",
+						"views",
+						"actions",
+						"variants",
+						"associated-pages",
+						"footer-info",
+						"footer-places",
+						"footer-icons"
+					],
+					"scripts": [
+						"skins.arknights.scripts"
+					],
+					"styles": [
+						"skins.arknights.styles",
+						"skins.arknights.icons"
+					],
+					"messages": [
+						"arknights-jumptocontent",
+						"arknights-drawer-toggle",
+						"arknights-drawer-close",
+						"arknights-search-toggle",
+						"arknights-search-shortcut",
+						"arknights-theme-toggle-label",
+						"arknights-theme-os",
+						"arknights-theme-day",
+						"arknights-theme-night",
+						"arknights-usermenu-toggle",
+						"arknights-usermenu-anon",
+						"arknights-toc-toggle",
+						"arknights-back-to-top",
+						"arknights-page-tools-more",
+						"arknights-variants-toggle",
+						"arknights-languages-toggle",
+						"arknights-sidebar-label",
+						"arknights-header-nav-label",
+						"arknights-footer-powered",
+						"navigation-heading",
+						"search",
+						"sitetitle",
+						"toc",
+						"tooltip-p-logo"
+					]
+				}
+			]
+		}
+	},
+	"SkinLessImportPaths": {
+		"arknights": "resources/mediawiki.less"
+	},
+	"MessagesDirs": {
+		"Arknights": [
+			"i18n"
+		]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Skins\\Arknights\\": "includes/"
+	},
+	"HookHandlers": {
+		"SkinHooks": {
+			"class": "MediaWiki\\Skins\\Arknights\\Hooks\\SkinHooks"
+		}
+	},
+	"Hooks": {
+		"BeforePageDisplay": "SkinHooks",
+		"OutputPageAfterGetHeadLinksArray": "SkinHooks",
+		"SidebarBeforeOutput": "SkinHooks"
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteSkinPath": "Arknights"
+	},
+	"ResourceModules": {
+		"skins.arknights.styles": {
+			"class": "MediaWiki\\ResourceLoader\\SkinModule",
+			"features": {
+				"normalize": true,
+				"accessibility": true,
+				"content-body": true,
+				"content-media": true,
+				"content-links": false,
+				"content-links-external": false,
+				"content-tables": false,
+				"interface-core": true,
+				"interface-message-box": false,
+				"interface-category": false,
+				"interface-indicators": false,
+				"interface-site-notice": false,
+				"interface-subtitle": false,
+				"interface-user-message": false,
+				"interface-edit-section-links": false,
+				"i18n-ordered-lists": true,
+				"i18n-headings": true,
+				"elements": false,
+				"toc": false,
+				"logo": false
+			},
+			"styles": [
+				"resources/design-system/tokens.css",
+				"resources/design-system/base.css",
+				"resources/design-system/components.css",
+				"resources/design-system/arknights.css",
+				"resources/design-system/utilities.css",
+				"resources/skins.arknights.styles/skin.less"
+			]
+		},
+		"skins.arknights.icons": {
+			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
+			"selectorWithoutVariant": ".ak-icon--{name}",
+			"useDataURI": false,
+			"useMaskImage": true,
+			"defaultColor": "#000",
+			"variants": {},
+			"icons": [
+				"appearance",
+				"arrowUp",
+				"articleRedirect",
+				"bell",
+				"bellOutline",
+				"block",
+				"bright",
+				"close",
+				"collapse",
+				"die",
+				"edit",
+				"ellipsis",
+				"expand",
+				"eye",
+				"halfBright",
+				"help",
+				"history",
+				"home",
+				"info",
+				"infoFilled",
+				"language",
+				"link",
+				"linkExternal",
+				"listBullet",
+				"lock",
+				"logIn",
+				"logOut",
+				"menu",
+				"moon",
+				"move",
+				"printer",
+				"recentChanges",
+				"reload",
+				"search",
+				"settings",
+				"share",
+				"specialPages",
+				"star",
+				"table",
+				"trash",
+				"unBlock",
+				"unLock",
+				"unStar",
+				"upload",
+				"userAdd",
+				"userAvatar",
+				"userAvatarOutline",
+				"userContributions",
+				"userGroup",
+				"userTalk",
+				"watchlist",
+				"wikiText"
+			]
+		},
+		"skins.arknights.scripts": {
+			"packageFiles": [
+				"resources/skins.arknights.scripts/skin.js",
+				{
+					"name": "resources/skins.arknights.scripts/config.json",
+					"callback": "MediaWiki\\Skins\\Arknights\\Hooks\\ResourceLoaderHooks::getSkinResourceLoaderConfig"
+				},
+				"resources/skins.arknights.scripts/theme.js",
+				"resources/skins.arknights.scripts/drawer.js",
+				"resources/skins.arknights.scripts/dropdown.js",
+				"resources/skins.arknights.scripts/header.js",
+				"resources/skins.arknights.scripts/search.js",
+				"resources/skins.arknights.scripts/toc.js",
+				"resources/skins.arknights.scripts/backToTop.js",
+				"resources/skins.arknights.scripts/interactive.js",
+				"resources/skins.arknights.scripts/sidebarTree.js",
+				"resources/design-system/sidebar-tree.js"
+			],
+			"dependencies": [
+				"mediawiki.storage",
+				"mediawiki.util",
+				"mediawiki.user"
+			]
+		}
+	},
+	"ResourceModuleSkinStyles": {
+		"arknights": {
+			"+ext.echo.styles.badge": "skinStyles/extensions/Echo/ext.echo.styles.badge.less",
+			"+ext.echo.styles.notifications": "skinStyles/extensions/Echo/ext.echo.styles.notifications.less",
+			"+ext.echo.special": "skinStyles/extensions/Echo/ext.echo.special.less",
+			"+ext.tabberNeue": "skinStyles/extensions/TabberNeue/ext.tabberNeue.less",
+			"+ext.tabberNeue.init.styles": "skinStyles/extensions/TabberNeue/ext.tabberNeue.init.styles.less",
+			"+ext.wikiEditor.styles": "skinStyles/extensions/WikiEditor/ext.wikiEditor.styles.less",
+			"+ext.wikiEditor": "skinStyles/extensions/WikiEditor/ext.wikiEditor.less",
+			"+ext.CodeMirror.v6": "skinStyles/extensions/CodeMirror/ext.CodeMirror.v6.less",
+			"+ext.CodeMirror.lib": "skinStyles/extensions/CodeMirror/ext.CodeMirror.lib.less",
+			"+ext.uls.interface": "skinStyles/extensions/UniversalLanguageSelector/ext.uls.interface.less",
+			"+ext.uls.pt": "skinStyles/extensions/UniversalLanguageSelector/ext.uls.pt.less",
+			"+jquery.uls": "skinStyles/extensions/UniversalLanguageSelector/jquery.uls.less",
+			"+ext.cargo.main": "skinStyles/extensions/Cargo/ext.cargo.main.less",
+			"+ext.cargo.drilldown": "skinStyles/extensions/Cargo/ext.cargo.drilldown.less",
+			"+ext.categoryTree.styles": "skinStyles/extensions/CategoryTree/ext.categoryTree.styles.less",
+			"+ext.cite.styles": "skinStyles/extensions/Cite/ext.cite.styles.less",
+			"+ext.MsUpload": "skinStyles/extensions/MsUpload/ext.MsUpload.less",
+			"+ext.RevisionSlider.lazyCss": "skinStyles/extensions/RevisionSlider/ext.RevisionSlider.lazyCss.less",
+			"+ext.discussionTools.init.styles": "skinStyles/extensions/DiscussionTools/ext.discussionTools.init.styles.less",
+			"+ext.flow.styles.base": "skinStyles/extensions/Flow/ext.flow.styles.base.less",
+			"+ext.datamaps.core.styles": "skinStyles/extensions/DataMaps/ext.datamaps.core.styles.less",
+			"+ext.templateData": "skinStyles/extensions/TemplateData/ext.templateData.less",
+			"+ext.pygments": "skinStyles/extensions/SyntaxHighlight_GeSHi/ext.pygments.less",
+			"+ext.smw.styles": "skinStyles/extensions/SemanticMediaWiki/ext.smw.styles.less",
+			"+ext.smw.special.styles": "skinStyles/extensions/SemanticMediaWiki/ext.smw.special.styles.less",
+			"+ext.srf.styles": "skinStyles/extensions/SemanticResultFormats/ext.srf.styles.less",
+			"mediawiki.skinning.interface": [],
+			"mediawiki.skinning.content.parsoid": [],
+			"+mediawiki.action.edit.styles": "skinStyles/mediawiki/action/mediawiki.action.edit.styles.less",
+			"+mediawiki.action.history.styles": "skinStyles/mediawiki/action/mediawiki.action.history.styles.less",
+			"+mediawiki.action.view.filepage": "skinStyles/mediawiki/action/mediawiki.action.view.filepage.less",
+			"+mediawiki.diff.styles": "skinStyles/mediawiki/mediawiki.diff.styles.less",
+			"+mediawiki.editfont.styles": "skinStyles/mediawiki/mediawiki.editfont.styles.less",
+			"+mediawiki.htmlform.ooui.styles": "skinStyles/mediawiki/mediawiki.htmlform.ooui.styles.less",
+			"+mediawiki.htmlform.styles": "skinStyles/mediawiki/mediawiki.htmlform.styles.less",
+			"+mediawiki.interface.helpers.styles": "skinStyles/mediawiki/mediawiki.interface.helpers.styles.less",
+			"+mediawiki.notification": "skinStyles/mediawiki/mediawiki.notification.less",
+			"+mediawiki.page.gallery.styles": "skinStyles/mediawiki/mediawiki.page.gallery.styles.less",
+			"+mediawiki.pager.styles": "skinStyles/mediawiki/mediawiki.pager.styles.less",
+			"+mediawiki.rcfilters.filters.ui": "skinStyles/mediawiki/mediawiki.rcfilters.filters.ui.less",
+			"+mediawiki.searchSuggest": "skinStyles/mediawiki/mediawiki.searchSuggest.less",
+			"+mediawiki.special": "skinStyles/mediawiki/special/mediawiki.special.less",
+			"+mediawiki.special.changeslist": "skinStyles/mediawiki/special/mediawiki.special.changeslist.less",
+			"+mediawiki.special.changeslist.enhanced": "skinStyles/mediawiki/special/mediawiki.special.changeslist.enhanced.less",
+			"+mediawiki.special.preferences.styles.ooui": "skinStyles/mediawiki/special/mediawiki.special.preferences.styles.ooui.less",
+			"+mediawiki.special.search.styles": "skinStyles/mediawiki/special/mediawiki.special.search.styles.less",
+			"+mediawiki.special.userlogin.common.styles": "skinStyles/mediawiki/special/mediawiki.special.userlogin.common.styles.less",
+			"+mediawiki.special.userlogin.login.styles": "skinStyles/mediawiki/special/mediawiki.special.userlogin.login.styles.less",
+			"+mediawiki.special.userlogin.signup.styles": "skinStyles/mediawiki/special/mediawiki.special.userlogin.signup.styles.less",
+			"+mediawiki.ui.button": "skinStyles/mediawiki/ui/mediawiki.ui.button.less",
+			"+mediawiki.ui.input": "skinStyles/mediawiki/ui/mediawiki.ui.input.less",
+			"+mediawiki.widgets.styles": "skinStyles/mediawiki/mediawiki.widgets.styles.less",
+			"+oojs-ui-core.styles": "skinStyles/ooui/oojs-ui-core.less",
+			"+oojs-ui-widgets.styles": "skinStyles/ooui/oojs-ui-widgets.less",
+			"+oojs-ui-windows.styles": "skinStyles/ooui/oojs-ui-windows.less",
+			"+oojs-ui-toolbars.styles": "skinStyles/ooui/oojs-ui-toolbars.less",
+			"+jquery.tablesorter.styles": "skinStyles/jquery/jquery.tablesorter.styles.less",
+			"+jquery.makeCollapsible.styles": "skinStyles/jquery/jquery.makeCollapsible.styles.less",
+			"+jquery.ui": "skinStyles/jquery/jquery.ui.less"
+		}
+	},
+	"config_prefix": "wgArknights",
+	"config": {
+		"ThemeDefault": {
+			"value": "os",
+			"description": "Default colour theme when the visitor has not chosen one: 'os' (follow system), 'day' (archive / light) or 'night' (terminal / dark).",
+			"descriptionmsg": "arknights-config-themedefault",
+			"public": true
+		},
+		"ThemeColor": {
+			"value": "#0f0f10",
+			"description": "Value of the <meta name=\"theme-color\"> tag.",
+			"descriptionmsg": "arknights-config-themecolor",
+			"public": true
+		},
+		"MenuSidebar": {
+			"value": false,
+			"description": "Render the wikitext page MediaWiki:MenuSidebar (parsed with the current page as context, so parser functions such as {{FULLPAGENAME}} / {{#tsl:}} work) as the primary sidebar navigation. This is the skin-native replacement for Extension:VectorMenuSidebar.",
+			"descriptionmsg": "arknights-config-menusidebar",
+			"public": true
+		},
+		"MenuSidebarMessage": {
+			"value": "MenuSidebar",
+			"description": "Name of the MediaWiki-namespace message holding the sidebar wikitext (without the 'MediaWiki:' prefix).",
+			"descriptionmsg": "arknights-config-menusidebarmessage",
+			"public": true
+		},
+		"MenuSidebarAfterMessage": {
+			"value": "MenuSidebarAfter",
+			"description": "Name of the MediaWiki-namespace message rendered below the sidebar (wikitext). Empty string disables it.",
+			"descriptionmsg": "arknights-config-menusidebaraftermessage",
+			"public": true
+		},
+		"MenuSidebarHidePortlets": {
+			"value": true,
+			"description": "When MenuSidebar is enabled, hide the MediaWiki:Sidebar portlets (except the toolbox and languages) — mirrors the behaviour of Extension:VectorMenuSidebar.",
+			"descriptionmsg": "arknights-config-menusidebarhideportlets",
+			"public": true
+		},
+		"HeaderNavMessage": {
+			"value": "Arknights-header-nav",
+			"description": "Name of the MediaWiki-namespace message holding the wikitext list rendered as the primary header navigation. Empty string or a missing / disabled ('-') message hides the header navigation.",
+			"descriptionmsg": "arknights-config-headernavmessage",
+			"public": true
+		},
+		"ShowPageTools": {
+			"value": true,
+			"description": "Visibility of the page tools (views/actions tabs): true, false, 'login' or 'permission-<right>'.",
+			"descriptionmsg": "arknights-config-showpagetools",
+			"public": true
+		},
+		"SidebarFlyout": {
+			"value": true,
+			"description": "Enable hover fly-out previews of collapsed sidebar branches on desktop pointers.",
+			"descriptionmsg": "arknights-config-sidebarflyout",
+			"public": true
+		},
+		"EnableThemeToggle": {
+			"value": true,
+			"description": "Show the terminal / archive / system theme toggle in the header.",
+			"descriptionmsg": "arknights-config-enablethemetoggle",
+			"public": true
+		},
+		"TableOfContentsCollapseAtCount": {
+			"value": 28,
+			"description": "Minimum number of headings required to collapse the sub-sections of the sticky table of contents by default."
+		}
+	},
+	"manifest_version": 2
+}

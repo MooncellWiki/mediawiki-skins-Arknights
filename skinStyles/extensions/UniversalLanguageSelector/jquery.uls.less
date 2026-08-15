@@ -1,0 +1,55 @@
+/**
+ * jquery.uls — language selector dialog
+ */
+.uls-menu {
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+	border-color: var( --ak-border );
+	border-radius: 0;
+	box-shadow: var( --ak-shadow-lg );
+
+	.uls-search-wrapper,
+	.uls-title-region,
+	.uls-menu-header,
+	.uls-language-list,
+	.uls-no-results-view,
+	.uls-lcd-region-section {
+		background: var( --ak-bg-surface );
+		color: var( --ak-fg );
+		border-color: var( --ak-border );
+	}
+
+	.uls-lcd-region-title,
+	.uls-language-list h3 {
+		color: var( --ak-fg-muted );
+	}
+
+	.uls-language-block li a,
+	.uls-language-block li {
+		color: var( --ak-fg );
+	}
+
+	.uls-language-block li:hover {
+		background: var( --ak-bg-hover );
+	}
+
+	#uls-languagefilter,
+	.uls-filterinput {
+		background: var( --ak-bg-surface-2 );
+		color: var( --ak-fg );
+		border-color: var( --ak-border-strong );
+		border-radius: 0;
+	}
+}
+
+html.skin-theme-clientpref-night .uls-menu .uls-search-label,
+html.skin-theme-clientpref-night .uls-menu .uls-icon-close {
+	filter: invert( 1 );
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .uls-menu .uls-search-label,
+	html.skin-theme-clientpref-os .uls-menu .uls-icon-close {
+		filter: invert( 1 );
+	}
+}

@@ -1,0 +1,88 @@
+/**
+ * WikiEditor — toolbar (initial styles)
+ */
+.wikiEditor-ui {
+	border-color: var( --ak-border );
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	box-shadow: none;
+	border-radius: 0;
+}
+
+.wikiEditor-ui-toolbar .tabs span.tab a,
+.wikiEditor-ui-toolbar .group .label,
+.wikiEditor-ui-toolbar .sections .section .page .index {
+	color: var( --ak-fg-secondary );
+}
+
+.wikiEditor-ui-toolbar .group,
+.wikiEditor-ui-toolbar .sections .section {
+	border-color: var( --ak-border );
+	background: transparent;
+}
+
+.wikiEditor-ui-toolbar .tabs span.tab a.current,
+.wikiEditor-ui-toolbar .tabs span.tab a:hover {
+	background: var( --ak-bg-hover );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select .label,
+.wikiEditor-ui-toolbar .group .tool-select .options {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select .options .option:hover {
+	background: var( --ak-bg-hover );
+}
+
+.wikiEditor-ui-toolbar .booklet .index .current {
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar .booklet .pages,
+.wikiEditor-ui-toolbar .booklet .index {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+}
+
+.wikiEditor-ui-toolbar .page-table td {
+	color: var( --ak-fg-secondary );
+}
+
+.wikiEditor-ui-toolbar .page-table td.syntax {
+	color: var( --ak-fg-muted );
+}
+
+.wikiEditor-ui-toolbar .group .tool-button,
+.wikiEditor-ui-toolbar .group .tool-select .label {
+	filter: none;
+}
+
+// Toolbar glyphs are dark images — invert them in the dark theme
+html.skin-theme-clientpref-night .wikiEditor-ui-toolbar .group .tool-button,
+html.skin-theme-clientpref-night .wikiEditor-ui-toolbar .group .tool-select .label::after {
+	filter: invert( 1 ) hue-rotate( 180deg );
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .wikiEditor-ui-toolbar .group .tool-button,
+	html.skin-theme-clientpref-os .wikiEditor-ui-toolbar .group .tool-select .label::after {
+		filter: invert( 1 ) hue-rotate( 180deg );
+	}
+}
+
+#wpTextbox1,
+.wikiEditor-ui-text textarea {
+	background: var( --ak-bg-inset );
+	color: var( --ak-fg );
+	border-color: var( --ak-border );
+}

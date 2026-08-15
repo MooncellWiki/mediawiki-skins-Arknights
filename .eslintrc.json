@@ -1,0 +1,16 @@
+{
+	"root": true,
+	"extends": [
+		"wikimedia/client-es6",
+		"wikimedia/mediawiki"
+	],
+	"parserOptions": {
+		"sourceType": "script"
+	},
+	"env": {
+		"commonjs": true
+	},
+	"rules": {
+		"no-jquery/no-jquery-constructor": "off"
+	}
+}

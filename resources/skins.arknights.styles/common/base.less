@@ -1,0 +1,114 @@
+/**
+ * Base — body, skip link, helpers, small MediaWiki interface bits that core's
+ * SkinModule features would otherwise provide.
+ */
+
+body.skin-arknights {
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: var( --ak-bg-canvas );
+	color: var( --ak-fg );
+}
+
+.ak-page {
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.ak-sr-only {
+	.ak-sr-only();
+}
+
+.ak-skip {
+	position: absolute;
+	left: 8px;
+	top: -48px;
+	z-index: calc( var( --ak-z-header ) + 10 );
+	background: var( --ak-accent );
+	color: var( --ak-accent-fg );
+	padding: 8px 12px;
+	font-weight: 700;
+
+	&:focus {
+		top: 8px;
+		color: var( --ak-accent-fg );
+	}
+}
+
+/* Icon button (header / drawer controls) */
+.ak-icon-btn {
+	all: unset;
+	box-sizing: border-box;
+	display: inline-grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	color: var( --ak-fg-secondary );
+	cursor: pointer;
+	position: relative;
+	transition: background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+	&:hover {
+		background: var( --ak-bg-hover );
+		color: var( --ak-fg );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+}
+
+/* Site notice */
+.ak-sitenotice {
+	max-width: @ak-page-max;
+	width: 100%;
+	margin: 0 auto;
+	padding: var( --ak-space-3 ) var( --ak-gutter ) 0;
+	box-sizing: border-box;
+	font-size: var( --ak-fs-sm );
+
+	&:empty {
+		display: none;
+	}
+
+	#siteNotice {
+		position: relative;
+		text-align: center;
+		margin: 0;
+	}
+
+	#localNotice {
+		margin: 0;
+	}
+}
+
+/* Core interface bits (mediawiki.skinning features that are disabled in skin.json) */
+.usermessage {
+	background: var( --ak-warning-bg );
+	border: 1px solid var( --ak-border );
+	border-left: var( --ak-bar-w ) solid var( --ak-warning );
+	color: var( --ak-fg );
+	font-weight: 700;
+	margin: 0 0 var( --ak-space-4 );
+	padding: var( --ak-space-3 ) var( --ak-space-4 );
+}
+
+.mw-hidden-cats-hidden,
+.catlinks-allhidden {
+	display: none;
+}
+
+.printfooter,
+.client-nojs #t-print {
+	display: none;
+}
+
+/* Temp-user banner from core sits above the header; keep it inside the flow */
+.mw-temp-user-banner {
+	order: -1;
+}

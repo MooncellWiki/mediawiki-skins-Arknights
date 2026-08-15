@@ -1,0 +1,50 @@
+/**
+ * History page
+ */
+#pagehistory {
+	li {
+		border-color: var( --ak-border );
+		padding: 6px 8px;
+		margin: 0;
+
+		&.selected {
+			background: var( --ak-accent-subtle );
+			border-color: var( --ak-accent-muted );
+		}
+
+		&.after {
+			background: var( --ak-bg-surface-2 );
+		}
+	}
+
+	.history-user,
+	.history-size,
+	.mw-changeslist-date {
+		color: var( --ak-fg-secondary );
+	}
+
+	.mw-plusminus-pos {
+		color: var( --ak-success );
+	}
+
+	.mw-plusminus-neg {
+		color: var( --ak-danger );
+	}
+
+	.mw-plusminus-null {
+		color: var( --ak-fg-muted );
+	}
+}
+
+.mw-history-compareselectedversions,
+#mw-history-compare .mw-history-compareselectedversions {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.mw-history-histlinks,
+.mw-history-histlinks-previous,
+.mw-history-histlinks-current {
+	color: var( --ak-fg-muted );
+}

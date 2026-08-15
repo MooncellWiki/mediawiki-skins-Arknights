@@ -1,0 +1,47 @@
+/**
+ * Search suggestions dropdown (attached to <body>)
+ */
+.suggestions {
+	.suggestions-results,
+	.suggestions-special {
+		background: var( --ak-bg-surface );
+		border: 1px solid var( --ak-border );
+		border-top: 2px solid var( --ak-accent );
+		box-shadow: var( --ak-shadow-lg );
+		color: var( --ak-fg );
+		border-radius: 0;
+	}
+
+	.suggestions-result {
+		color: var( --ak-fg );
+		padding: 6px 12px;
+		line-height: 1.4;
+	}
+
+	.suggestions-result-current {
+		background: var( --ak-accent-subtle );
+		color: var( --ak-accent );
+	}
+
+	.suggestions-special {
+		border-top: 1px solid var( --ak-border );
+		padding: 8px 12px;
+	}
+
+	.suggestions-special.suggestions-result-current {
+		background: var( --ak-accent-subtle );
+	}
+
+	.special-label {
+		color: var( --ak-fg-muted );
+	}
+
+	.special-query {
+		color: var( --ak-fg );
+		font-style: normal;
+	}
+
+	.suggestions-result .highlight {
+		color: var( --ak-accent );
+	}
+}

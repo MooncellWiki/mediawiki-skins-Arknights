@@ -1,0 +1,185 @@
+/**
+ * OOUI core — square corners + theme surfaces via bridged tokens.
+ * Most colours already follow the theme through the Codex custom-property bridge in
+ * tokens.css; this file fixes the remaining hard-coded values and the border radius.
+ */
+.oo-ui-buttonElement-framed > .oo-ui-buttonElement-button,
+.oo-ui-inputWidget-input,
+.oo-ui-textInputWidget .oo-ui-inputWidget-input,
+.oo-ui-dropdownWidget-handle,
+.oo-ui-tagMultiselectWidget-handle,
+.oo-ui-comboBoxInputWidget .oo-ui-inputWidget-input,
+.oo-ui-popupWidget-popup,
+.oo-ui-panelLayout-framed,
+.oo-ui-messageWidget-block,
+.oo-ui-tabSelectWidget-framed,
+.oo-ui-tabOptionWidget,
+.oo-ui-buttonSelectWidget .oo-ui-buttonOptionWidget:first-child .oo-ui-buttonElement-button,
+.oo-ui-buttonSelectWidget .oo-ui-buttonOptionWidget:last-child .oo-ui-buttonElement-button,
+.oo-ui-fieldsetLayout-header,
+.oo-ui-labelElement-label,
+.oo-ui-processDialog,
+.oo-ui-window-frame,
+.oo-ui-tagItemWidget {
+	border-radius: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.oo-ui-buttonElement-framed > .oo-ui-buttonElement-button {
+	font-family: var( --ak-font-body );
+	font-weight: 600;
+}
+
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled > .oo-ui-buttonElement-button {
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg );
+	border-color: var( --ak-border-strong );
+}
+
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled > .oo-ui-buttonElement-button:hover {
+	background: var( --ak-bg-surface-3 );
+	border-color: var( --ak-fg-muted );
+	color: var( --ak-fg );
+}
+
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-flaggedElement-primary > .oo-ui-buttonElement-button {
+	background: var( --ak-accent );
+	color: var( --ak-accent-fg );
+	border-color: var( --ak-accent );
+}
+
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-flaggedElement-primary > .oo-ui-buttonElement-button:hover {
+	background: var( --ak-accent-hover );
+	border-color: var( --ak-accent-hover );
+}
+
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-destructive.oo-ui-flaggedElement-primary > .oo-ui-buttonElement-button {
+	background: var( --ak-red-800 );
+	border-color: var( --ak-red-800 );
+	color: #fff;
+}
+
+.oo-ui-inputWidget-input,
+.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input,
+.oo-ui-dropdownWidget.oo-ui-widget-enabled .oo-ui-dropdownWidget-handle,
+.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle {
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+	border-color: var( --ak-border-strong );
+	font-family: var( --ak-font-body );
+}
+
+.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input:focus,
+.oo-ui-dropdownWidget.oo-ui-widget-enabled.oo-ui-dropdownWidget-open .oo-ui-dropdownWidget-handle {
+	border-color: var( --ak-accent );
+	box-shadow: var( --ak-shadow-accent );
+	outline: 0;
+}
+
+.oo-ui-labelElement .oo-ui-labelElement-label,
+.oo-ui-fieldLayout-header .oo-ui-labelElement-label,
+.oo-ui-fieldsetLayout-header .oo-ui-labelElement-label,
+.oo-ui-fieldLayout .oo-ui-fieldLayout-help .oo-ui-labelElement-label,
+.oo-ui-optionWidget.oo-ui-labelElement .oo-ui-labelElement-label {
+	color: inherit;
+}
+
+.oo-ui-fieldLayout .oo-ui-fieldLayout-help .oo-ui-labelElement-label,
+.oo-ui-fieldLayout-help-content {
+	color: var( --ak-fg-muted );
+}
+
+.oo-ui-menuSelectWidget,
+.oo-ui-popupWidget-popup,
+.oo-ui-dropdownWidget-handle + .oo-ui-menuSelectWidget {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+	box-shadow: var( --ak-shadow-lg );
+}
+
+.oo-ui-menuOptionWidget.oo-ui-optionWidget-selected,
+.oo-ui-menuOptionWidget.oo-ui-optionWidget-highlighted {
+	background: var( --ak-accent-subtle );
+	color: var( --ak-fg );
+}
+
+.oo-ui-checkboxInputWidget [ type='checkbox' ] + span,
+.oo-ui-radioInputWidget [ type='radio' ] + span {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border-strong );
+	border-radius: 0;
+}
+
+.oo-ui-checkboxInputWidget [ type='checkbox' ]:checked + span,
+.oo-ui-radioInputWidget [ type='radio' ]:checked + span {
+	background: var( --ak-accent );
+	border-color: var( --ak-accent );
+}
+
+.oo-ui-radioInputWidget [ type='radio' ] + span {
+	border-radius: 50%;
+}
+
+.oo-ui-messageWidget {
+	color: var( --ak-fg );
+}
+
+.oo-ui-messageWidget-block {
+	border-color: var( --ak-border );
+	border-left-width: var( --ak-bar-w );
+	background: var( --ak-bg-surface-2 );
+
+	&.oo-ui-flaggedElement-error {
+		border-left-color: var( --ak-danger );
+		background: var( --ak-danger-bg );
+	}
+
+	&.oo-ui-flaggedElement-warning {
+		border-left-color: var( --ak-warning );
+		background: var( --ak-warning-bg );
+	}
+
+	&.oo-ui-flaggedElement-success {
+		border-left-color: var( --ak-success );
+		background: var( --ak-success-bg );
+	}
+
+	&.oo-ui-flaggedElement-notice {
+		border-left-color: var( --ak-info );
+		background: var( --ak-info-bg );
+	}
+}
+
+.oo-ui-panelLayout-framed {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+}
+
+.oo-ui-fieldsetLayout-header .oo-ui-labelElement-label {
+	color: var( --ak-fg );
+}
+
+// Icons and indicators are dark bitmaps/SVGs: invert them in the dark theme (Vector 2022 convention).
+// `.skin-invert` / `.notheme` / `.mw-no-invert` are respected as in Vector.
+@ooui-icon-selectors: ~'.oo-ui-iconElement-icon:not( .oo-ui-image-progressive ):not( .oo-ui-image-destructive ):not( .oo-ui-checkboxInputWidget-checkIcon ):not( .oo-ui-image-invert ):not( .mw-no-invert )';
+@ooui-indicator-selectors: ~'.oo-ui-indicatorElement-indicator';
+
+html.skin-theme-clientpref-night @{ooui-icon-selectors},
+html.skin-theme-clientpref-night @{ooui-indicator-selectors} {
+	filter: invert( 1 ) hue-rotate( 180deg );
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os @{ooui-icon-selectors},
+	html.skin-theme-clientpref-os @{ooui-indicator-selectors} {
+		filter: invert( 1 ) hue-rotate( 180deg );
+	}
+}
+
+.skin-invert,
+.notheme {
+	@{ooui-icon-selectors},
+	@{ooui-indicator-selectors} {
+		filter: none !important; /* stylelint-disable-line declaration-no-important */
+	}
+}

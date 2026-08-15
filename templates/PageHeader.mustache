@@ -1,0 +1,20 @@
+{{!
+	object data-page-heading { html-title-heading, html-tagline, is-title-blank, namespace-text, is-special }
+	string html-subtitle     #mw-content-subtitle
+	array array-indicators
+	object data-page-tools
+}}
+<header class="ak-page-header mw-body-header" id="ak-page-header">
+	{{#data-page-heading}}
+	<div class="ak-page-header__top">
+		{{#namespace-text}}<span class="ak-page-header__ns ak-en">{{.}}</span>{{/namespace-text}}
+		{{#has-indicators}}{{>Indicators}}{{/has-indicators}}
+	</div>
+	<div class="ak-page-heading{{#is-title-blank}} ak-page-heading--blank{{/is-title-blank}}">
+		{{{html-title-heading}}}
+		{{#html-tagline}}<div id="siteSub" class="ak-page-heading__tagline">{{{.}}}</div>{{/html-tagline}}
+	</div>
+	{{/data-page-heading}}
+	<div id="contentSub"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
+	{{#data-page-tools}}{{#has-tools}}{{>PageTools}}{{/has-tools}}{{/data-page-tools}}
+</header>

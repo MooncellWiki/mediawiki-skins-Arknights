@@ -1,0 +1,47 @@
+/**
+ * OOUI windows / dialogs
+ */
+.oo-ui-window-frame,
+.oo-ui-dialog-content,
+.oo-ui-processDialog-content,
+.oo-ui-messageDialog-content {
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+	border-radius: 0;
+}
+
+.oo-ui-window-overlay,
+.oo-ui-windowManager-modal > .oo-ui-dialog > .oo-ui-window-frame,
+.oo-ui-windowManager-modal-active .oo-ui-window {
+	border-radius: 0;
+}
+
+.oo-ui-windowManager-modal > .oo-ui-dialog {
+	background: var( --ak-bg-overlay );
+}
+
+.oo-ui-processDialog-navigation,
+.oo-ui-processDialog-location {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.oo-ui-processDialog-title,
+.oo-ui-messageDialog-title,
+.oo-ui-messageDialog-message {
+	color: var( --ak-fg );
+}
+
+.oo-ui-messageDialog-actions {
+	border-color: var( --ak-border );
+}
+
+.oo-ui-messageDialog-actions .oo-ui-actionWidget {
+	border-color: var( --ak-border );
+}
+
+.oo-ui-processDialog-errors {
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+}

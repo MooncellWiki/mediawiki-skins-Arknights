@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"PRTS.wiki"
+		]
+	},
+	"skinname-arknights": "Arknights",
+	"arknights-skin-desc": "PRTS.wiki 明日方舟设计系统皮肤 —— 终端（暗）/ 档案（亮）双主题，wikitext 驱动的侧栏与页眉导航",
+	"arknights-jumptocontent": "跳到内容",
+	"arknights-drawer-toggle": "菜单",
+	"arknights-drawer-close": "关闭",
+	"arknights-search-toggle": "搜索",
+	"arknights-theme-toggle-label": "配色主题",
+	"arknights-theme-os": "跟随系统",
+	"arknights-theme-day": "档案模式（亮色）",
+	"arknights-theme-night": "终端模式（暗色）",
+	"arknights-usermenu-toggle": "用户菜单",
+	"arknights-usermenu-anon": "未登录",
+	"arknights-toc-toggle": "展开/收起小节",
+	"arknights-back-to-top": "回到顶部",
+	"arknights-page-tools-more": "更多",
+	"arknights-variants-toggle": "变体",
+	"arknights-languages-toggle": "语言",
+	"arknights-sidebar-label": "站点导航",
+	"arknights-header-nav-label": "主导航",
+	"arknights-footer-powered": "Powered by MediaWiki · Skin:Arknights",
+	"arknights-config-themedefault": "默认配色主题：'os'（跟随系统）、'day'（档案模式 / 亮色）或 'night'（终端模式 / 暗色）。",
+	"arknights-config-themecolor": "theme-color meta 标签的值。",
+	"arknights-config-menusidebar": "将 MediaWiki:MenuSidebar（wikitext，以当前页面为上下文解析）渲染为侧栏导航。",
+	"arknights-config-menusidebarmessage": "存放侧栏 wikitext 的 MediaWiki 名字空间消息名。",
+	"arknights-config-menusidebaraftermessage": "渲染在侧栏下方的 MediaWiki 名字空间消息名。空字符串表示禁用。",
+	"arknights-config-menusidebarhideportlets": "启用 wikitext 侧栏时隐藏 MediaWiki:Sidebar 的门户（工具箱与语言除外）。",
+	"arknights-config-headernavmessage": "渲染为页眉主导航的 MediaWiki 名字空间消息名。",
+	"arknights-config-showpagetools": "页面工具的可见性：true、false、'login' 或 'permission-<权限>'。",
+	"arknights-config-sidebarflyout": "在桌面端启用侧栏折叠分支的悬停飞出预览。",
+	"arknights-config-enablethemetoggle": "在页眉显示主题切换。"
+}

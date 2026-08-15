@@ -1,0 +1,25 @@
+{{!
+	object data-header-nav    repeated inside the drawer on small screens
+	object data-menu-sidebar  { html-menu, html-after, label } — wikitext MediaWiki:MenuSidebar
+	object data-main-menu     { array-portlets, data-toolbox, data-languages }
+}}
+<aside class="ak-sidebar" id="ak-sidebar" aria-label="{{msg-arknights-sidebar-label}}" tabindex="-1">
+	<div class="ak-sidebar__head">
+		<span class="ak-sidebar__title">{{msg-navigation-heading}}</span>
+		<button type="button" class="ak-sidebar__close ak-icon-btn" aria-label="{{msg-arknights-drawer-close}}" title="{{msg-arknights-drawer-close}}"><span class="ak-icon ak-icon--close"></span></button>
+	</div>
+	<div class="ak-sidebar__panel" id="mw-panel">
+		{{#data-header-nav}}<nav class="ak-sidebar__nav" aria-label="{{label}}">{{{html-items}}}</nav>{{/data-header-nav}}
+		{{#data-menu-sidebar}}
+		<nav id="MenuSidebar" class="ak-menusidebar" aria-label="{{label}}">{{{html-menu}}}</nav>
+		{{/data-menu-sidebar}}
+		{{#data-main-menu}}
+		{{#array-portlets}}{{>Menu}}{{/array-portlets}}
+		{{#data-toolbox}}{{>Menu}}{{/data-toolbox}}
+		{{#data-languages}}{{>Menu}}{{/data-languages}}
+		{{/data-main-menu}}
+		{{#data-menu-sidebar}}{{#html-after}}
+		<div class="ak-menusidebar-after" id="MenuSidebarAfter">{{{.}}}</div>
+		{{/html-after}}{{/data-menu-sidebar}}
+	</div>
+</aside>

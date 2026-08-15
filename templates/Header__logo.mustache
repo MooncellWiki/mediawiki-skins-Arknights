@@ -1,0 +1,15 @@
+{{!
+	string link-mainpage
+	string html-logo-icon-src   icon > svg > 1x from $wgLogos
+	object data-logos           core logo data (wordmark: {src,width,height})
+	string msg-sitetitle / msg-tooltip-p-logo
+	string|null html-header-tagline  MediaWiki:Arknights-header-tagline (plain text), null when unset
+}}
+<a class="ak-header__logo mw-logo" href="{{link-mainpage}}" title="{{msg-tooltip-p-logo}}">
+	{{#html-logo-icon-src}}<img class="mw-logo-icon ak-header__logo-icon ak-glyph" src="{{.}}" alt="" aria-hidden="true" width="32" height="32">{{/html-logo-icon-src}}
+	<span class="ak-header__wordmark mw-logo-container">
+		{{#data-logos.wordmark}}<img class="mw-logo-wordmark ak-header__wordmark-img" src="{{src}}" alt="{{msg-sitetitle}}" width="{{width}}" height="{{height}}">{{/data-logos.wordmark}}
+		{{^data-logos.wordmark}}<span class="ak-header__sitename">{{msg-sitetitle}}</span>{{/data-logos.wordmark}}
+		{{#html-header-tagline}}<small class="ak-header__tagline">{{.}}</small>{{/html-header-tagline}}
+	</span>
+</a>

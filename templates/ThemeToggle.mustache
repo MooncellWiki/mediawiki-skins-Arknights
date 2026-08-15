@@ -1,0 +1,9 @@
+{{!
+	3-state colour theme switch: os (follow system) / day (archive, light) / night (terminal, dark).
+	The active button is set by resources/skins.arknights.scripts/theme.js from the <html> class.
+}}
+<div class="ak-theme-toggle" id="ak-theme-toggle" role="group" aria-label="{{msg-arknights-theme-toggle-label}}">
+	<button type="button" data-theme="os" title="{{msg-arknights-theme-os}}" aria-label="{{msg-arknights-theme-os}}" aria-pressed="false"><span class="ak-icon ak-icon--halfBright"></span></button>
+	<button type="button" data-theme="day" title="{{msg-arknights-theme-day}}" aria-label="{{msg-arknights-theme-day}}" aria-pressed="false"><span class="ak-icon ak-icon--bright"></span></button>
+	<button type="button" data-theme="night" title="{{msg-arknights-theme-night}}" aria-label="{{msg-arknights-theme-night}}" aria-pressed="false"><span class="ak-icon ak-icon--moon"></span></button>
+</div>

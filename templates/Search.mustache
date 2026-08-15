@@ -1,0 +1,20 @@
+{{!
+	string form-action
+	string page-title                   Special:Search
+	string html-input                   <input id="searchInput" …>
+	string html-button-search           "go" submit (visually hidden; makes Enter = go)
+	string html-button-search-fallback  full-text submit (hidden when JS is available)
+	string msg-search
+	string msg-arknights-search-shortcut
+}}
+<form class="ak-header__search ak-search" role="search" action="{{form-action}}" id="searchform" autocomplete="off">
+	<input type="hidden" name="title" value="{{page-title}}">
+	<label class="ak-search__icon-wrap" for="searchInput">
+		<span class="ak-icon ak-icon--search ak-search__icon"></span>
+		<span class="ak-sr-only">{{msg-search}}</span>
+	</label>
+	{{{html-input}}}
+	<kbd class="ak-search__kbd" aria-hidden="true">{{msg-arknights-search-shortcut}}</kbd>
+	{{{html-button-search}}}
+	{{{html-button-search-fallback}}}
+</form>

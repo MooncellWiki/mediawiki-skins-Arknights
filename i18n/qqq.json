@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"PRTS.wiki"
+		]
+	},
+	"skinname-arknights": "{{name}}\n{{optional}}",
+	"arknights-skin-desc": "{{desc|what=skin|name=Arknights|url=https://github.com/MooncellWiki/mediawiki-skins-Arknights}}",
+	"arknights-jumptocontent": "Label of the skip link that jumps to the page content.",
+	"arknights-drawer-toggle": "Label of the button that opens the navigation drawer on small screens.",
+	"arknights-drawer-close": "Label of the button that closes the navigation drawer / table of contents drawer.",
+	"arknights-search-toggle": "Label of the button that reveals the search box on small screens.",
+	"arknights-search-shortcut": "Keyboard shortcut hint displayed inside the search box. Usually should not be translated.\n{{optional}}",
+	"arknights-theme-toggle-label": "Accessible label of the colour theme switch group.",
+	"arknights-theme-os": "Label of the theme option that follows the operating system preference.",
+	"arknights-theme-day": "Label of the light theme. In Arknights the light UI is the archive / dossier interface.",
+	"arknights-theme-night": "Label of the dark theme. In Arknights the dark UI is the PRTS terminal interface.",
+	"arknights-usermenu-toggle": "Label of the button that opens the user menu.",
+	"arknights-usermenu-anon": "Text shown on the user menu button for visitors who are not logged in.",
+	"arknights-toc-toggle": "Label of the button that expands or collapses the subsections of a table of contents entry.",
+	"arknights-back-to-top": "Label of the floating button that scrolls to the top of the page.",
+	"arknights-page-tools-more": "Label of the dropdown holding additional page actions (move, delete, protect …).",
+	"arknights-variants-toggle": "Label of the dropdown holding language variants.",
+	"arknights-languages-toggle": "Label of the dropdown holding interlanguage links.",
+	"arknights-sidebar-label": "Accessible label of the sidebar navigation region.",
+	"arknights-header-nav-label": "Accessible label of the primary header navigation.",
+	"arknights-header-tagline": "Short Latin tagline shown under the site name in the header and footer (e.g. \"ARKNIGHTS WIKI\"). Empty by default; wikis set it on-wiki via MediaWiki:Arknights-header-tagline.\n{{optional}}",
+	"arknights-footer-powered": "Small print in the site footer.\n{{optional}}",
+	"arknights-footer-desc": "Optional description paragraph in the site footer, parsed as wikitext in the content language. Disabled by default; wikis define MediaWiki:Arknights-footer-desc.\n{{ignored}}",
+	"arknights-footer-tagline": "Optional tagline in the bottom bar of the site footer, parsed as wikitext in the content language. Disabled by default.\n{{ignored}}",
+	"arknights-config-themedefault": "Description of the configuration option $wgArknightsThemeDefault.",
+	"arknights-config-themecolor": "Description of the configuration option $wgArknightsThemeColor.",
+	"arknights-config-menusidebar": "Description of the configuration option $wgArknightsMenuSidebar.",
+	"arknights-config-menusidebarmessage": "Description of the configuration option $wgArknightsMenuSidebarMessage.",
+	"arknights-config-menusidebaraftermessage": "Description of the configuration option $wgArknightsMenuSidebarAfterMessage.",
+	"arknights-config-menusidebarhideportlets": "Description of the configuration option $wgArknightsMenuSidebarHidePortlets.",
+	"arknights-config-headernavmessage": "Description of the configuration option $wgArknightsHeaderNavMessage.",
+	"arknights-config-showpagetools": "Description of the configuration option $wgArknightsShowPageTools.",
+	"arknights-config-sidebarflyout": "Description of the configuration option $wgArknightsSidebarFlyout.",
+	"arknights-config-enablethemetoggle": "Description of the configuration option $wgArknightsEnableThemeToggle."
+}

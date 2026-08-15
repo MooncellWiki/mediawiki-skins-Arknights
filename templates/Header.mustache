@@ -1,0 +1,24 @@
+{{!
+	string msg-arknights-drawer-toggle
+	object data-header-nav   { html-items, label }
+	object data-search-box   core search box data
+	bool has-theme-toggle
+	object data-user-menu
+}}
+<header class="ak-header mw-header" id="mw-head">
+	<div class="ak-header__inner">
+		<button type="button" class="ak-header__menu ak-icon-btn" id="ak-drawer-toggle" aria-label="{{msg-arknights-drawer-toggle}}" title="{{msg-arknights-drawer-toggle}}" aria-controls="ak-sidebar" aria-expanded="false">
+			<span class="ak-icon ak-icon--menu"></span>
+		</button>
+		{{>Header__logo}}
+		{{#data-header-nav}}{{>HeaderNav}}{{/data-header-nav}}
+		{{#data-search-box}}{{>Search}}{{/data-search-box}}
+		<div class="ak-header__tools">
+			<button type="button" class="ak-header__search-toggle ak-icon-btn" id="ak-search-toggle" aria-label="{{msg-arknights-search-toggle}}" title="{{msg-arknights-search-toggle}}" aria-controls="searchform" aria-expanded="false">
+				<span class="ak-icon ak-icon--search"></span>
+			</button>
+			{{#has-theme-toggle}}{{>ThemeToggle}}{{/has-theme-toggle}}
+			{{#data-user-menu}}{{>UserMenu}}{{/data-user-menu}}
+		</div>
+	</div>
+</header>

@@ -1,0 +1,35 @@
+{{!
+	object data-places { id, className, array-items[ {id, html} ] }
+	object data-icons  { id, className, array-items[ {id, html} ] }
+	string html-footer-desc / html-footer-tagline (MediaWiki:Arknights-footer-desc / -tagline)
+	string msg-sitetitle / msg-arknights-footer-powered
+	string|null html-header-tagline
+}}
+<footer class="ak-footer mw-footer" id="footer"{{{html-user-language-attributes}}}>
+	<div class="ak-footer__inner">
+		<div class="ak-footer__brand">
+			<span class="ak-footer__sitename mw-wiki-title">{{msg-sitetitle}}</span>
+			{{#html-header-tagline}}<small class="ak-footer__tagline">{{.}}</small>{{/html-header-tagline}}
+			{{#html-footer-desc}}<p class="ak-footer__desc" id="footer-desc">{{{.}}}</p>{{/html-footer-desc}}
+		</div>
+		{{#data-places}}
+		<nav class="ak-footer__col ak-footer__places" id="{{id}}"{{#className}} class="{{.}}"{{/className}}>
+			<ul>{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>
+		</nav>
+		{{/data-places}}
+	</div>
+	<div class="ak-footer__bottom">
+		<div class="ak-footer__bottom-inner">
+			<div class="ak-footer__legal">
+				{{#html-footer-tagline}}<span id="footer-tagline">{{{.}}}</span>{{/html-footer-tagline}}
+				<span class="ak-footer__powered ak-en">{{msg-arknights-footer-powered}}</span>
+			</div>
+			{{#data-icons}}
+			<div class="ak-footer__icons{{#className}} {{.}}{{/className}}" id="{{id}}">
+				<ul>{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>
+			</div>
+			{{/data-icons}}
+		</div>
+	</div>
+	<span class="ak-footer__watermark ak-watermark" aria-hidden="true">{{msg-sitetitle}}</span>
+</footer>

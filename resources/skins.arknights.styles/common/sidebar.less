@@ -1,0 +1,423 @@
+/**
+ * Sidebar — sticky column on desktop, off-canvas drawer below the desktop breakpoint.
+ *
+ * Content sources (both styled the same, both enhanced by design-system/sidebar-tree.js):
+ *  a) MediaWiki:Sidebar portlets   → nav.ak-menu-portlet > .ak-menu-portlet__heading + .ak-menu-portlet__content > ul
+ *  b) MediaWiki:MenuSidebar        → nav#MenuSidebar.ak-menusidebar > p (group heading) + ul > li > (a|b) [+ ul …]
+ */
+.ak-sidebar {
+	position: sticky;
+	top: calc( var( --ak-header-h ) + var( --ak-space-6 ) );
+	max-height: calc( 100vh - var( --ak-header-h ) - var( --ak-space-6 ) );
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	font-size: var( --ak-fs-sm );
+	scrollbar-width: thin;
+	padding-right: 4px;
+	padding-bottom: var( --ak-space-6 );
+	box-sizing: border-box;
+	outline: 0;
+}
+
+.ak-sidebar__head {
+	display: none;
+}
+
+.ak-sidebar__nav {
+	display: none;
+}
+
+/* ── Portlets (MediaWiki:Sidebar / toolbox / languages) ── */
+.ak-sidebar .ak-menu-portlet {
+	margin-bottom: var( --ak-space-5 );
+
+	&__heading {
+		.ak-overline();
+		color: var( --ak-fg-muted );
+		margin: 0 0 6px;
+		padding: 0 0 6px 10px;
+		border-left: 2px solid var( --ak-accent );
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	&__list {
+		.ak-reset-list();
+	}
+}
+
+/* ── Group headings from wikitext (<p>) share the portlet heading style ── */
+.ak-sidebar .ak-menusidebar > p,
+.ak-sidebar .ak-menusidebar-after > p {
+	.ak-overline();
+	color: var( --ak-fg-muted );
+	margin: 0 0 6px;
+	padding: 0 0 6px 10px;
+	border-left: 2px solid var( --ak-accent );
+	display: flex;
+	align-items: center;
+	gap: 6px;
+
+	&:empty {
+		display: none;
+	}
+}
+
+.ak-sidebar .ak-menusidebar > ul + p,
+.ak-sidebar .ak-menusidebar > div + p,
+.ak-sidebar .ak-menusidebar > ul + ul {
+	margin-top: var( --ak-space-5 );
+}
+
+/* ── Rows ── */
+.ak-sidebar ul {
+	.ak-reset-list();
+}
+
+.ak-sidebar li {
+	position: relative;
+	margin: 0;
+}
+
+.ak-sidebar li.mw-empty-elt,
+.ak-sidebar li:empty {
+	display: none;
+}
+
+.ak-sidebar li > a,
+.ak-sidebar li > b,
+.ak-sidebar li > span,
+.ak-sidebar li > .ak-tree__label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	color: var( --ak-fg-secondary );
+	font-weight: 400;
+	text-decoration: none;
+	border-left: 2px solid transparent;
+	transition: color var( --ak-dur-fast ), background var( --ak-dur-fast ), border-color var( --ak-dur-fast );
+	cursor: pointer;
+	line-height: 1.4;
+
+	.ak-icon {
+		width: 16px;
+		height: 16px;
+		color: var( --ak-fg-muted );
+		opacity: 0.85;
+	}
+}
+
+.ak-sidebar li > a:hover,
+.ak-sidebar li > b:hover,
+.ak-sidebar li > span:hover,
+.ak-sidebar .ak-tree__branch.is-peek > .ak-tree__label {
+	color: var( --ak-fg );
+	background: var( --ak-bg-hover );
+	border-left-color: var( --ak-border-strong );
+	text-decoration: none;
+
+	.ak-icon {
+		color: var( --ak-accent );
+		opacity: 1;
+	}
+}
+
+.ak-sidebar li.is-active > a,
+.ak-sidebar li.selected > a,
+.ak-sidebar li.is-current > a,
+.ak-sidebar a.selflink,
+.ak-sidebar a.mw-selflink {
+	color: var( --ak-accent );
+	border-left-color: var( --ak-accent );
+	font-weight: 700;
+	background: var( --ak-accent-subtle );
+}
+
+.ak-sidebar a.selflink,
+.ak-sidebar a.mw-selflink {
+	cursor: default;
+}
+
+.ak-sidebar a.external {
+	background-image: none;
+	padding-right: 10px;
+}
+
+.ak-sidebar li > a.new {
+	color: var( --ak-link-new );
+}
+
+// Non-link rows (e.g. widgets rendered as <span>) may contain inline links
+.ak-sidebar li > span {
+	flex-wrap: wrap;
+	cursor: default;
+
+	a {
+		color: var( --ak-link );
+	}
+}
+
+/* ── Collapsible portlets (whole group) — state handled by sidebar-tree.js ── */
+.ak-sidebar .ak-portlet--collapsible {
+	> .ak-portlet__title {
+		cursor: pointer;
+		user-select: none;
+
+		&::after {
+			.ak-chevron();
+			margin-left: auto;
+			margin-right: 12px;
+			transition: transform var( --ak-dur-fast );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --ak-accent );
+			outline-offset: 2px;
+		}
+	}
+
+	&.is-collapsed {
+		> .ak-portlet__title::after {
+			transform: rotate( -45deg );
+		}
+
+		> .ak-menu-portlet__content,
+		> ul {
+			display: none;
+		}
+	}
+}
+
+/* ── Tree (nested lists of any depth) ── */
+.ak-tree__branch > .ak-tree__label {
+	padding-right: 32px;
+}
+
+.ak-tree__branch > b.ak-tree__label,
+.ak-tree__branch > span.ak-tree__label {
+	font-weight: 600;
+	color: var( --ak-fg-secondary );
+}
+
+.ak-tree__branch.is-open > .ak-tree__label,
+.ak-tree__branch.is-current-path > .ak-tree__label {
+	color: var( --ak-fg );
+}
+
+.ak-tree__branch.is-current-path > .ak-tree__label {
+	border-left-color: var( --ak-accent-muted );
+}
+
+.ak-tree__toggle {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 32px;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var( --ak-fg-muted );
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+
+	&::before {
+		.ak-chevron();
+		transform: translate( -1px, 0 ) rotate( -45deg );
+		transition: transform var( --ak-dur-fast ) var( --ak-ease );
+	}
+
+	&:hover {
+		color: var( --ak-accent );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-accent );
+		outline-offset: -2px;
+	}
+}
+
+.ak-tree__branch.is-open > .ak-tree__toggle::before {
+	transform: translate( 0, -1px ) rotate( 45deg );
+}
+
+.ak-tree__branch.is-current-path > .ak-tree__toggle {
+	color: var( --ak-accent );
+}
+
+.ak-sidebar li > ul {
+	display: none;
+	position: relative;
+	margin: 0 0 4px;
+	padding-left: 12px;
+
+	// indent rail
+	&::before {
+		content: '';
+		position: absolute;
+		left: 11px;
+		top: 2px;
+		bottom: 2px;
+		border-left: 1px solid var( --ak-border );
+	}
+}
+
+.ak-tree__branch.is-current-path > ul::before {
+	border-left-color: var( --ak-accent-muted );
+}
+
+.ak-tree__branch.is-open > ul {
+	display: block;
+	animation: ak-tree-in var( --ak-dur-fast ) var( --ak-ease );
+}
+
+// No JS: show every level
+.client-nojs .ak-sidebar li > ul {
+	display: block;
+}
+
+.ak-sidebar li li > a,
+.ak-sidebar li li > b,
+.ak-sidebar li li > .ak-tree__label {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-size: calc( var( --ak-fs-sm ) - 1px );
+}
+
+.ak-sidebar li li li > a,
+.ak-sidebar li li li > b,
+.ak-sidebar li li li > .ak-tree__label {
+	color: var( --ak-fg-muted );
+}
+
+.ak-sidebar li li li > a:hover,
+.ak-sidebar li li li > b:hover {
+	color: var( --ak-fg );
+}
+
+@keyframes ak-tree-in {
+	from {
+		opacity: 0;
+		transform: translateY( -3px );
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* ── Desktop hover fly-out (created by sidebar-tree.js under <body>) ── */
+.ak-flyout {
+	position: fixed;
+	z-index: var( --ak-z-dropdown );
+	min-width: 184px;
+	max-width: 300px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	scrollbar-width: thin;
+	background: var( --ak-bg-surface );
+	border: 1px solid var( --ak-border );
+	border-left: 2px solid var( --ak-accent );
+	box-shadow: var( --ak-shadow-lg );
+	padding: 4px 0 6px;
+	font-size: var( --ak-fs-sm );
+	animation: ak-flyout-in var( --ak-dur-fast ) var( --ak-ease );
+
+	&__title {
+		.ak-overline();
+		padding: 6px 14px 4px;
+		color: var( --ak-fg-subtle );
+	}
+
+	ul {
+		.ak-reset-list();
+	}
+
+	li > a,
+	li > b,
+	li > .ak-tree__label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 14px;
+		color: var( --ak-fg-secondary );
+		font-weight: 400;
+		text-decoration: none;
+		border-left: 2px solid transparent;
+		white-space: nowrap;
+		cursor: pointer;
+	}
+
+	li > b,
+	li > span.ak-tree__label {
+		font-weight: 600;
+		color: var( --ak-fg );
+		cursor: default;
+	}
+
+	li > a:hover {
+		color: var( --ak-fg );
+		background: var( --ak-bg-hover );
+		border-left-color: var( --ak-accent );
+		text-decoration: none;
+	}
+
+	li.is-current > a,
+	a.selflink,
+	a.mw-selflink {
+		color: var( --ak-accent );
+		font-weight: 700;
+	}
+
+	li > ul {
+		display: block;
+		padding-left: 12px;
+	}
+
+	a.external {
+		background-image: none;
+		padding-right: 14px;
+	}
+
+	.ak-tree__toggle {
+		display: none;
+	}
+}
+
+@keyframes ak-flyout-in {
+	from {
+		opacity: 0;
+		transform: translateX( -4px );
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.ak-tree__branch.is-open > ul,
+	.ak-flyout {
+		animation: none;
+	}
+
+	.ak-tree__toggle::before,
+	.ak-portlet--collapsible > .ak-portlet__title::after {
+		transition: none;
+	}
+}
+
+/* ── Drawer overlay (created by drawer.js) ── */
+.ak-overlay {
+	position: fixed;
+	inset: 0;
+	background: var( --ak-bg-overlay );
+	z-index: var( --ak-z-overlay );
+	animation: ak-fade-in var( --ak-dur-fast ) var( --ak-ease );
+}

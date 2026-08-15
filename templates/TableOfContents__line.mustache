@@ -1,0 +1,9 @@
+<li id="toc-{{anchor}}" class="ak-toc__item ak-toc__item--level-{{toclevel}}{{#is-parent-section}} ak-toc__item--parent{{/is-parent-section}}">
+	<a class="ak-toc__link" href="#{{linkAnchor}}"><span class="ak-toc__num">{{number}}</span><span class="ak-toc__text">{{{line}}}</span></a>
+	{{#is-top-level-section}}{{#is-parent-section}}<button type="button" class="ak-toc__toggle" aria-controls="toc-{{anchor}}-sublist" aria-expanded="true" aria-label="{{msg-arknights-toc-toggle}}" title="{{msg-arknights-toc-toggle}}"></button>{{/is-parent-section}}{{/is-top-level-section}}
+	{{#is-parent-section}}
+	<ul id="toc-{{anchor}}-sublist" class="ak-toc__list ak-toc__sublist">
+		{{#array-sections}}{{>TableOfContents__line}}{{/array-sections}}
+	</ul>
+	{{/is-parent-section}}
+</li>

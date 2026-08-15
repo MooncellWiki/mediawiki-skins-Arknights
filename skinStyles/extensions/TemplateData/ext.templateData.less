@@ -1,0 +1,33 @@
+/**
+ * TemplateData — documentation table
+ */
+.mw-templatedata-doc-wrap {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.mw-templatedata-doc-params,
+table.mw-templatedata-doc-params {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+
+	> thead > tr > th,
+	> tbody > tr > th,
+	> tbody > tr > td {
+		border-color: var( --ak-border );
+	}
+
+	> tbody > tr > th {
+		background: var( --ak-bg-surface-2 );
+	}
+}
+
+.mw-templatedata-doc-param-status.mw-templatedata-doc-param-status-required {
+	color: var( --ak-danger );
+}
+
+.mw-templatedata-doc-param-status.mw-templatedata-doc-param-status-suggested {
+	color: var( --ak-info );
+}

@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"PRTS.wiki"
+		]
+	},
+	"skinname-arknights": "Arknights",
+	"arknights-skin-desc": "PRTS.wiki 向けアークナイツ デザインシステム スキン — ターミナル（ダーク）/ アーカイブ（ライト）の2テーマ、wikitext によるサイドバーとヘッダーナビゲーション",
+	"arknights-jumptocontent": "コンテンツにスキップ",
+	"arknights-drawer-toggle": "メニュー",
+	"arknights-drawer-close": "閉じる",
+	"arknights-search-toggle": "検索",
+	"arknights-theme-toggle-label": "カラーテーマ",
+	"arknights-theme-os": "システムに従う",
+	"arknights-theme-day": "アーカイブモード（ライト）",
+	"arknights-theme-night": "ターミナルモード（ダーク）",
+	"arknights-usermenu-toggle": "利用者メニュー",
+	"arknights-usermenu-anon": "ログインしていません",
+	"arknights-toc-toggle": "サブセクションの表示切替",
+	"arknights-back-to-top": "ページ上部へ",
+	"arknights-page-tools-more": "その他",
+	"arknights-variants-toggle": "変種",
+	"arknights-languages-toggle": "言語",
+	"arknights-sidebar-label": "サイトナビゲーション",
+	"arknights-header-nav-label": "メインナビゲーション",
+	"arknights-footer-powered": "Powered by MediaWiki · Skin:Arknights"
+}

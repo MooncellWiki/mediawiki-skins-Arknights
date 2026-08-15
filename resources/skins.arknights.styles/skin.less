@@ -1,0 +1,35 @@
+/**
+ * Arknights — skin chrome entry point
+ *
+ * The design-system layers (tokens / base / components / arknights / utilities)
+ * are loaded before this file by skin.json. Everything here is skin chrome
+ * (header, sidebar, page header, TOC, footer, responsive, print) written against
+ * the DOM produced by templates/*.mustache.
+ */
+@import './variables.less';
+@import './mixins.less';
+
+@media screen {
+	@import './common/base.less';
+	@import './common/icons.less';
+	@import './common/dropdown.less';
+	@import './common/header.less';
+	@import './common/theme-toggle.less';
+	@import './common/layout.less';
+	@import './common/sidebar.less';
+	@import './common/menu-sidebar.less';
+	@import './common/page-header.less';
+	@import './common/page-tools.less';
+	@import './common/content.less';
+	@import './common/toc.less';
+	@import './common/footer.less';
+	@import './common/mainpage.less';
+	@import './common/mediawiki-ui.less';
+	@import './common/dark-compat.less';
+	@import './common/notheme.generated.less';
+	@import './common/responsive.less';
+}
+
+@media print {
+	@import './common/print.less';
+}

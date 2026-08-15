@@ -1,0 +1,8 @@
+{{!
+	Section edit links (Skin option templateSectionLinks).
+	string class
+	array array-links  [ { array-attributes: [ {key,value} ], text, icon } ]
+}}
+<span class="{{class}}">{{!
+	}}{{#array-links}}{{>Link}}{{/array-links}}{{!
+}}</span>

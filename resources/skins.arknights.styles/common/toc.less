@@ -1,0 +1,151 @@
+/**
+ * Table of contents — sticky right column (≥ 1400px), floating drawer below.
+ */
+.ak-toc {
+	position: sticky;
+	top: calc( var( --ak-header-h ) + var( --ak-space-6 ) );
+	max-height: calc( 100vh - var( --ak-header-h ) - var( --ak-space-8 ) );
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	font-size: var( --ak-fs-xs );
+	scrollbar-width: thin;
+	box-sizing: border-box;
+}
+
+.ak-toc__head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.ak-toc__title {
+	.ak-overline();
+	color: var( --ak-fg-muted );
+	padding-left: 10px;
+	border-left: 2px solid var( --ak-accent );
+	flex: 1;
+}
+
+.ak-toc__close {
+	display: none;
+	width: 28px;
+	height: 28px;
+}
+
+.ak-toc__progress {
+	height: 2px;
+	background: var( --ak-border );
+	margin: 0 0 8px;
+	overflow: hidden;
+
+	> i {
+		display: block;
+		height: 100%;
+		width: var( --_p, 0% );
+		background: var( --ak-accent );
+		transition: width 0.1s linear;
+	}
+}
+
+.ak-toc__list {
+	.ak-reset-list();
+	border-left: 1px solid var( --ak-border );
+}
+
+.ak-toc__sublist {
+	border-left: 0;
+	margin-left: 12px;
+}
+
+.ak-toc__item {
+	position: relative;
+	margin: 0;
+}
+
+.ak-toc__link {
+	display: block;
+	padding: 4px 26px 4px 10px;
+	color: var( --ak-fg-muted );
+	text-decoration: none;
+	border-left: 2px solid transparent;
+	margin-left: -1px;
+	line-height: 1.45;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&:hover {
+		color: var( --ak-fg );
+		text-decoration: none;
+	}
+}
+
+.ak-toc__item--level-1 > .ak-toc__link {
+	font-weight: 600;
+	color: var( --ak-fg-secondary );
+}
+
+.ak-toc__item.is-active > .ak-toc__link {
+	color: var( --ak-accent );
+	border-left-color: var( --ak-accent );
+	font-weight: 700;
+}
+
+.ak-toc__item.is-active-path > .ak-toc__link {
+	color: var( --ak-fg );
+}
+
+.ak-toc__num {
+	display: none;
+}
+
+.ak-toc__toggle {
+	position: absolute;
+	top: 3px;
+	right: 2px;
+	width: 22px;
+	height: 20px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var( --ak-fg-subtle );
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+
+	&::before {
+		.ak-chevron();
+		transform: translateY( -1px ) rotate( 45deg );
+		transition: transform var( --ak-dur-fast ) var( --ak-ease );
+	}
+
+	&:hover {
+		color: var( --ak-accent );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+}
+
+.ak-toc__item.is-collapsed {
+	> .ak-toc__toggle::before {
+		transform: translate( -1px, 0 ) rotate( -45deg );
+	}
+
+	> .ak-toc__sublist {
+		display: none;
+	}
+}
+
+// Floating TOC button (shown below the TOC breakpoint by responsive.less)
+.ak-toc-fab {
+	display: none;
+	left: var( --ak-space-5 );
+	right: auto;
+	opacity: 1;
+	transform: none;
+}

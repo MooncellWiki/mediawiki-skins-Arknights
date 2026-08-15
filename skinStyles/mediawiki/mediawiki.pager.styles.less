@@ -1,0 +1,43 @@
+/**
+ * Pagers — TablePager, navigation bar
+ */
+.mw-datatable,
+.TablePager {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+
+	th,
+	td {
+		border-color: var( --ak-border );
+	}
+
+	th {
+		background: var( --ak-bg-surface-2 );
+		color: var( --ak-fg-secondary );
+	}
+
+	tr:hover td {
+		background: var( --ak-bg-hover );
+	}
+}
+
+.mw-datatable th a,
+.TablePager th a {
+	color: var( --ak-fg );
+}
+
+.TablePager_nav {
+	td {
+		border: 0;
+	}
+
+	.oo-ui-buttonElement-button {
+		border-radius: 0;
+	}
+}
+
+.mw-pager-navigation-bar {
+	font-family: var( --ak-font-label );
+	color: var( --ak-fg-secondary );
+}

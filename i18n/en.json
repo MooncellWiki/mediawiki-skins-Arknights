@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"PRTS.wiki"
+		]
+	},
+	"skinname-arknights": "Arknights",
+	"arknights-skin-desc": "Arknights design-system skin for PRTS.wiki — terminal (dark) / archive (light) dual theme, wikitext-driven sidebar and header navigation",
+	"arknights-jumptocontent": "Jump to content",
+	"arknights-drawer-toggle": "Menu",
+	"arknights-drawer-close": "Close",
+	"arknights-search-toggle": "Search",
+	"arknights-search-shortcut": "/",
+	"arknights-theme-toggle-label": "Colour theme",
+	"arknights-theme-os": "Follow system",
+	"arknights-theme-day": "Archive mode (light)",
+	"arknights-theme-night": "Terminal mode (dark)",
+	"arknights-usermenu-toggle": "User menu",
+	"arknights-usermenu-anon": "Not logged in",
+	"arknights-toc-toggle": "Toggle subsections",
+	"arknights-back-to-top": "Back to top",
+	"arknights-page-tools-more": "More",
+	"arknights-variants-toggle": "Variants",
+	"arknights-languages-toggle": "Languages",
+	"arknights-sidebar-label": "Site navigation",
+	"arknights-header-nav-label": "Primary navigation",
+	"arknights-header-tagline": "",
+	"arknights-footer-powered": "Powered by MediaWiki · Skin:Arknights",
+	"arknights-footer-desc": "-",
+	"arknights-footer-tagline": "-",
+	"arknights-config-themedefault": "Default colour theme: 'os' (follow system), 'day' (archive / light) or 'night' (terminal / dark).",
+	"arknights-config-themecolor": "Value of the theme-color meta tag.",
+	"arknights-config-menusidebar": "Render MediaWiki:MenuSidebar (wikitext, parsed with the current page as context) as the sidebar navigation.",
+	"arknights-config-menusidebarmessage": "Name of the MediaWiki-namespace message that holds the sidebar wikitext.",
+	"arknights-config-menusidebaraftermessage": "Name of the MediaWiki-namespace message rendered below the sidebar. Empty string disables it.",
+	"arknights-config-menusidebarhideportlets": "Hide the MediaWiki:Sidebar portlets (except toolbox and languages) when the wikitext sidebar is enabled.",
+	"arknights-config-headernavmessage": "Name of the MediaWiki-namespace message rendered as the primary header navigation.",
+	"arknights-config-showpagetools": "Visibility of the page tools: true, false, 'login' or 'permission-<right>'.",
+	"arknights-config-sidebarflyout": "Enable hover fly-out previews of collapsed sidebar branches on desktop.",
+	"arknights-config-enablethemetoggle": "Show the theme toggle in the header."
+}

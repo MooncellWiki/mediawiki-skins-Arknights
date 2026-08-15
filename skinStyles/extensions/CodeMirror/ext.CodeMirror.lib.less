@@ -1,0 +1,29 @@
+/**
+ * CodeMirror 5 — legacy editor surface
+ */
+.CodeMirror {
+	background: var( --ak-bg-inset );
+	color: var( --ak-fg );
+	font-family: var( --ak-font-mono );
+
+	.CodeMirror-gutters {
+		background: var( --ak-bg-surface-2 );
+		border-color: var( --ak-border );
+	}
+
+	.CodeMirror-linenumber {
+		color: var( --ak-fg-subtle );
+	}
+
+	.CodeMirror-cursor {
+		border-left-color: var( --ak-fg );
+	}
+
+	.CodeMirror-selected {
+		background: var( --ak-selection );
+	}
+}
+
+.CodeMirror-focused .CodeMirror-selected {
+	background: var( --ak-selection );
+}

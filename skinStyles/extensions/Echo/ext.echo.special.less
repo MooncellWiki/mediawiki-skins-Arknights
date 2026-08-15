@@ -1,0 +1,27 @@
+/**
+ * Echo — Special:Notifications
+ */
+.mw-echo-ui-notificationsInboxWidget {
+	&-main,
+	&-sidebar {
+		background: transparent;
+	}
+}
+
+.mw-echo-ui-notificationsInboxWidget-main-toolbar-top,
+.mw-echo-ui-notificationsInboxWidget-main-toolbar-nav,
+.mw-echo-ui-notificationsInboxWidget-sidebar {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.mw-echo-ui-notificationsInboxWidget-main-notifications .mw-echo-ui-notificationItemWidget {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+
+	&-unread {
+		background: var( --ak-accent-subtle );
+	}
+}

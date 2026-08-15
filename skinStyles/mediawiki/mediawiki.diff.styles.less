@@ -1,0 +1,85 @@
+/**
+ * Diff — semantic colours on the theme surfaces
+ */
+table.diff {
+	color: var( --ak-fg );
+	background: transparent;
+
+	td {
+		border-color: var( --ak-border );
+	}
+
+	td.diff-context {
+		background: var( --ak-bg-surface-2 );
+		color: var( --ak-fg-secondary );
+		border-color: var( --ak-border );
+	}
+
+	td.diff-addedline,
+	td.diff-deletedline {
+		border-width: 1px 1px 1px 4px;
+		border-radius: 0;
+	}
+
+	td.diff-addedline {
+		border-color: var( --ak-success );
+		background: var( --ak-success-bg );
+	}
+
+	td.diff-deletedline {
+		border-color: var( --ak-warning );
+		background: var( --ak-warning-bg );
+	}
+
+	td.diff-addedline .diffchange,
+	td.diff-deletedline .diffchange {
+		border-radius: 0;
+	}
+
+	td.diff-addedline .diffchange {
+		background: rgba( 47, 172, 120, 0.35 );
+	}
+
+	td.diff-deletedline .diffchange {
+		background: rgba( 244, 152, 0, 0.35 );
+	}
+
+	td.diff-lineno {
+		color: var( --ak-fg-muted );
+		font-family: var( --ak-font-label );
+	}
+
+	td.diff-marker {
+		color: var( --ak-fg-muted );
+	}
+
+	.diff-title,
+	.diff-otitle,
+	.diff-ntitle {
+		background: var( --ak-bg-surface-2 );
+	}
+}
+
+.diff-currentversion-title,
+.diff-multi {
+	color: var( --ak-fg-secondary );
+}
+
+.mw-diff-inline-added,
+.mw-diff-inline-deleted {
+	border-radius: 0;
+}
+
+.mw-diff-inline-added {
+	background: var( --ak-success-bg );
+	color: var( --ak-fg );
+}
+
+.mw-diff-inline-deleted {
+	background: var( --ak-warning-bg );
+	color: var( --ak-fg );
+}
+
+.mw-diff-inline-legend {
+	color: var( --ak-fg-muted );
+}

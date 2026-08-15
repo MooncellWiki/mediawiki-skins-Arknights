@@ -1,0 +1,36 @@
+/**
+ * DataMaps — controls and legend follow the theme
+ */
+.ext-datamaps-container {
+	.leaflet-control,
+	.ext-datamaps-control,
+	.ext-datamaps-container-legend,
+	.ext-datamaps-legend-panel,
+	.ext-datamaps-marker-group-toggles {
+		background: var( --ak-bg-surface );
+		color: var( --ak-fg );
+		border-color: var( --ak-border );
+		border-radius: 0;
+		box-shadow: var( --ak-shadow-md );
+	}
+
+	.leaflet-control a,
+	.ext-datamaps-control button {
+		color: var( --ak-fg-secondary );
+		background: var( --ak-bg-surface );
+		border-radius: 0;
+	}
+
+	.leaflet-control a:hover,
+	.ext-datamaps-control button:hover {
+		background: var( --ak-bg-hover );
+	}
+
+	.leaflet-popup-content-wrapper,
+	.leaflet-popup-tip {
+		background: var( --ak-bg-surface );
+		color: var( --ak-fg );
+		border-radius: 0;
+		box-shadow: var( --ak-shadow-lg );
+	}
+}

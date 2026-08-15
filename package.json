@@ -1,0 +1,17 @@
+{
+	"name": "mediawiki-skins-arknights",
+	"private": true,
+	"description": "Arknights design-system skin for PRTS.wiki",
+	"scripts": {
+		"lint": "npm run lint:js && npm run lint:styles && npm run lint:i18n",
+		"lint:js": "eslint --cache resources/skins.arknights.scripts",
+		"lint:styles": "stylelint \"resources/skins.arknights.styles/**/*.less\" \"skinStyles/**/*.less\"",
+		"lint:i18n": "banana-checker i18n/",
+		"sync:design-system": "scripts/sync-design-system.sh"
+	},
+	"devDependencies": {
+		"eslint-config-wikimedia": "0.28.2",
+		"grunt-banana-checker": "0.13.0",
+		"stylelint-config-wikimedia": "0.17.2"
+	}
+}

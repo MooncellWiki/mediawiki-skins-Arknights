@@ -1,0 +1,67 @@
+/**
+ * Content area — the article card, categories, page info footer
+ */
+.ak-body {
+	background: var( --ak-bg-surface );
+	border: 1px solid var( --ak-border );
+	padding: var( --ak-space-6 ) var( --ak-space-8 );
+	position: relative;
+	min-width: 0;
+
+	> .mw-body-content > *:first-child,
+	> .mw-body-content > .mw-parser-output > *:first-child {
+		margin-top: 0;
+	}
+
+	&--flat {
+		background: transparent;
+		border: 0;
+		padding: 0;
+	}
+}
+
+// Wide tables should scroll inside the card rather than overflow the layout
+.ak-body .mw-body-content {
+	overflow-wrap: break-word;
+}
+
+/* Page footer: categories + last modified / copyright */
+.ak-page-footer {
+	margin-top: var( --ak-space-4 );
+	display: flex;
+	flex-direction: column;
+	gap: var( --ak-space-3 );
+}
+
+.ak-page-footer .catlinks {
+	margin: 0;
+}
+
+.ak-page-info {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var( --ak-space-2 ) var( --ak-space-6 );
+	align-items: baseline;
+	font-size: var( --ak-fs-xs );
+	color: var( --ak-fg-muted );
+	padding-top: var( --ak-space-3 );
+	border-top: 1px solid var( --ak-border );
+
+	&__item--lastmod {
+		font-family: var( --ak-font-label );
+		letter-spacing: 0.02em;
+	}
+
+	&__item--copyright,
+	&__item--credits {
+		flex-basis: 100%;
+	}
+
+	a {
+		color: var( --ak-fg-secondary );
+
+		&:hover {
+			color: var( --ak-accent );
+		}
+	}
+}

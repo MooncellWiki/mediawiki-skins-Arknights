@@ -1,0 +1,321 @@
+/**
+ * Header — 56px sticky bar: drawer toggle · logo/wordmark · primary nav · search · tools
+ */
+.ak-header {
+	position: sticky;
+	top: 0;
+	z-index: var( --ak-z-header );
+	height: var( --ak-header-h );
+	background: var( --ak-bg-header );
+	-webkit-backdrop-filter: saturate( 1.4 ) blur( 10px );
+	backdrop-filter: saturate( 1.4 ) blur( 10px );
+	border-bottom: 1px solid var( --ak-border );
+	color: var( --ak-fg );
+	transition: box-shadow var( --ak-dur-fast );
+
+	// Official-site style short accent bar at the bottom-left
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: -1px;
+		height: 2px;
+		width: 160px;
+		background: var( --ak-accent );
+	}
+
+	&.is-scrolled {
+		box-shadow: var( --ak-shadow-sm );
+	}
+}
+
+.ak-header__inner {
+	height: 100%;
+	max-width: @ak-page-max;
+	margin: 0 auto;
+	padding: 0 var( --ak-gutter );
+	display: flex;
+	align-items: center;
+	gap: var( --ak-space-3 );
+	box-sizing: border-box;
+}
+
+.ak-header__menu {
+	display: none;
+	margin-left: -8px;
+}
+
+/* Logo + wordmark */
+.ak-header__logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	flex: none;
+	height: 100%;
+	padding-right: var( --ak-space-4 );
+	border-right: 1px solid var( --ak-border );
+	color: inherit;
+	text-decoration: none;
+
+	&:hover,
+	&:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+.ak-header__logo-icon {
+	height: 30px;
+	width: auto;
+	max-width: 48px;
+	object-fit: contain;
+}
+
+.ak-header__wordmark {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	line-height: 1;
+}
+
+.ak-header__sitename {
+	font-family: var( --ak-font-display );
+	font-size: 20px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.ak-header__wordmark-img {
+	max-height: 30px;
+	width: auto;
+}
+
+.ak-header__tagline {
+	display: block;
+	font: 600 9px/1 var( --ak-font-label );
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var( --ak-fg-muted );
+	margin-top: 4px;
+	white-space: nowrap;
+}
+
+/* Primary navigation (parsed wikitext <ul>) */
+.ak-header__nav {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+
+	ul {
+		.ak-reset-list();
+		display: flex;
+		align-items: center;
+		height: 100%;
+		gap: 2px;
+	}
+
+	li {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		margin: 0;
+	}
+
+	a {
+		display: inline-flex;
+		align-items: center;
+		height: var( --ak-header-h );
+		padding: 0 12px;
+		font-weight: 600;
+		font-size: var( --ak-fs-sm );
+		color: var( --ak-fg-secondary );
+		text-decoration: none;
+		position: relative;
+		white-space: nowrap;
+
+		&:hover {
+			color: var( --ak-fg );
+			background: var( --ak-bg-hover );
+			text-decoration: none;
+		}
+
+		&.external {
+			background-image: none;
+			padding-right: 12px;
+		}
+	}
+
+	a.mw-selflink,
+	li.is-active > a,
+	a.is-active {
+		color: var( --ak-accent );
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 12px;
+			right: 12px;
+			bottom: 0;
+			height: 3px;
+			background: var( --ak-accent );
+		}
+	}
+
+	// Parsed wikitext may wrap the list in <p> / <div>
+	p {
+		margin: 0;
+	}
+}
+
+/* Search */
+.ak-header__search {
+	flex: 0 1 320px;
+	min-width: 160px;
+	position: relative;
+	margin: 0;
+	margin-left: auto;
+
+	#searchInput,
+	input[ type='search' ] {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 34px;
+		margin: 0;
+		padding: 0 34px 0 34px;
+		font: inherit;
+		font-size: var( --ak-fs-sm );
+		color: var( --ak-fg );
+		background: var( --ak-bg-surface-2 );
+		border: 1px solid transparent;
+		border-radius: var( --ak-radius-sm );
+		transition: border-color var( --ak-dur-fast ), background var( --ak-dur-fast ), box-shadow var( --ak-dur-fast );
+		appearance: none;
+		-webkit-appearance: none;
+
+		&::-webkit-search-decoration,
+		&::-webkit-search-cancel-button {
+			-webkit-appearance: none;
+		}
+
+		&::placeholder {
+			color: var( --ak-fg-subtle );
+		}
+
+		&:focus {
+			outline: 0;
+			background: var( --ak-bg-surface );
+			border-color: var( --ak-accent );
+			box-shadow: var( --ak-shadow-accent );
+		}
+	}
+
+	.ak-search__icon-wrap {
+		position: absolute;
+		left: 10px;
+		top: 50%;
+		transform: translateY( -50% );
+		display: grid;
+		place-items: center;
+		color: var( --ak-fg-muted );
+		pointer-events: none;
+	}
+
+	.ak-search__icon {
+		width: 16px;
+		height: 16px;
+	}
+
+	.ak-search__kbd {
+		position: absolute;
+		right: 8px;
+		top: 50%;
+		transform: translateY( -50% );
+		font: 600 10px/1 var( --ak-font-mono );
+		color: var( --ak-fg-subtle );
+		border: 1px solid var( --ak-border );
+		padding: 3px 5px;
+		pointer-events: none;
+	}
+
+	&:focus-within .ak-search__kbd {
+		display: none;
+	}
+
+	// The go / fulltext submit buttons: keep them in the DOM (Enter = go) but out of sight
+	#searchButton,
+	.mw-fallbackSearchButton {
+		.ak-sr-only();
+	}
+}
+
+/* Tools */
+.ak-header__tools {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex: none;
+	height: 100%;
+}
+
+.ak-header__search-toggle {
+	display: none;
+}
+
+/* Echo notification badges */
+.ak-header__notifications {
+	display: flex;
+	align-items: center;
+	height: 100%;
+
+	&-list {
+		.ak-reset-list();
+		display: flex;
+		align-items: center;
+		gap: 2px;
+	}
+}
+
+/* User menu button */
+.ak-header__user-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 36px;
+	padding: 0 10px 0 8px;
+	color: var( --ak-fg-secondary );
+	font-size: var( --ak-fs-sm );
+	font-weight: 600;
+	max-width: 200px;
+	box-sizing: border-box;
+	transition: background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+	&:hover {
+		background: var( --ak-bg-hover );
+		color: var( --ak-fg );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+
+	.ak-header__user-name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.ak-header__user .ak-dropdown__card {
+	min-width: 240px;
+}
+
+details[ open ] > .ak-header__user-btn {
+	background: var( --ak-bg-active );
+	color: var( --ak-fg );
+}

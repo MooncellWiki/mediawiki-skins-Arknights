@@ -1,0 +1,154 @@
+/**
+ * Dropdown — <details> based, works without JS; dropdown.js adds outside-click /
+ * Escape handling and single-open behaviour.
+ *
+ * .ak-dropdown
+ *   > details.ak-dropdown__details
+ *     > summary (trigger)
+ *     > .ak-dropdown__card.ak-menu-card[--right]
+ */
+.ak-dropdown {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+.ak-dropdown__details {
+	display: contents;
+
+	> summary {
+		list-style: none;
+		cursor: pointer;
+		user-select: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		&::marker {
+			content: '';
+		}
+	}
+}
+
+.ak-dropdown__card {
+	position: absolute;
+	top: calc( 100% + 6px );
+	left: 0;
+	z-index: var( --ak-z-dropdown );
+	min-width: 220px;
+	max-width: ~"min( 92vw, 360px )";
+	max-height: ~"min( 70vh, 560px )";
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	animation: ak-dropdown-in var( --ak-dur-fast ) var( --ak-ease );
+}
+
+.ak-menu-card {
+	background: var( --ak-bg-surface );
+	border: 1px solid var( --ak-border );
+	border-top: 2px solid var( --ak-accent );
+	box-shadow: var( --ak-shadow-lg );
+	padding: 4px 0 6px;
+	color: var( --ak-fg );
+	font-size: var( --ak-fs-sm );
+	text-align: left;
+
+	&--right {
+		left: auto;
+		right: 0;
+	}
+
+	&__heading {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 14px 6px;
+		font-weight: 700;
+		border-bottom: 1px solid var( --ak-border );
+		margin-bottom: 4px;
+
+		&--user .ak-icon {
+			color: var( --ak-accent );
+		}
+	}
+
+	// Portlets rendered inside a card
+	.ak-menu-portlet {
+		padding: 2px 0;
+
+		+ .ak-menu-portlet {
+			border-top: 1px solid var( --ak-border );
+			margin-top: 4px;
+			padding-top: 6px;
+		}
+
+		&__heading {
+			.ak-overline();
+			padding: 6px 14px 4px;
+			color: var( --ak-fg-subtle );
+		}
+
+		&__list {
+			.ak-reset-list();
+		}
+
+		li {
+			position: relative;
+		}
+
+		li > a,
+		li > span,
+		li > .ak-link {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 7px 14px;
+			color: var( --ak-fg );
+			text-decoration: none;
+			border-left: 2px solid transparent;
+			white-space: nowrap;
+			cursor: pointer;
+
+			.ak-icon {
+				width: 18px;
+				height: 18px;
+				color: var( --ak-fg-muted );
+			}
+		}
+
+		li > a:hover {
+			background: var( --ak-bg-hover );
+			border-left-color: var( --ak-accent );
+			text-decoration: none;
+			color: var( --ak-fg );
+
+			.ak-icon {
+				color: var( --ak-accent );
+			}
+		}
+
+		li.selected > a,
+		li > a.selected {
+			color: var( --ak-accent );
+			border-left-color: var( --ak-accent );
+			font-weight: 700;
+		}
+
+		li.new > a {
+			color: var( --ak-link-new );
+		}
+	}
+}
+
+@keyframes ak-dropdown-in {
+	from {
+		opacity: 0;
+		transform: translateY( -4px );
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}

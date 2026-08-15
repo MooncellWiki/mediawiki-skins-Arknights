@@ -1,0 +1,55 @@
+/**
+ * mediawiki.ui buttons → design-system buttons
+ */
+.mw-ui-button {
+	border-radius: 0;
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg );
+	border-color: var( --ak-border-strong );
+	font-family: var( --ak-font-body );
+	font-weight: 600;
+
+	&:hover {
+		background: var( --ak-bg-surface-3 );
+		border-color: var( --ak-fg-muted );
+		color: var( --ak-fg );
+	}
+
+	&:focus {
+		border-color: var( --ak-accent );
+		box-shadow: var( --ak-shadow-accent );
+	}
+
+	&.mw-ui-progressive {
+		background: var( --ak-accent );
+		color: var( --ak-accent-fg );
+		border-color: var( --ak-accent );
+
+		&:hover {
+			background: var( --ak-accent-hover );
+			border-color: var( --ak-accent-hover );
+		}
+	}
+
+	&.mw-ui-destructive {
+		background: var( --ak-red-800 );
+		color: #fff;
+		border-color: var( --ak-red-800 );
+
+		&:hover {
+			background: var( --ak-red-700 );
+			border-color: var( --ak-red-700 );
+		}
+	}
+
+	&.mw-ui-quiet {
+		background: transparent;
+		border-color: transparent;
+		color: var( --ak-fg-secondary );
+
+		&:hover {
+			background: var( --ak-bg-hover );
+			color: var( --ak-fg );
+		}
+	}
+}

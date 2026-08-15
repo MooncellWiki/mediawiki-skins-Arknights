@@ -1,0 +1,23 @@
+/**
+ * Main page — let MediaWiki:首页 own its layout: no card, no page header chrome, full width.
+ */
+.ak-layout--mainpage {
+	.ak-page-header {
+		margin-bottom: var( --ak-space-3 );
+	}
+
+	.ak-page-heading--blank + #contentSub:empty {
+		display: none;
+	}
+}
+
+.ak-body--mainpage {
+	background: transparent;
+	border: 0;
+	padding: 0;
+}
+
+// When the title is blanked (MediaWiki:Mainpage-title = -), collapse the header entirely
+.page-Main_Page.action-view .ak-page-header:has( .ak-page-heading--blank ):not( :has( .ak-page-tools ) ) {
+	display: none;
+}

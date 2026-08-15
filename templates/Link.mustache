@@ -1,0 +1,9 @@
+{{!
+	A single link from SkinComponentLink (class-as-property mode).
+	array array-attributes  [ {key, value} ]
+	string class / text / icon
+}}
+<a{{#array-attributes}} {{key}}="{{value}}"{{/array-attributes}} class="ak-link{{#class}} {{.}}{{/class}}">{{!
+	}}{{#icon}}<span class="ak-icon ak-icon--{{.}}" aria-hidden="true"></span>{{/icon}}{{!
+	}}<span>{{text}}</span>{{!
+}}</a>

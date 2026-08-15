@@ -1,0 +1,61 @@
+/**
+ * Special:Preferences (OOUI tabs)
+ */
+.mw-prefs-tabs-wrapper.oo-ui-panelLayout-framed,
+.mw-prefs-tabs > .oo-ui-menuLayout-content > .oo-ui-indexLayout-stackLayout > .oo-ui-tabPanelLayout {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+	border-radius: 0;
+}
+
+.mw-prefs-tabs .oo-ui-tabSelectWidget,
+.mw-prefs-tabs .oo-ui-tabSelectWidget-framed {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	border-radius: 0;
+}
+
+.mw-prefs-tabs .oo-ui-tabOptionWidget {
+	color: var( --ak-fg-secondary );
+	border-radius: 0;
+
+	&.oo-ui-optionWidget-selected {
+		background: var( --ak-bg-surface );
+		color: var( --ak-accent );
+		border-color: var( --ak-border );
+	}
+}
+
+.mw-prefs-tabs .oo-ui-tabOptionWidget-framed.oo-ui-optionWidget-selected {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-accent );
+}
+
+.mw-prefs-tabs .oo-ui-tabOptionWidget-framed:not( .oo-ui-optionWidget-selected ):hover {
+	background: var( --ak-bg-hover );
+}
+
+.mw-prefs-buttons {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	border-radius: 0;
+}
+
+.mw-prefs-search-matched,
+.mw-prefs-search-highlight {
+	background: var( --ak-accent-subtle );
+	outline-color: var( --ak-accent );
+}
+
+.mw-prefs-noresults {
+	color: var( --ak-fg-muted );
+}
+
+.mw-prefs-fieldset-wrapper .oo-ui-fieldsetLayout-header .oo-ui-labelElement-label,
+.mw-prefs-tabs .oo-ui-fieldsetLayout-header .oo-ui-labelElement-label {
+	color: var( --ak-fg );
+	border-left: var( --ak-bar-w ) solid var( --ak-accent );
+	padding-left: var( --ak-space-3 );
+}

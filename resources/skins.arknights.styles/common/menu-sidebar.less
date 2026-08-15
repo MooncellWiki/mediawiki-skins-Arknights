@@ -1,0 +1,47 @@
+/**
+ * MenuSidebar — wikitext sidebar (MediaWiki:MenuSidebar / MenuSidebarAfter).
+ * The generic row / tree rules live in sidebar.less; this file only handles the
+ * raw parser output shapes that differ from portlets.
+ */
+.ak-menusidebar {
+	margin-bottom: var( --ak-space-5 );
+
+	// A leading list without a heading (home / short URL / support …)
+	> ul:first-child {
+		margin-bottom: var( --ak-space-4 );
+	}
+
+	// Legacy inline "NEW" badges written as <span style="…">: keep them small
+	li > b > span,
+	li > a > span {
+		font-weight: inherit;
+	}
+
+	// {{#widget:CopyURL}} and other non-link rows written as <a> without href
+	li > a:not( [ href ] ) {
+		cursor: pointer;
+	}
+
+	// Anything else the parser emits at the top level (tables, divs) gets breathing room
+	> div,
+	> table {
+		margin: 0 0 var( --ak-space-4 );
+	}
+}
+
+.ak-menusidebar-after {
+	margin-top: var( --ak-space-5 );
+	padding-top: var( --ak-space-4 );
+	border-top: 1px solid var( --ak-border );
+	font-size: var( --ak-fs-xs );
+	color: var( --ak-fg-muted );
+
+	> p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+// Skin-provided toolbox rendered as a portlet right after the wikitext menu
+.ak-sidebar .ak-menu-portlet--toolbox {
+	margin-top: var( --ak-space-2 );
+}

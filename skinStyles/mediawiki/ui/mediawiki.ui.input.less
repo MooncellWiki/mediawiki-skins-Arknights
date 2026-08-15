@@ -1,0 +1,20 @@
+/**
+ * mediawiki.ui inputs
+ */
+.mw-ui-input {
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+	border-color: var( --ak-border-strong );
+	border-radius: var( --ak-radius-sm );
+	font-family: var( --ak-font-body );
+
+	&:focus {
+		border-color: var( --ak-accent );
+		box-shadow: var( --ak-shadow-accent );
+		outline: 0;
+	}
+
+	&::placeholder {
+		color: var( --ak-fg-subtle );
+	}
+}

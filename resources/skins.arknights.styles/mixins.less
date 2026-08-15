@@ -1,0 +1,43 @@
+/**
+ * Arknights — LESS mixins
+ */
+
+.ak-overline() {
+	font-family: var( --ak-font-label );
+	font-size: var( --ak-fs-overline );
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: var( --ak-tracking-overline );
+	text-transform: uppercase;
+}
+
+.ak-sr-only() {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect( 0 0 0 0 );
+	white-space: nowrap;
+	border: 0;
+}
+
+.ak-chevron( @size: 6px, @width: 1.5px ) {
+	content: '';
+	width: @size;
+	height: @size;
+	border-right: @width solid currentColor;
+	border-bottom: @width solid currentColor;
+	transform: rotate( 45deg );
+}
+
+.ak-reset-list() {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	li::before {
+		display: none !important;
+	}
+}

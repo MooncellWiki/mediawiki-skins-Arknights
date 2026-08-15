@@ -1,0 +1,36 @@
+{{!
+	object data-associated-pages  namespace tabs (page / talk)
+	object data-views             read / edit / history / watch
+	object data-actions           more actions dropdown
+	object data-variants          language variants dropdown
+	string msg-more / msg-variants
+}}
+<div class="ak-page-tools" id="ak-page-tools">
+	{{#data-associated-pages}}
+	<nav id="{{id}}" class="ak-page-tabs ak-page-tabs--ns{{#class}} {{.}}{{/class}}" aria-label="{{label}}"{{{html-tooltip}}}>
+		<ul class="ak-page-tabs__list">{{{html-items}}}</ul>
+	</nav>
+	{{/data-associated-pages}}
+	<div class="ak-page-tools__spacer"></div>
+	{{#data-views}}
+	<nav id="{{id}}" class="ak-page-tabs ak-page-tabs--views{{#class}} {{.}}{{/class}}" aria-label="{{label}}"{{{html-tooltip}}}>
+		<ul class="ak-page-tabs__list">{{{html-items}}}</ul>
+	</nav>
+	{{/data-views}}
+	{{#data-variants}}
+	<div class="ak-dropdown ak-page-tools__dropdown ak-page-tools__variants">
+		<details class="ak-dropdown__details">
+			<summary class="ak-page-tools__btn" title="{{msg-variants}}"><span class="ak-icon ak-icon--language"></span><span class="ak-page-tools__btn-label">{{msg-variants}}</span></summary>
+			<div class="ak-dropdown__card ak-menu-card ak-menu-card--right">{{>Menu}}</div>
+		</details>
+	</div>
+	{{/data-variants}}
+	{{#data-actions}}
+	<div class="ak-dropdown ak-page-tools__dropdown ak-page-tools__more">
+		<details class="ak-dropdown__details">
+			<summary class="ak-page-tools__btn" title="{{msg-more}}"><span class="ak-icon ak-icon--ellipsis"></span><span class="ak-sr-only">{{msg-more}}</span></summary>
+			<div class="ak-dropdown__card ak-menu-card ak-menu-card--right">{{>Menu}}</div>
+		</details>
+	</div>
+	{{/data-actions}}
+</div>

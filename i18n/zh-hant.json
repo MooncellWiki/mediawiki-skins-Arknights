@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"PRTS.wiki"
+		]
+	},
+	"skinname-arknights": "Arknights",
+	"arknights-skin-desc": "PRTS.wiki 明日方舟設計系統外觀 —— 終端（暗）/ 檔案（亮）雙主題，wikitext 驅動的側欄與頁首導覽",
+	"arknights-jumptocontent": "跳至內容",
+	"arknights-drawer-toggle": "選單",
+	"arknights-drawer-close": "關閉",
+	"arknights-search-toggle": "搜尋",
+	"arknights-theme-toggle-label": "配色主題",
+	"arknights-theme-os": "跟隨系統",
+	"arknights-theme-day": "檔案模式（亮色）",
+	"arknights-theme-night": "終端模式（暗色）",
+	"arknights-usermenu-toggle": "使用者選單",
+	"arknights-usermenu-anon": "未登入",
+	"arknights-toc-toggle": "展開/收合小節",
+	"arknights-back-to-top": "回到頂部",
+	"arknights-page-tools-more": "更多",
+	"arknights-variants-toggle": "變體",
+	"arknights-languages-toggle": "語言",
+	"arknights-sidebar-label": "站點導覽",
+	"arknights-header-nav-label": "主導覽",
+	"arknights-footer-powered": "Powered by MediaWiki · Skin:Arknights"
+}

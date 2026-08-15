@@ -1,0 +1,67 @@
+/**
+ * Small overrides for core UI rendered inside the skin (things base.css does not cover)
+ */
+
+// mw-jump-link from accessibility feature: keep it visually consistent with .ak-skip
+.mw-jump-link:not( .ak-skip ) {
+	.ak-sr-only();
+}
+
+// Special pages get a lighter card
+.ns-special .ak-body {
+	padding: var( --ak-space-5 ) var( --ak-space-6 );
+}
+
+// Search suggestions (mediawiki.searchSuggest) attach to <body>; theme them
+.suggestions {
+	font-size: var( --ak-fs-sm );
+
+	.suggestions-results,
+	.suggestions-special {
+		background: var( --ak-bg-surface );
+		border: 1px solid var( --ak-border );
+		border-top: 2px solid var( --ak-accent );
+		box-shadow: var( --ak-shadow-lg );
+		color: var( --ak-fg );
+	}
+
+	.suggestions-result {
+		color: var( --ak-fg );
+		padding: 6px 12px;
+	}
+
+	.suggestions-result-current {
+		background: var( --ak-accent-subtle );
+		color: var( --ak-accent );
+	}
+
+	.suggestions-special {
+		margin-top: -1px;
+		border-top: 1px solid var( --ak-border );
+		padding: 8px 12px;
+	}
+
+	.special-label {
+		color: var( --ak-fg-muted );
+	}
+
+	.special-query {
+		color: var( --ak-fg );
+		font-style: normal;
+	}
+
+	.suggestions-special.suggestions-result-current {
+		background: var( --ak-accent-subtle );
+	}
+}
+
+// Category / file description tables etc. respect the theme
+.mw-body-content .mw-search-results,
+.mw-body-content .mw-search-result-heading {
+	color: inherit;
+}
+
+// Notifications (mw.notify) — base.css styles .mw-notification; ensure position under header
+.mw-notification-area {
+	top: calc( var( --ak-header-h ) + 8px );
+}

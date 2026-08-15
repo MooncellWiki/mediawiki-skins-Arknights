@@ -1,0 +1,31 @@
+/**
+ * OOUI toolbars (used by editors)
+ */
+.oo-ui-toolbar-bar {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+	box-shadow: none;
+}
+
+.oo-ui-toolbar-position-top > .oo-ui-toolbar-bar {
+	border-bottom-color: var( --ak-border );
+}
+
+.oo-ui-toolGroup .oo-ui-tool-link,
+.oo-ui-popupToolGroup-handle {
+	color: var( --ak-fg-secondary );
+}
+
+.oo-ui-tool.oo-ui-widget-enabled > .oo-ui-tool-link:hover,
+.oo-ui-popupToolGroup.oo-ui-widget-enabled > .oo-ui-popupToolGroup-handle:hover {
+	background: var( --ak-bg-hover );
+	color: var( --ak-fg );
+}
+
+.oo-ui-popupToolGroup-tools {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+	box-shadow: var( --ak-shadow-lg );
+}

@@ -1,0 +1,161 @@
+/**
+ * Site footer — inverse block, striped top edge, wordmark watermark
+ */
+.ak-footer {
+	background: var( --ak-bg-inverse );
+	color: var( --ak-fg-inverse );
+	margin-top: auto;
+	position: relative;
+	overflow: hidden;
+	font-size: var( --ak-fs-sm );
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		height: 4px;
+		background: repeating-linear-gradient( -45deg, var( --ak-accent ) 0 12px, transparent 12px 24px );
+		opacity: 0.9;
+	}
+
+	a {
+		color: inherit;
+		opacity: 0.8;
+		text-decoration: none;
+
+		&:hover {
+			opacity: 1;
+			color: var( --ak-accent );
+			text-decoration: none;
+		}
+	}
+
+	ul {
+		.ak-reset-list();
+	}
+}
+
+html.skin-theme-clientpref-night .ak-footer,
+:root[ data-theme='dark' ] .ak-footer {
+	background: #0a0a0b;
+	color: #f0f0f0;
+}
+
+.ak-footer__inner {
+	position: relative;
+	z-index: 1;
+	max-width: @ak-page-max;
+	margin: 0 auto;
+	padding: var( --ak-space-10 ) var( --ak-gutter ) var( --ak-space-6 );
+	display: grid;
+	grid-template-columns: 1.4fr 2fr;
+	gap: var( --ak-space-8 );
+	box-sizing: border-box;
+}
+
+.ak-footer__brand {
+	display: flex;
+	flex-direction: column;
+}
+
+.ak-footer__sitename {
+	font-family: var( --ak-font-display );
+	font-size: 26px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1;
+}
+
+.ak-footer__tagline {
+	font: 600 9px/1 var( --ak-font-label );
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	opacity: 0.55;
+	margin-top: 6px;
+}
+
+.ak-footer__desc {
+	font-size: var( --ak-fs-xs );
+	opacity: 0.6;
+	max-width: 44ch;
+	margin: 12px 0 0;
+	line-height: 1.7;
+
+	> p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.ak-footer__places ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	justify-content: flex-end;
+	padding-top: 6px;
+}
+
+.ak-footer__bottom {
+	position: relative;
+	z-index: 1;
+	border-top: 1px solid rgba( 127, 127, 127, 0.25 );
+}
+
+.ak-footer__bottom-inner {
+	max-width: @ak-page-max;
+	margin: 0 auto;
+	padding: var( --ak-space-4 ) var( --ak-gutter );
+	font-size: var( --ak-fs-xs );
+	display: flex;
+	gap: var( --ak-space-4 );
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+}
+
+.ak-footer__legal {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var( --ak-space-4 );
+	align-items: center;
+	opacity: 0.65;
+}
+
+.ak-footer__powered {
+	letter-spacing: 0.04em;
+}
+
+.ak-footer__icons ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 12px;
+	align-items: center;
+
+	img {
+		display: block;
+		height: 31px;
+		width: auto;
+		opacity: 0.85;
+	}
+}
+
+.ak-footer__watermark {
+	position: absolute;
+	right: -10px;
+	bottom: -30px;
+	font-family: var( --ak-font-display );
+	font-size: 9rem;
+	font-weight: 800;
+	line-height: 1;
+	letter-spacing: var( --ak-tracking-display );
+	text-transform: uppercase;
+	color: currentColor;
+	opacity: 0.04;
+	pointer-events: none;
+	user-select: none;
+	white-space: nowrap;
+	z-index: 0;
+}

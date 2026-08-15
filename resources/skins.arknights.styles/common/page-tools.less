@@ -1,0 +1,151 @@
+/**
+ * Page tools — namespace tabs · views tabs · variants / more dropdowns
+ */
+.ak-page-tools {
+	display: flex;
+	align-items: flex-end;
+	gap: var( --ak-space-2 );
+	border-bottom: 1px solid var( --ak-border );
+	flex-wrap: wrap;
+	margin-top: var( --ak-space-2 );
+}
+
+.ak-page-tools__spacer {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ak-page-tabs {
+	display: flex;
+	align-items: flex-end;
+
+	&__list {
+		.ak-reset-list();
+		display: flex;
+		gap: 2px;
+	}
+
+	li {
+		margin: 0;
+	}
+
+	li > a,
+	li > span,
+	li > .ak-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		height: 36px;
+		padding: 0 12px;
+		font-weight: 600;
+		font-size: var( --ak-fs-sm );
+		color: var( --ak-fg-muted );
+		text-decoration: none;
+		border-bottom: 3px solid transparent;
+		margin-bottom: -1px;
+		position: relative;
+		white-space: nowrap;
+
+		.ak-icon {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	li > a:hover {
+		color: var( --ak-fg );
+		background: var( --ak-bg-hover );
+		text-decoration: none;
+	}
+
+	li.selected > a,
+	li > a.selected {
+		color: var( --ak-accent );
+		border-bottom-color: var( --ak-accent );
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0;
+			border-style: solid;
+			border-width: 6px 6px 0 0;
+			border-color: var( --ak-accent ) transparent transparent;
+		}
+	}
+
+	li.new > a {
+		color: var( --ak-link-new );
+	}
+
+	// Watch / unwatch star: icon-only tab, accent-2 (yellow) when watched
+	li#ca-watch > a,
+	li#ca-unwatch > a {
+		padding: 0 10px;
+
+		> span:not( .ak-icon ) {
+			.ak-sr-only();
+		}
+
+		.ak-icon {
+			width: 20px;
+			height: 20px;
+			color: var( --ak-fg-muted );
+		}
+
+		&:hover .ak-icon {
+			color: var( --ak-fg );
+		}
+	}
+
+	li#ca-unwatch > a .ak-icon {
+		color: var( --ak-accent-2 );
+	}
+
+	li#ca-watch > a.loading .ak-icon,
+	li#ca-unwatch > a.loading .ak-icon {
+		opacity: 0.4;
+	}
+}
+
+.ak-page-tools__dropdown {
+	margin-bottom: 2px;
+}
+
+.ak-page-tools__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 32px;
+	padding: 0 10px;
+	font-size: var( --ak-fs-sm );
+	font-weight: 600;
+	color: var( --ak-fg-muted );
+	border: 1px solid transparent;
+	box-sizing: border-box;
+	transition: background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+	&:hover {
+		color: var( --ak-fg );
+		background: var( --ak-bg-hover );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+
+	.ak-icon {
+		width: 18px;
+		height: 18px;
+	}
+}
+
+details[ open ] > .ak-page-tools__btn {
+	background: var( --ak-bg-active );
+	color: var( --ak-fg );
+}
+
+.ak-page-tools__dropdown .ak-dropdown__card {
+	min-width: 200px;
+}

@@ -1,0 +1,25 @@
+{{!
+	object data-notifications  Echo badges portlet (id p-notifications)
+	object data-user-menu      personal tools portlet (id p-personal)
+	object data-user-interface-preferences
+	bool is-registered / is-anon
+	string username / label / msg-toggle
+}}
+{{#data-notifications}}
+<div class="ak-header__notifications" id="{{id}}"{{{html-tooltip}}}>
+	<ul class="ak-header__notifications-list">{{{html-items}}}</ul>
+</div>
+{{/data-notifications}}
+<div class="ak-dropdown ak-header__user" id="ak-user-menu">
+	<details class="ak-dropdown__details">
+		<summary class="ak-header__user-btn{{#is-registered}} ak-header__user-btn--named{{/is-registered}}" title="{{msg-toggle}}" aria-label="{{msg-toggle}}">
+			<span class="ak-icon ak-icon--userAvatar"></span>
+			<span class="ak-header__user-name">{{label}}</span>
+		</summary>
+		<div class="ak-dropdown__card ak-menu-card ak-menu-card--right">
+			{{#is-registered}}<div class="ak-menu-card__heading ak-menu-card__heading--user"><span class="ak-icon ak-icon--userAvatar"></span>{{username}}</div>{{/is-registered}}
+			{{#data-user-interface-preferences}}{{>Menu}}{{/data-user-interface-preferences}}
+			{{#data-user-menu}}{{>Menu}}{{/data-user-menu}}
+		</div>
+	</details>
+</div>

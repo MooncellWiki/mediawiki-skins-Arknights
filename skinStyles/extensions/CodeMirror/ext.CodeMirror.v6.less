@@ -1,0 +1,55 @@
+/**
+ * CodeMirror 6 — editor surface follows the theme
+ */
+.cm-editor {
+	background: var( --ak-bg-inset );
+	color: var( --ak-fg );
+	border-color: var( --ak-border );
+	font-family: var( --ak-font-mono );
+
+	.cm-gutters {
+		background: var( --ak-bg-surface-2 );
+		color: var( --ak-fg-subtle );
+		border-color: var( --ak-border );
+	}
+
+	.cm-activeLine,
+	.cm-activeLineGutter {
+		background: var( --ak-bg-hover );
+	}
+
+	.cm-selectionBackground,
+	&.cm-focused .cm-selectionBackground,
+	&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+		background: var( --ak-selection );
+	}
+
+	.cm-cursor {
+		border-left-color: var( --ak-fg );
+	}
+
+	.cm-panels {
+		background: var( --ak-bg-surface-2 );
+		color: var( --ak-fg );
+		border-color: var( --ak-border );
+	}
+}
+
+.cm-mw-pagename,
+.cm-mw-link-pagename {
+	color: var( --ak-link );
+}
+
+.cm-mw-template-name,
+.cm-mw-template-bracket {
+	color: var( --ak-rt-rem );
+}
+
+.cm-mw-parserfunction-name,
+.cm-mw-parserfunction-bracket {
+	color: var( --ak-rt-vup );
+}
+
+.cm-mw-comment {
+	color: var( --ak-fg-subtle );
+}

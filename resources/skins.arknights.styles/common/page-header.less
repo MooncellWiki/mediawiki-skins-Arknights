@@ -1,0 +1,144 @@
+/**
+ * Page header — namespace eyebrow, indicators, h1 with accent bar, tagline, subtitle
+ */
+.ak-page-header {
+	margin-bottom: var( --ak-space-4 );
+}
+
+.ak-page-header__top {
+	display: flex;
+	align-items: center;
+	gap: var( --ak-space-3 );
+	min-height: 20px;
+	margin-bottom: 4px;
+
+	&:empty {
+		display: none;
+	}
+}
+
+.ak-page-header__ns {
+	.ak-overline();
+	color: var( --ak-accent );
+}
+
+.ak-indicators {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var( --ak-space-2 );
+	margin-left: auto;
+	float: none;
+	font-size: var( --ak-fs-xs );
+
+	&:empty {
+		display: none;
+	}
+
+	.mw-indicator {
+		display: inline-flex;
+		align-items: center;
+	}
+}
+
+.ak-page-heading {
+	position: relative;
+	padding-left: var( --ak-space-4 );
+	border-left: var( --ak-bar-w-lg ) solid var( --ak-accent );
+	margin-bottom: var( --ak-space-3 );
+
+	&--blank {
+		display: none;
+	}
+}
+
+.skin-arknights .mw-body h1#firstHeading,
+.skin-arknights #firstHeading,
+.skin-arknights .mw-body-header .firstHeading {
+	font-family: var( --ak-font-body );
+	font-size: var( --ak-fs-h1 );
+	font-weight: 800;
+	line-height: 1.2;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	letter-spacing: 0.01em;
+	overflow-wrap: anywhere;
+	color: var( --ak-fg );
+
+	.mw-page-title-namespace {
+		color: var( --ak-fg-muted );
+		font-weight: 600;
+	}
+
+	.mw-page-title-separator {
+		color: var( --ak-fg-subtle );
+	}
+
+	.mw-page-title-parenthesis {
+		color: var( --ak-fg-muted );
+		font-weight: 500;
+		font-size: 0.7em;
+	}
+
+	// {{DISPLAYTITLE}} styling hooks
+	.ak-en {
+		display: block;
+		font-size: 0.5em;
+		color: var( --ak-fg-muted );
+		margin-top: 2px;
+		letter-spacing: var( --ak-tracking-caps );
+	}
+}
+
+.ak-page-heading__tagline {
+	display: block;
+	font-size: var( --ak-fs-xs );
+	color: var( --ak-fg-muted );
+	margin-top: 4px;
+	line-height: 1.5;
+
+	&:empty {
+		display: none;
+	}
+}
+
+// Core hides #siteSub by default; we use it for the tagline
+.skin-arknights #siteSub {
+	display: block;
+}
+
+#contentSub,
+#contentSub2 {
+	font-size: var( --ak-fs-xs );
+	color: var( --ak-fg-muted );
+	margin: 0;
+}
+
+#mw-content-subtitle {
+	margin: 0 0 var( --ak-space-3 );
+
+	&:empty {
+		display: none;
+	}
+
+	.subpages {
+		display: block;
+		margin-bottom: 4px;
+	}
+
+	a {
+		color: var( --ak-fg-muted );
+
+		&:hover {
+			color: var( --ak-accent );
+		}
+	}
+}
+
+#contentSub2 {
+	margin: var( --ak-space-2 ) 0 var( --ak-space-3 );
+
+	&:empty {
+		display: none;
+	}
+}

@@ -1,0 +1,56 @@
+/**
+ * Echo — notification popup / list widgets
+ */
+.mw-echo-ui-notificationBadgeButtonPopupWidget-popup {
+	.oo-ui-popupWidget-popup {
+		background: var( --ak-bg-surface );
+		border-color: var( --ak-border );
+		border-top: 2px solid var( --ak-accent );
+		box-shadow: var( --ak-shadow-lg );
+		color: var( --ak-fg );
+	}
+
+	.oo-ui-popupWidget-anchor::before,
+	.oo-ui-popupWidget-anchor::after {
+		border-bottom-color: var( --ak-border );
+	}
+
+	.oo-ui-popupWidget-anchor::after {
+		border-bottom-color: var( --ak-bg-surface );
+	}
+}
+
+.mw-echo-ui-notificationItemWidget {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+
+	&-unread {
+		background: var( --ak-accent-subtle );
+	}
+
+	&:hover {
+		background: var( --ak-bg-hover );
+	}
+
+	&-content-message-header,
+	&-content-message-body {
+		color: var( --ak-fg-secondary );
+	}
+}
+
+.mw-echo-ui-notificationsWidget-loading,
+.mw-echo-ui-notificationBadgeButtonPopupWidget-footer,
+.mw-echo-ui-notificationBadgeButtonPopupWidget-popup .oo-ui-popupWidget-head {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.mw-echo-ui-notificationBadgeButtonPopupWidget-popup .oo-ui-popupWidget-head .oo-ui-labelElement-label {
+	color: var( --ak-fg );
+}
+
+.mw-echo-ui-notificationBadgeButtonPopupWidget-footer .oo-ui-buttonElement-button {
+	color: var( --ak-fg-secondary );
+}

@@ -1,0 +1,16 @@
+/**
+ * Arknights — skin-only LESS variables (compile time).
+ * Runtime design tokens live in resources/design-system/tokens.css (--ak-*).
+ */
+@import 'mediawiki.skin.variables.less';
+
+// Layout breakpoints
+@ak-bp-mobile-max: @max-width-breakpoint-mobile;    // < 640
+@ak-bp-tablet: @min-width-breakpoint-tablet;        // >= 640
+@ak-bp-desktop: @min-width-breakpoint-desktop;      // >= 1120  sidebar becomes a column
+@ak-bp-desktop-max: @max-width-breakpoint-tablet;   // < 1120  sidebar is a drawer
+@ak-bp-toc: 1400px;                                 // >= 1400  table of contents column
+@ak-bp-toc-max: 1399.98px;
+@ak-bp-wide: @min-width-breakpoint-desktop-wide;    // >= 1680
+
+@ak-page-max: 1680px;

@@ -1,0 +1,12 @@
+{{!
+	string html-categories
+	object data-page-footer { id, array-items[ {id, name, html} ] }
+}}
+<footer class="ak-page-footer">
+	{{{html-categories}}}
+	{{#data-page-footer}}
+	<div class="ak-page-info" id="{{id}}">
+		{{#array-items}}<div id="{{id}}" class="ak-page-info__item ak-page-info__item--{{name}}">{{{html}}}</div>{{/array-items}}
+	</div>
+	{{/data-page-footer}}
+</footer>

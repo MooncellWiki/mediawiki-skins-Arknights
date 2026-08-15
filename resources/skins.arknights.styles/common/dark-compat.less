@@ -1,0 +1,35 @@
+/**
+ * Dark-mode compatibility conventions shared with Vector 2022 / Minerva, so templates
+ * written for those skins behave the same here:
+ *   .skin-invert / .skin-invert-image img → inverted (filter) in the dark theme
+ *   .notheme                              → keeps the light (archive) tokens (see notheme.generated.less)
+ *   .mw-no-invert                          → excluded from icon inversion
+ * The design system additionally offers `.ak-glyph` (white line-art icons, inverted in LIGHT mode).
+ */
+html.skin-theme-clientpref-night .skin-invert-image img,
+html.skin-theme-clientpref-night .skin-invert {
+	filter: invert( 1 ) hue-rotate( 180deg );
+}
+
+html.skin-theme-clientpref-night .notheme {
+	color-scheme: light;
+	color: var( --ak-fg );
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .skin-invert-image img,
+	html.skin-theme-clientpref-os .skin-invert {
+		filter: invert( 1 ) hue-rotate( 180deg );
+	}
+
+	html.skin-theme-clientpref-os .notheme {
+		color-scheme: light;
+		color: var( --ak-fg );
+	}
+}
+
+// Nested inversions cancel out
+.skin-invert .skin-invert,
+.notheme .skin-invert {
+	filter: none;
+}

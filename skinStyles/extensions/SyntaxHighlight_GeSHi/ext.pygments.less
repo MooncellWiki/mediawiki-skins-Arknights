@@ -1,0 +1,55 @@
+/**
+ * SyntaxHighlight — code blocks on the inset surface (base.css styles the frame)
+ */
+.mw-highlight {
+	background: var( --ak-bg-inset );
+	color: var( --ak-fg );
+
+	pre {
+		background: transparent;
+		border: 0;
+	}
+
+	.linenos {
+		color: var( --ak-fg-subtle );
+	}
+}
+
+// Pygments "default" palette is tuned for light backgrounds: soften the worst offenders in dark
+html.skin-theme-clientpref-night .mw-highlight {
+	.c,
+	.c1,
+	.cm {
+		color: var( --ak-fg-subtle );
+	}
+
+	.k,
+	.kd,
+	.kn,
+	.kp,
+	.kr,
+	.kt {
+		color: var( --ak-rt-vup );
+	}
+
+	.s,
+	.s1,
+	.s2,
+	.sd,
+	.se {
+		color: var( --ak-rt-rem );
+	}
+
+	.nb,
+	.nf,
+	.nc,
+	.nt {
+		color: var( --ak-cyan-300 );
+	}
+
+	.mi,
+	.mf,
+	.m {
+		color: var( --ak-lime-500 );
+	}
+}

@@ -1,0 +1,37 @@
+/**
+ * Icons — mask-image glyphs from skins.arknights.icons (OOUI WikimediaUI icons).
+ * The module emits `.ak-icon--{name} { mask-image: url(…) }`; this file gives
+ * the box its size and colour (currentColor via background-color).
+ */
+.ak-icon {
+	display: inline-block;
+	flex: none;
+	width: 20px;
+	height: 20px;
+	background-color: currentColor;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	vertical-align: middle;
+	pointer-events: none;
+
+	// Inline in text (menu items, links)
+	a > &,
+	summary > &,
+	button > & {
+		vertical-align: -0.28em;
+	}
+}
+
+.ak-icon--sm {
+	width: 16px;
+	height: 16px;
+}
+
+.ak-icon--lg {
+	width: 24px;
+	height: 24px;
+}
