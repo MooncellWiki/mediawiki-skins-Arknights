@@ -1,0 +1,20 @@
+/**
+ * Cargo — action=pagevalues
+ *
+ * ext.cargo.pagevalues 给每张表的标题条硬编码了 `background-color: #fff` 和浅色
+ * 分隔线，深色下就是一条白底 + 继承来的浅色字，完全读不出来；`top: 0` 又让它粘在
+ * 视口顶端、被固定页头盖住。
+ */
+.cargo-pagevalues-tableinfo {
+	top: var( --ak-header-h );
+	z-index: 1;
+	padding: var( --ak-space-2 ) 0;
+	background-color: var( --ak-bg-surface );
+	border-bottom: 1px solid var( --ak-border );
+	color: var( --ak-fg-secondary );
+
+	h2 {
+		margin: 0;
+		border-bottom: 0;
+	}
+}

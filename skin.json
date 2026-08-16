@@ -345,6 +345,7 @@
 			"+ext.charinsert.styles": "skinStyles/extensions/CharInsert/ext.charinsert.styles.less",
 			"+ext.cargo.main": "skinStyles/extensions/Cargo/ext.cargo.main.less",
 			"+ext.cargo.drilldown": "skinStyles/extensions/Cargo/ext.cargo.drilldown.less",
+			"+ext.cargo.pagevalues": "skinStyles/extensions/Cargo/ext.cargo.pagevalues.less",
 			"+ext.categoryTree.styles": "skinStyles/extensions/CategoryTree/ext.categoryTree.styles.less",
 			"+ext.cite.styles": "skinStyles/extensions/Cite/ext.cite.styles.less",
 			"+ext.MsUpload": "skinStyles/extensions/MsUpload/ext.MsUpload.less",
