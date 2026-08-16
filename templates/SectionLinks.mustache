@@ -1,8 +1,16 @@
 {{!
 	Section edit links (Skin option templateSectionLinks).
 	string class
-	array array-links  [ { array-attributes: [ {key,value} ], text, icon } ]
+	array array-links  [ { array-attributes: [ {key,value} ], text, icon, class } ]
+
+	视觉稿（prts-design preview/operator.html）里这里是 `[编辑]`——方括号 + 纯文字，没有图标。
+	刻意不复用 Link partial：MW 1.43 的 Skin::doEditSectionLink() 给章节链接带了
+	'icon' => 'edit'，Link.mustache 见到 icon 就会渲染 .ak-icon，于是白捡了一个铅笔图标——
+	那是 core 顺手塞的，不是设计稿的意图。多条链接（VisualEditor 会经 SkinEditSectionLinks
+	再加一条）之间的分隔交给 CSS 的 `.mw-editsection a + a::before`。
 }}
 <span class="{{class}}">{{!
-	}}{{#array-links}}{{>Link}}{{/array-links}}{{!
+	}}<span class="mw-editsection-bracket">[</span>{{!
+	}}{{#array-links}}<a{{#array-attributes}} {{key}}="{{value}}"{{/array-attributes}} class="ak-link{{#class}} {{.}}{{/class}}"><span>{{text}}</span></a>{{/array-links}}{{!
+	}}<span class="mw-editsection-bracket">]</span>{{!
 }}</span>
