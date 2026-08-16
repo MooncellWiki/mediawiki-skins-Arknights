@@ -59,9 +59,12 @@
 	border-left: 1px solid var( --ak-border );
 }
 
+// Sublists are not indented: every level's link keeps its left edge on the rail,
+// so the active marker always lands exactly on that 1px line (upstream design).
+// Depth is expressed by the link's padding-left instead — see below.
 .ak-toc__sublist {
 	border-left: 0;
-	margin-left: 12px;
+	margin-left: 0;
 }
 
 .ak-toc__item {
@@ -85,6 +88,15 @@
 		color: var( --ak-fg );
 		text-decoration: none;
 	}
+}
+
+// Indentation lives on the padding, never on the border: 10 / 22 / 34, level 4+ stays at 34
+.ak-toc__sublist > .ak-toc__item > .ak-toc__link {
+	padding-left: 22px;
+}
+
+.ak-toc__sublist .ak-toc__sublist > .ak-toc__item > .ak-toc__link {
+	padding-left: 34px;
 }
 
 .ak-toc__item--level-1 > .ak-toc__link {

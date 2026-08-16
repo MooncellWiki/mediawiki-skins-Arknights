@@ -7,7 +7,6 @@ namespace MediaWiki\Skins\Arknights;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentFooter;
-use MediaWiki\Skins\Arknights\Components\ArknightsComponentHeaderNav;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentMainMenu;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentMenuSidebar;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentPageFooter;
@@ -130,7 +129,6 @@ class SkinArknights extends SkinMustache {
 		$menuSidebarData = $menuSidebar->getTemplateData();
 
 		$components = [
-			'data-header-nav' => new ArknightsComponentHeaderNav( $config, $localizer, $wikitextMenus ),
 			'data-main-menu' => new ArknightsComponentMainMenu(
 				$config,
 				$parentData['data-portlets-sidebar'] ?? [],

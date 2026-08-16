@@ -3,7 +3,7 @@
  * path, keyboard support and desktop hover fly-outs.
  *
  * The implementation is the design-system script (resources/design-system/sidebar-tree.js,
- * synced verbatim from prts-redesign). It self-initialises on `.ak-sidebar` and watches
+ * synced verbatim from prts-design). It self-initialises on `.ak-sidebar` and watches
  * for late DOM injection, so all we do here is load it and expose a re-scan hook for
  * gadgets that rebuild parts of the sidebar.
  */

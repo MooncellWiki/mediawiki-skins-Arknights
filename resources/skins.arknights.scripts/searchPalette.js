@@ -2,7 +2,7 @@
  * Search palette — MediaWiki data sources for the floating command palette.
  *
  * The palette itself is the design-system script (resources/design-system/search-palette.js,
- * synced verbatim from prts-redesign); it owns the DOM, the keyboard model and the
+ * synced verbatim from prts-design); it owns the DOM, the keyboard model and the
  * accessibility plumbing but ships no data of its own. This file supplies the wiki half:
  *
  *   1. Title search   REST `/rest.php/v1/search/title` — the same endpoint Vector 2022 and
@@ -346,11 +346,19 @@ function init() {
 
 	/* ── 3. Empty state ── */
 
+	/**
+	 * The empty state's shortcuts, parsed server-side from
+	 * MediaWiki:Arknights-search-shortcuts (see Menu/SearchShortcutsParser.php). Which
+	 * links belong here is an editorial decision, so it is one the wiki makes: the header
+	 * has no navigation of its own to borrow, and scraping the sidebar picks whatever
+	 * happens to sit at its top level rather than what is actually worth a shortcut.
+	 *
+	 * @type {Array<{label: string, url: string}>}
+	 */
+	const shortcutLinks = config.wgArknightsSearchShortcuts || [];
+
 	function shortcuts() {
-		return Array.from( document.querySelectorAll( '.ak-header__nav a' ) )
-			.slice( 0, 8 )
-			.map( ( link ) => ( { label: ( link.textContent || '' ).trim(), url: link.href } ) )
-			.filter( ( item ) => item.label );
+		return shortcutLinks;
 	}
 
 	const messages = {
@@ -362,7 +370,7 @@ function init() {
 		fulltextDesc: mw.msg( 'arknights-search-fulltext-desc' ),
 		emptyTitle: mw.msg( 'arknights-search-empty-title' ),
 		emptyDesc: mw.msg( 'arknights-search-empty-desc' ),
-		shortcuts: mw.msg( 'arknights-search-shortcuts' ),
+		shortcuts: mw.msg( 'arknights-search-shortcuts-label' ),
 		noResults: mw.msg( 'arknights-search-noresults' ),
 		noResultsDesc: mw.msg( 'arknights-search-noresults-desc' ),
 		error: mw.msg( 'arknights-search-error' ),

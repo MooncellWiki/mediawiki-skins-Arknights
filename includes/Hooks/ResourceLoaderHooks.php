@@ -6,6 +6,7 @@ namespace MediaWiki\Skins\Arknights\Hooks;
 
 use MediaWiki\Config\Config;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Skins\Arknights\Menu\SearchShortcutsParser;
 use MediaWiki\Skins\Arknights\SkinArknights;
 
 /**
@@ -45,6 +46,10 @@ class ResourceLoaderHooks {
 		return [
 			// Whether asking action=arknightssearchindex is worth a request at all
 			'wgArknightsSearchIndex' => (bool)array_filter( (array)$config->get( 'ArknightsSearchIndex' ) ),
+			// Empty-state shortcuts, from MediaWiki:Arknights-search-shortcuts. Editing the
+			// message changes this file's content, which is what ResourceLoader hashes the
+			// module version from — no versionCallback needed for the cache to follow.
+			'wgArknightsSearchShortcuts' => SearchShortcutsParser::parse( $context ),
 		];
 	}
 }

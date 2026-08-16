@@ -4,7 +4,8 @@
 
 /* ≥ 1680: a bit more room for the side columns */
 @media ( min-width: @ak-bp-wide ) {
-	.ak-layout {
+	// On :root, not on .ak-layout — the header grid shares these two widths with the layout
+	:root {
 		--ak-sidebar-w: 268px;
 		--ak-toc-w: 268px;
 	}
@@ -145,7 +146,20 @@
 	}
 }
 
-/* < 1120: sidebar becomes an off-canvas drawer, header nav moves into it */
+// Declared here because the tools card it belongs to only exists below 1120px
+@keyframes ak-nav-screen-in {
+	from {
+		opacity: 0;
+		transform: translateY( -6px );
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* < 1120: sidebar becomes an off-canvas drawer, the header tools move into the burger card */
 @media ( max-width: @ak-bp-desktop-max ) {
 	.ak-layout {
 		grid-template-columns: minmax( 0, 1fr );
@@ -203,62 +217,142 @@
 		display: inline-grid;
 	}
 
-	// Primary navigation repeated as a grid at the top of the drawer
-	.ak-sidebar__nav {
-		display: block;
-		margin-bottom: var( --ak-space-5 );
-
-		ul {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 4px;
-		}
-
-		li {
-			margin: 0;
-		}
-
-		li > a {
-			justify-content: center;
-			text-align: center;
-			border: 1px solid var( --ak-border );
-			border-left-width: 1px;
-			padding: 8px 6px;
-			font-size: var( --ak-fs-xs );
-			font-weight: 600;
-
-			&:hover,
-			&.mw-selflink {
-				border-color: var( --ak-accent );
-			}
-		}
-
-		p {
-			margin: 0;
-		}
-	}
-
 	// The drawer entry is only needed once the sidebar stops being a column
 	.ak-local-nav__menu {
 		display: inline-flex;
 	}
 
-	.ak-header__nav {
-		display: none;
+	// The sidebar is a drawer now, so the header has no columns left to line up with
+	.ak-header__inner {
+		display: flex;
+		gap: var( --ak-space-3 );
 	}
 
+	// Brand left, everything else (search / burger) right
 	.ak-header__logo {
-		border-right: 0;
-		padding-right: 0;
+		margin-right: auto;
 	}
 
 	.ak-header__search {
 		flex: 1 1 auto;
-		max-width: 420px;
+		width: auto;
+		max-width: none;
 	}
 
 	.ak-body {
 		padding: var( --ak-space-5 );
+	}
+
+	/**
+	 * Tools card — the main row keeps only brand / search / ≡; the theme toggle,
+	 * notifications and the user menu move into the card the burger pulls down. It hangs
+	 * off the main row's bottom right edge and covers the local nav, rather than filling
+	 * the screen: there are only three rows in it. The page is not scroll-locked — the
+	 * card scrolls on its own if it has to.
+	 */
+	.ak-nav-cb {
+		display: block;
+	}
+
+	.ak-header__burger {
+		display: inline-flex;
+	}
+
+	.ak-header__screen {
+		position: absolute;
+		top: 100%;
+		right: var( --ak-gutter );
+		z-index: var( --ak-z-dropdown );
+		display: none;
+		flex-direction: column;
+		width: ~'min( 320px, calc( 100vw - var( --ak-gutter ) * 2 ) )';
+		max-height: calc( 100dvh - var( --ak-header-h ) - var( --ak-space-4 ) );
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		box-sizing: border-box;
+		background: var( --ak-bg-surface );
+		color: var( --ak-fg );
+		border: 1px solid var( --ak-border );
+		border-top: 3px solid var( --ak-accent );
+		box-shadow: var( --ak-shadow-lg );
+	}
+
+	.ak-nav-cb:checked ~ .ak-header__screen {
+		display: flex;
+		animation: ak-nav-screen-in var( --ak-dur-normal ) var( --ak-ease );
+
+		// Nested rather than in header.less: this file is imported last, so a top-level
+		// override would lose to the declaration right above it
+		@media ( prefers-reduced-motion: reduce ) {
+			animation: none;
+		}
+	}
+
+	// Tools become "Appearance / notifications / account" rows
+	.ak-header__tools {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		margin: 0;
+		padding: var( --ak-space-1 ) 0;
+	}
+
+	// Overrides the `display: contents` .ak-header__tool carries on desktop
+	.ak-header__tools > * {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var( --ak-space-3 );
+		min-height: 48px;
+		padding: 0 var( --ak-space-4 );
+	}
+
+	.ak-header__tool-label {
+		display: inline;
+		font-size: var( --ak-fs-body );
+		color: var( --ak-fg );
+	}
+
+	// Bigger tap targets on touch screens
+	.ak-theme-toggle > button {
+		width: 40px;
+		height: 32px;
+	}
+
+	// Echo badges side by side
+	.ak-header__notifications-list {
+		flex-wrap: wrap;
+		gap: var( --ak-space-2 );
+	}
+
+	/**
+	 * User menu — the row is the summary itself, and the card opens in place instead of
+	 * floating out of a 320px panel that would clip it.
+	 */
+	.ak-header__user {
+		display: block;
+		min-height: 0;
+		padding: 0;
+	}
+
+	.ak-header__user-btn {
+		display: flex;
+		min-height: 48px;
+		max-width: none;
+		height: auto;
+		padding: 0 var( --ak-space-4 );
+	}
+
+	.ak-header__user .ak-dropdown__card {
+		position: static;
+		min-width: 0;
+		max-width: none;
+		max-height: none;
+		margin: 0 var( --ak-space-4 ) var( --ak-space-2 );
+		border: 0;
+		border-top: 1px solid var( --ak-border );
+		background: transparent;
+		box-shadow: none;
 	}
 }
 
@@ -332,18 +426,6 @@
 	.ak-toc {
 		left: var( --ak-gutter );
 		width: auto;
-	}
-
-	.ak-theme-toggle > button[ data-theme='os' ] {
-		display: none;
-	}
-
-	.ak-header__user-btn {
-		padding: 0 6px;
-
-		.ak-header__user-name {
-			display: none;
-		}
 	}
 
 	.ak-page-heading {

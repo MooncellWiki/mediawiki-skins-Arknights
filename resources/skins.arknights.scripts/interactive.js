@@ -2,7 +2,7 @@
  * Design-system interactive conventions (pure delegation, no per-element setup):
  * .ak-tabs[data-tabs] · .ak-panel--collapsible · .ak-chip · .ak-btn-group / .ak-phase-tabs /
  * .ak-skill-levels (+ data-bind-* / data-show-*) · [data-dialog-open] / [data-dialog-close] ·
- * .ak-voice__play. Mirrors prts-redesign/preview/preview.js so templates behave the same
+ * .ak-voice__play. Mirrors prts-design/preview/preview.js so templates behave the same
  * on-wiki as in the design-system preview.
  */
 

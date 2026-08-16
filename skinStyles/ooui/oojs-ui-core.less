@@ -103,21 +103,21 @@
 	color: var( --ak-fg );
 }
 
-.oo-ui-checkboxInputWidget [ type='checkbox' ] + span,
-.oo-ui-radioInputWidget [ type='radio' ] + span {
-	background: var( --ak-bg-surface );
-	border-color: var( --ak-border-strong );
+// Binary inputs. Colours arrive through the Codex bridge in tokens.css
+// (`--background-color-base` / `--background-color-progressive` / `--border-color-input-binary*`),
+// so only the two things the bridge cannot express are set here.
+//
+// Never use the `background` shorthand on these spans: OOUI paints the checkbox tick as a
+// `background-image` on this very element and toggles it with `background-size: 0 0` → `1em 1em`.
+// The shorthand resets both, which leaves a filled square with no tick.
+.oo-ui-checkboxInputWidget [ type='checkbox' ] + span {
 	border-radius: 0;
 }
 
-.oo-ui-checkboxInputWidget [ type='checkbox' ]:checked + span,
-.oo-ui-radioInputWidget [ type='radio' ]:checked + span {
-	background: var( --ak-accent );
-	border-color: var( --ak-accent );
-}
-
+// The radio dot is the span's own background showing through a 6px border; OOUI takes it from
+// `--background-color-base-fixed`, which stays #fff in the dark theme.
 .oo-ui-radioInputWidget [ type='radio' ] + span {
-	border-radius: 50%;
+	background-color: var( --ak-bg-surface );
 }
 
 .oo-ui-messageWidget {

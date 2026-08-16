@@ -87,7 +87,8 @@
 						"arknights-variants-toggle",
 						"arknights-languages-toggle",
 						"arknights-sidebar-label",
-						"arknights-header-nav-label",
+						"arknights-appearance",
+						"arknights-nav-screen",
 						"arknights-footer-powered",
 						"navigation-heading",
 						"search",
@@ -286,7 +287,7 @@
 				"arknights-search-fulltext-desc",
 				"arknights-search-empty-title",
 				"arknights-search-empty-desc",
-				"arknights-search-shortcuts",
+				"arknights-search-shortcuts-label",
 				"arknights-search-noresults",
 				"arknights-search-noresults-desc",
 				"arknights-search-error",
@@ -425,12 +426,6 @@
 			"value": true,
 			"description": "When MenuSidebar is enabled, hide the MediaWiki:Sidebar portlets (except the toolbox and languages) — mirrors the behaviour of Extension:VectorMenuSidebar.",
 			"descriptionmsg": "arknights-config-menusidebarhideportlets",
-			"public": true
-		},
-		"HeaderNavMessage": {
-			"value": "Arknights-header-nav",
-			"description": "Name of the MediaWiki-namespace message holding the wikitext list rendered as the primary header navigation. Empty string or a missing / disabled ('-') message hides the header navigation.",
-			"descriptionmsg": "arknights-config-headernavmessage",
 			"public": true
 		},
 		"ShowPageTools": {
