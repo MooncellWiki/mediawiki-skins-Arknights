@@ -28,3 +28,16 @@
 	border-color: var( --ak-border );
 	box-shadow: var( --ak-shadow-md );
 }
+
+/**
+ * entity-examiner 占位 loader：smw.indicators.css 的 `load1` 关键帧直接对 height
+ * 做动画（4em ↔ 5em）。这个元素在正常流里（两侧的 ::before/::after 是 absolute，
+ * 不参与布局），于是在 smw.entityexaminer 的检查请求回来之前，指示器高度每秒
+ * 反复 22px ↔ 25px，把页头下方的整篇内容顶上顶下。
+ *
+ * max-height 不参与动画，会在算 used height 时把动画值钳回 4em，因此指示器占位
+ * 恒定、不再触发重排；box-shadow 与两侧竖条的动画保持原样。
+ */
+.smw-indicator-vertical-bar-loader {
+	max-height: 4em;
+}
