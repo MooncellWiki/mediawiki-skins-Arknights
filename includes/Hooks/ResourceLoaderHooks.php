@@ -30,4 +30,21 @@ class ResourceLoaderHooks {
 		];
 	}
 
+	/**
+	 * Config exposed to skins.arknights.search (searchConfig.json virtual file).
+	 *
+	 * A module of its own rather than a share of the one above: the palette is loaded
+	 * lazily, and there is no reason for its config blob to carry the theme and table of
+	 * contents settings that the always-on bundle already has.
+	 *
+	 * @param RL\Context $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getSearchResourceLoaderConfig( RL\Context $context, Config $config ): array {
+		return [
+			// Whether asking action=arknightssearchindex is worth a request at all
+			'wgArknightsSearchIndex' => (bool)array_filter( (array)$config->get( 'ArknightsSearchIndex' ) ),
+		];
+	}
 }

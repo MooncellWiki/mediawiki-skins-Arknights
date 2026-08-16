@@ -8,9 +8,9 @@
  *   1. Title search   REST `/rest.php/v1/search/title` — the same endpoint Vector 2022 and
  *                     Citizen use. `thumbnail` needs PageImages, `description` needs a
  *                     short-description provider; both degrade to nothing when absent.
- *   2. Local index    Optional, injected by `mw.hook( 'skin.arknights.search' )` — a site or
- *                     gadget can answer from an in-memory index, which is the only way to
- *                     get infix or pinyin matching out of a wiki without CirrusSearch.
+ *   2. Local index    Optional, injected by `mw.hook( 'skin.arknights.search' )` — see
+ *                     searchIndex.js for the Cargo-backed one, which is what gives PRTS
+ *                     pinyin-initial and alias matching that the title search cannot do.
  *   3. Modes          `>` actions (scraped from the page's own menus) · `#` categories ·
  *                     `@` users · `~` files, all over the Action API.
  *
@@ -22,6 +22,8 @@
  */
 
 const palette = require( '../design-system/search-palette.js' );
+const searchIndex = require( './searchIndex.js' );
+const config = require( './searchConfig.json' );
 
 const NS_CATEGORY = 14;
 const NS_FILE = 6;
@@ -84,7 +86,7 @@ function isRedirectWorthShowing( title, matched ) {
 }
 
 /**
- * Build the palette.
+ * Build the palette and wire the local index to it.
  *
  * This is the entry point of the lazily loaded `skins.arknights.search` module —
  * searchLoader.js calls it once, on the first sign that the reader wants to search.
@@ -96,7 +98,7 @@ function init() {
 	const scriptPath = mw.config.get( 'wgScriptPath' ) || '';
 
 	// Sites and gadgets can add an instant local index: fn( query ) -> Group[] (or a promise
-	// of one), consulted alongside the REST title search and merged ahead of it.
+	// of one). searchIndex.js registers the Cargo-backed index through this hook.
 	let localIndex = null;
 	mw.hook( 'skin.arknights.search' ).add( ( fn ) => {
 		localIndex = typeof fn === 'function' ? fn : null;
@@ -379,7 +381,7 @@ function init() {
 		brand: mw.config.get( 'wgSiteName' ) + ' · Search'
 	};
 
-	return palette.init( {
+	const instance = palette.init( {
 		trigger: 'form.ak-header__search',
 		toggles: '.ak-header__search-toggle',
 		messages: messages,
@@ -393,6 +395,12 @@ function init() {
 		modes: modes,
 		recent: { key: 'arknights-search-recent', max: 8 }
 	} );
+
+	// Registers itself through the same hook a gadget would use, and only fetches once the
+	// palette is actually opened — a hover-driven prefetch should not cost an API request.
+	searchIndex.init( config );
+
+	return instance;
 }
 
 module.exports = { init };

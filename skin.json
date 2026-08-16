@@ -118,6 +118,15 @@
 			]
 		}
 	},
+	"APIModules": {
+		"arknightssearchindex": {
+			"class": "MediaWiki\\Skins\\Arknights\\Api\\ApiArknightsSearchIndex",
+			"services": [
+				"MainConfig",
+				"MainWANObjectCache"
+			]
+		}
+	},
 	"Hooks": {
 		"BeforePageDisplay": "SkinHooks",
 		"OutputPageAfterGetHeadLinksArray": "SkinHooks",
@@ -255,6 +264,11 @@
 		"skins.arknights.search": {
 			"packageFiles": [
 				"resources/skins.arknights.scripts/searchPalette.js",
+				{
+					"name": "resources/skins.arknights.scripts/searchConfig.json",
+					"callback": "MediaWiki\\Skins\\Arknights\\Hooks\\ResourceLoaderHooks::getSearchResourceLoaderConfig"
+				},
+				"resources/skins.arknights.scripts/searchIndex.js",
 				"resources/design-system/search-palette.js"
 			],
 			"dependencies": [
@@ -446,6 +460,14 @@
 			"description": "Replace the header search field with the floating command palette (grouped title search, / > # @ ~ modes, recent pages, keyboard driven). Set false to keep the plain form and core's search suggestions.",
 			"descriptionmsg": "arknights-config-searchpalette",
 			"public": true
+		},
+		"SearchIndex": {
+			"value": [],
+			"description": "Cargo tables flattened into the palette's instant local index, which adds infix and pinyin-initial matching that MediaWiki's prefix-only title search cannot do. A list of groups: { id, type, labelMsg|label, en, tables, fields: { title, aliases[], desc, rarity, class }, where, joinOn, groupBy, having, orderBy, limit, rarityOffset }. Empty disables the index. See README.md for the PRTS.wiki example."
+		},
+		"SearchIndexTTL": {
+			"value": 3600,
+			"description": "Seconds the search index is cached, server-side and by the CDN / browser alike."
 		}
 	},
 	"manifest_version": 2

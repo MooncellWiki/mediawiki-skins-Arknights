@@ -74,6 +74,8 @@
 	"arknights-search-mode-file": "文件",
 	"arknights-search-mode-file-desc": "查找图片与媒体文件",
 	"arknights-search-mode-file-placeholder": "搜索文件…",
+	"arknights-search-group-operator": "干员",
+	"arknights-search-group-item": "道具",
 	"arknights-config-searchpalette": "把页眉搜索框换成悬浮命令面板。",
 	"arknights-search-load-error": "搜索面板加载失败，上方的搜索框仍可正常使用。"
 }

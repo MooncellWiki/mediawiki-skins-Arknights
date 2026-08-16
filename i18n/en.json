@@ -78,6 +78,10 @@
 	"arknights-search-mode-file": "Files",
 	"arknights-search-mode-file-desc": "Find images and media",
 	"arknights-search-mode-file-placeholder": "Search files…",
+	"arknights-search-group-operator": "Operators",
+	"arknights-search-group-item": "Items",
 	"arknights-config-searchpalette": "Replace the header search field with the floating command palette.",
+	"apihelp-arknightssearchindex-summary": "Return the search palette's local index, built from the Cargo tables listed in $wgArknightsSearchIndex.",
+	"apihelp-arknightssearchindex-example": "Fetch the search index",
 	"arknights-search-load-error": "Search is taking too long to load — the box above still works."
 }

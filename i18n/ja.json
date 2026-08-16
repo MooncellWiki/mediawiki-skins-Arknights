@@ -64,5 +64,7 @@
 	"arknights-search-mode-file": "ファイル",
 	"arknights-search-mode-file-desc": "画像・メディアを探す",
 	"arknights-search-mode-file-placeholder": "ファイルを検索…",
+	"arknights-search-group-operator": "オペレーター",
+	"arknights-search-group-item": "アイテム",
 	"arknights-search-load-error": "検索パネルを読み込めませんでした。上の検索ボックスはそのまま使えます。"
 }

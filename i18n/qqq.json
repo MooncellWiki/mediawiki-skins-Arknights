@@ -78,6 +78,10 @@
 	"arknights-search-mode-file": "Name of the files command mode, triggered by \"~\" or \"/file\".",
 	"arknights-search-mode-file-desc": "Description of the files mode in the command list.",
 	"arknights-search-mode-file-placeholder": "Field placeholder while the files mode is active.",
+	"arknights-search-group-operator": "Default heading of the operators group in the local search index. Referenced from $wgArknightsSearchIndex.",
+	"arknights-search-group-item": "Default heading of the items group in the local search index. Referenced from $wgArknightsSearchIndex.",
 	"arknights-config-searchpalette": "{{optional}}\nDescription of the $wgArknightsSearchPalette configuration setting.",
+	"apihelp-arknightssearchindex-summary": "{{doc-apihelp-summary|arknightssearchindex}}",
+	"apihelp-arknightssearchindex-example": "{{doc-apihelp-example|arknightssearchindex}}",
 	"arknights-search-load-error": "Shown when the search palette module fails to load or times out after the user asked for it. The header search form keeps working, so this is a notice rather than an error."
 }

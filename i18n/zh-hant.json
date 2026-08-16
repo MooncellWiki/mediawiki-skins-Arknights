@@ -64,5 +64,7 @@
 	"arknights-search-mode-file": "檔案",
 	"arknights-search-mode-file-desc": "尋找圖片與媒體檔案",
 	"arknights-search-mode-file-placeholder": "搜尋檔案…",
+	"arknights-search-group-operator": "幹員",
+	"arknights-search-group-item": "道具",
 	"arknights-search-load-error": "搜尋面板載入失敗，上方的搜尋框仍可正常使用。"
 }
