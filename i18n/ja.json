@@ -34,7 +34,7 @@
 	"arknights-search-fulltext-desc": "全ページの本文から探す",
 	"arknights-search-empty-title": "検索",
 	"arknights-search-empty-desc": "オペレーター、敵、アイテム、ステージ、または任意のページ名。$1 でコマンド一覧",
-	"arknights-search-shortcuts": "ショートカット",
+	"arknights-search-shortcuts-label": "ショートカット",
 	"arknights-search-noresults": "「$1」に一致するタイトルはありません",
 	"arknights-search-noresults-desc": "綴りを確認するか、全文検索をお試しください",
 	"arknights-search-error": "検索を利用できません。Enter で全文検索します",

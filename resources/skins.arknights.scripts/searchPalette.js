@@ -347,31 +347,18 @@ function init() {
 	/* ── 3. Empty state ── */
 
 	/**
-	 * Where the empty state's shortcuts come from, most specific first. The header carries
-	 * no navigation of its own, so these are the sidebar's own top entries: the wikitext
-	 * sidebar's first groups (children of branches are left out — the leaf links are the
-	 * useful ones), else MediaWiki:Sidebar's first portlet, else whatever the panel holds.
+	 * The empty state's shortcuts, parsed server-side from
+	 * MediaWiki:Arknights-search-shortcuts (see Menu/SearchShortcutsParser.php). Which
+	 * links belong here is an editorial decision, so it is one the wiki makes: the header
+	 * has no navigation of its own to borrow, and scraping the sidebar picks whatever
+	 * happens to sit at its top level rather than what is actually worth a shortcut.
 	 *
-	 * @type {string[]}
+	 * @type {Array<{label: string, url: string}>}
 	 */
-	const shortcutSources = [
-		'#MenuSidebar > ul > li > a[href]',
-		'#p-navigation a[href]',
-		'#mw-panel a[href]'
-	];
+	const shortcutLinks = config.wgArknightsSearchShortcuts || [];
 
 	function shortcuts() {
-		let links = [];
-		for ( const selector of shortcutSources ) {
-			links = Array.from( document.querySelectorAll( selector ) );
-			if ( links.length ) {
-				break;
-			}
-		}
-		return links
-			.slice( 0, 8 )
-			.map( ( link ) => ( { label: ( link.textContent || '' ).trim(), url: link.href } ) )
-			.filter( ( item ) => item.label );
+		return shortcutLinks;
 	}
 
 	const messages = {
@@ -383,7 +370,7 @@ function init() {
 		fulltextDesc: mw.msg( 'arknights-search-fulltext-desc' ),
 		emptyTitle: mw.msg( 'arknights-search-empty-title' ),
 		emptyDesc: mw.msg( 'arknights-search-empty-desc' ),
-		shortcuts: mw.msg( 'arknights-search-shortcuts' ),
+		shortcuts: mw.msg( 'arknights-search-shortcuts-label' ),
 		noResults: mw.msg( 'arknights-search-noresults' ),
 		noResultsDesc: mw.msg( 'arknights-search-noresults-desc' ),
 		error: mw.msg( 'arknights-search-error' ),

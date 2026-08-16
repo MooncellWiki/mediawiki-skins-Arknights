@@ -53,6 +53,7 @@ $wgArknightsMenuSidebar = true;
 | 页面 | 用途 |
 |---|---|
 | `MediaWiki:MenuSidebar` / `MediaWiki:MenuSidebarAfter` | 侧栏（同 VMS 语法：`分组标题` 独立一行 / `*` 项 / `'''粗体'''` = 有子级的分组项 / `**` 子项，深度不限；支持 `{{#tsl:}}` `{{FULLPAGENAME}}` `{{PAGEID}}` `{{#widget:}}` 等） |
+| `MediaWiki:Arknights-search-shortcuts` | 搜索面板空态的快捷入口（同 `MediaWiki:Sidebar` 的条目语法，见下） |
 | `MediaWiki:Arknights-header-tagline` | 页眉/页脚站名下方的拉丁小字（如 `ARKNIGHTS WIKI`） |
 | `MediaWiki:Arknights-footer-desc` / `-footer-tagline` | 页脚描述段 / 底栏一句话（wikitext，默认关闭） |
 | `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间覆盖标题下方的 tagline |
@@ -68,8 +69,9 @@ includes/
                                   PageHeading / PageTools / TableOfContents / PageFooter / Footer / Menu
   Menu/WikitextMenuParser.php     以当前页为上下文解析 MediaWiki 名字空间 wikitext，并把 RL 模块转发给 OutputPage
   Menu/MenuItemDecorator.php      把核心的 icon 键变成 <span class="ak-icon ak-icon--x">
+  Menu/SearchShortcutsParser.php  MediaWiki:Arknights-search-shortcuts → 搜索面板空态的快捷入口
   Hooks/SkinHooks.php             BeforePageDisplay（内联主题脚本）/ viewport / 工具箱图标
-  Hooks/ResourceLoaderHooks.php   config.json
+  Hooks/ResourceLoaderHooks.php   config.json / searchConfig.json
   Api/ApiArknightsSearchIndex.php 搜索面板的本地索引（Cargo → JSON，含服务端拼音）
 templates/*.mustache              skin · Header · Header__logo · Search · ThemeToggle · UserMenu · Menu ·
                                   Sidebar · PageHeader · PageTools · Indicators · TableOfContents(+__list/__line) ·
@@ -106,9 +108,8 @@ scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重
   所以预取失败可以完全静默，只有用户主动点了才需要提示（`arknights-search-load-error`）。
   唯一的约束：挂载会把输入框搬走，所以光标在框里或框里有字时不做静默挂载，留给下一次主动打开一起做。
 - 打开：点触发器 / 手机上的搜索图标 / 按 `/`、`Ctrl(⌘)K`、accesskey F。关闭：Esc（有字先清空，模式中先退出）、点遮罩、选中结果。
-- 空态显示最近访问（`localStorage['arknights-search-recent']`）与侧栏顶部做的快捷入口
-  （依次取 `#MenuSidebar` 首层链接 → `#p-navigation` → `#mw-panel`）；
-  `/` 列出命令，`>` 动作 · `#` 分类 · `@` 用户 · `~` 文件。
+- 空态显示最近访问（`localStorage['arknights-search-recent']`）与**站内可编辑的快捷入口**
+  `MediaWiki:Arknights-search-shortcuts`（见下）；`/` 列出命令，`>` 动作 · `#` 分类 · `@` 用户 · `~` 文件。
 - 面板开启时 `SkinHooks::onSkinPageReadyConfig()` 会把 `mediawiki.page.ready` 的 `search` 开关置 false
   （与 Vector 2022 同一做法）。核心是在搜索框**聚焦时**才懒加载 `mediawiki.searchSuggest` 的，不关掉的话
   它会挂到被搬进面板的那个 `#searchInput` 上、在面板里再画一份列表。
@@ -121,6 +122,27 @@ scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重
 | 标题搜索 | `GET /rest.php/v1/search/title` | 与 Vector 2022 / Citizen 相同。`thumbnail` 需要 PageImages，`description` 需要短描述扩展；两者缺失时静默降级 |
 | 本地即时索引 | `mw.hook( 'skin.arknights.search' )` | 见下节。给出中缀匹配、别名与拼音首字母 —— 核心标题搜索只能前缀匹配 |
 | 模式 | Action API | `#` 分类（空查询＝本页所属）· `@` 用户 · `~` 文件；`>` 动作直接扫本页的 `#p-views #p-cactions #p-tb #p-personal` 与页面标签 |
+
+### 快捷入口（`MediaWiki:Arknights-search-shortcuts`）
+
+空态那排方块由这条消息决定，语法就是 `MediaWiki:Sidebar` 的条目语法去掉分组标题——一行一个 `* 目标|标签`，
+最多取 8 条：
+
+```wikitext
+* mainpage|mainpage-description
+* 干员一览|干员
+* Special:RecentChanges|recentchanges
+* https://www.mooncell.wiki|Mooncell主站
+```
+
+两半都是「存在同名消息就当消息键、否则按字面」：目标按内容语言解析（页面名或 URL），标签按界面语言。
+目标或标签解析成 `-` 的那一行跳过，整条消息写 `-` 就完全不显示快捷入口。不填时用 i18n 默认值
+（首页 / 最近更改 / 随机页面 / 帮助，与 MediaWiki 默认侧栏导航同一组链接）。
+
+这里**不是 wikitext**：没有模板、解析器函数与魔术字。列表在服务端解析进 `skins.arknights.search` 的
+`searchConfig.json`（`Menu/SearchShortcutsParser.php`），编辑消息即改变该文件内容，而 RL 正是按内容算模块版本，
+所以缓存自动跟着走，不需要 `versionCallback`。改完不用清缓存，但客户端拿到新版本号要等 startup 模块的
+HTTP 缓存过期（默认 5 分钟），自己测的时候按 Shift 刷新即可。
 
 ### 本地索引（Cargo）
 

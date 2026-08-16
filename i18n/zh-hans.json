@@ -43,7 +43,7 @@
 	"arknights-search-fulltext-desc": "在全站正文中查找",
 	"arknights-search-empty-title": "搜索",
 	"arknights-search-empty-desc": "干员、敌人、道具、关卡或任意页面名；输入 $1 查看命令",
-	"arknights-search-shortcuts": "快捷入口",
+	"arknights-search-shortcuts-label": "快捷入口",
 	"arknights-search-noresults": "没有标题匹配“$1”",
 	"arknights-search-noresults-desc": "检查拼写，或试试全文搜索",
 	"arknights-search-error": "搜索服务暂时不可用，回车执行全文搜索",
