@@ -86,11 +86,16 @@ function adoptSkinIcon() {
 	if ( !svg ) {
 		return;
 	}
+	// The design system's SVG is both the well and the drawing. The skin's glyph is a mask
+	// painted with background-color, so it cannot also carry the well's own background:
+	// keep the trigger's class on a wrapper and hang the glyph inside it.
+	const well = document.createElement( 'span' );
+	well.className = 'ak-search-trigger__icon';
+	well.setAttribute( 'aria-hidden', 'true' );
 	const icon = document.createElement( 'span' );
-	// Keeps the trigger's own class so header.less still sizes it to 16px
-	icon.className = 'ak-icon ak-icon--search ak-search-trigger__icon';
-	icon.setAttribute( 'aria-hidden', 'true' );
-	svg.replaceWith( icon );
+	icon.className = 'ak-icon ak-icon--search';
+	well.append( icon );
+	svg.replaceWith( well );
 }
 
 /**

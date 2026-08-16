@@ -8,7 +8,20 @@ body.skin-arknights {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background: var( --ak-bg-canvas );
+	/**
+	 * --ak-canvas-image lies over the canvas colour — the event theme's page backdrop,
+	 * where the live site puts its bkg image. The sidebar and the TOC have no plate of
+	 * their own, so it wants to stay low-contrast (tokens.css §2d).
+	 *
+	 * Longhands rather than the `background` shorthand throughout the theme interface:
+	 * less.php reads the `position / size` slash as a division and refuses to compile.
+	 */
+	background-color: var( --ak-bg-canvas );
+	background-image: var( --ak-canvas-image );
+	background-position: var( --ak-canvas-position );
+	background-size: var( --ak-canvas-size );
+	background-repeat: var( --ak-canvas-repeat );
+	background-attachment: var( --ak-canvas-attachment );
 	color: var( --ak-fg );
 }
 

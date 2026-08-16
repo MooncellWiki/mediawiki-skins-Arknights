@@ -68,6 +68,28 @@ $wgArknightsMenuSidebar = true;
 | `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间覆盖标题下方的 tagline |
 | `MediaWiki:Arknights.css` / `MediaWiki:Arknights.js` | 皮肤专属站点样式/脚本（MediaWiki 自动加载） |
 
+## 活动主题：头图 · 顶栏底图 · 站标 · 主色
+
+页眉与页脚是皮肤的「框」，在**两套主题下都是黑的**（官网导航栏 / 游戏主界面顶栏 / 干员档案页顶部黑边的框架语言），配色不读明暗主题，只读 `design-system/tokens.css §2d` 的 `--ak-chrome-*`。大活换皮不需要改选择器——现网 `ext.gadget.seventhStyle` 改的那几处（`body` 大图、`#mw-head` 左右底图、`.mw-wiki-logo`、侧栏分组渐变）都被抽成了接口变量，Gadget 或 `MediaWiki:Common.css` 只写变量即可，卸载即恢复：
+
+```css
+:root {
+  --ak-theme-accent: #72a330;                       /* 页眉标语 / 悬停 / 外观开关选中项 / 搜索图标框、侧栏与目录分组条、页脚斜纹一起换 */
+  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 220px;   /* 头图 .ak-keyart：页眉之下的通栏画，默认 0 高不占位 */
+  --ak-chrome-image: url(//media.prts.wiki/…/headleft.png), url(//media.prts.wiki/…/headright.png);
+  --ak-chrome-image-position: left top, right top;   --ak-chrome-texture: 0;    /* 顶栏底图（现网 PRTSheadleft / Garanheadright）；有底图就关掉默认网点 */
+  --ak-logo-image: url(//media.prts.wiki/…/logo.png);                           /* 站标（Chromium / WebKit 生效；Firefox 请改 $wgLogos） */
+  --ak-canvas-image: url(//media.prts.wiki/…/bkg.png);  --ak-canvas-repeat: no-repeat;   /* 画布底纹 */
+}
+html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/kv-night.jpg); }   /* 头图 / 画布图要分昼夜就这样写；页眉本身两套主题同色，底图与站标只需一套 */
+```
+
+完整变量表见 prts-design 的 `docs/01-design-system.md §2.10`，可运行示例见 `preview/demo-theme.css`。三点注意：
+
+- 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
+- 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
+- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
+
 ## 目录结构
 
 ```
@@ -231,6 +253,7 @@ $wgArknightsSearchIndex = [
 
 - 页眉 `.ak-header`、侧栏 `.ak-sidebar`、页面头 `.ak-page-header`、目录 `.ak-toc`、页脚 `.ak-footer` 等类名与 prts-design 的 `src/skin.css` 一致，但骨架样式由本皮肤的 LESS 维护（DOM 由模板定义）。
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
+- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`header.less` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。活动主题的接口见上文「活动主题」。
 - **<1120 页眉**回到 flex，只留 品牌 / 搜索（<640 收成图标）/ ≡。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ≡ 拉下、贴主行右下沿的 320px 卡片。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录浮层的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起，以及卡片开着时不收页眉。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
 - 图标：`skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `.ak-icon.ak-icon--{name}`；可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）。
 - 模板/TemplateStyles 中直接使用 `.ak-*` 组件与 `var(--ak-*)` 令牌，与预览页一致；`data-bind`/`.ak-tabs`/`.ak-phase-tabs` 等交互约定由 `interactive.js` 提供。

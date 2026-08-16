@@ -1,7 +1,14 @@
 /**
- * Header — sticky, two rows:
+ * Header — a black "terminal" bar in both themes, two rows:
  *   .ak-header__inner    56px — logo/wordmark · search · tools
  *   .ak-local-nav        48px — second row, shown below 1400px only (drawer / table of contents)
+ *
+ * The frame does not follow the light/dark theme: the official site's nav bar (#000, cyan
+ * current item, white line-art icons), the game's home-screen top bar (dark plate, halftone
+ * field, cyan selection) and the black band above an operator's file are all the same idea —
+ * a black frame around white or black paper. So the colours here read `--ak-chrome-*`
+ * (tokens.css §2d) rather than the theme tokens, and the block below remaps the semantic
+ * tokens onto them for the whole header subtree.
  *
  * The main row is a three-column grid sharing its column widths with .ak-layout: the brand
  * sits over the sidebar column, search starts at the content column's left edge (capped at
@@ -16,18 +23,89 @@
  * also in responsive.less.
  */
 .ak-header {
+	/**
+	 * Semantic tokens → the chrome palette, scoped to this subtree. Every control inside
+	 * (buttons, the search trigger, Echo badges, the user menu, the tools card) is then
+	 * header-coloured without a rule of its own, and an event gadget can reskin the whole
+	 * frame by overriding --ak-chrome-* / --ak-theme-accent — no selectors involved.
+	 * The search palette and the sidebar flyout hang off <body>, so they keep page colours.
+	 */
+	--ak-fg: var( --ak-chrome-fg );
+	--ak-fg-secondary: var( --ak-chrome-fg-2 );
+	--ak-fg-muted: var( --ak-chrome-fg-muted );
+	--ak-fg-subtle: var( --ak-chrome-fg-muted );
+	--ak-bg-surface: var( --ak-chrome-bg-solid );
+	--ak-bg-surface-2: var( --ak-chrome-field );
+	--ak-bg-surface-3: rgba( 255, 255, 255, 0.12 );
+	--ak-bg-hover: var( --ak-chrome-hover );
+	--ak-bg-active: rgba( 255, 255, 255, 0.14 );
+	--ak-border: var( --ak-chrome-line );
+	--ak-border-subtle: var( --ak-chrome-line );
+	--ak-border-strong: var( --ak-chrome-line-strong );
+	--ak-bg-inverse: #fff;
+	--ak-fg-inverse: #000;
+	--ak-accent: var( --ak-theme-accent );
+	--ak-accent-fg: var( --ak-theme-accent-fg );
+	--ak-accent-hover: var( --ak-theme-accent );
+	--ak-focus: var( --ak-theme-accent );
+	--ak-accent-subtle: color-mix( in srgb, var( --ak-theme-accent ) 14%, transparent );
+	// White line-art marks are already the right way round on a black bar
+	--ak-glyph-filter: none;
+	--ak-shadow-lg: 0 16px 40px rgba( 0, 0, 0, 0.55 ), 0 2px 6px rgba( 0, 0, 0, 0.4 );
+	// Native controls in here (the no-JS search field) follow suit
+	color-scheme: dark;
 	position: sticky;
 	top: 0;
 	z-index: var( --ak-z-header );
-	background: var( --ak-bg-header );
+	color: var( --ak-fg );
+	/**
+	 * --ak-chrome-image is the event theme's top-bar artwork (where PRTSheadleft /
+	 * Garanheadright sit on the live site), over a translucent plate — the key art and the
+	 * canvas image show through it as they scroll underneath.
+	 *
+	 * Longhands rather than the `background` shorthand: less.php reads the shorthand's
+	 * `position / size` slash as a division and refuses to compile.
+	 */
+	background-color: var( --ak-chrome-bg );
+	background-image: var( --ak-chrome-image );
+	background-position: var( --ak-chrome-image-position );
+	background-size: var( --ak-chrome-image-size );
+	background-repeat: var( --ak-chrome-image-repeat );
 	-webkit-backdrop-filter: saturate( 1.4 ) blur( 10px );
 	backdrop-filter: saturate( 1.4 ) blur( 10px );
-	border-bottom: 1px solid var( --ak-border );
-	color: var( --ak-fg );
+	border-bottom: 1px solid var( --ak-chrome-line );
 	transition: transform var( --ak-dur-normal ) var( --ak-ease ), box-shadow var( --ak-dur-fast );
 
 	&.is-scrolled {
 		box-shadow: var( --ak-shadow-sm );
+	}
+
+	/**
+	 * Halftone field over the right-hand side — the game's top bar (img_back /
+	 * bkg_openserver) and the dot field down the left edge of the official site. Masked
+	 * away towards the middle so it never reaches the brand; --ak-chrome-texture turns it
+	 * down, or off (0) when an event theme brings its own top-bar artwork.
+	 */
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		opacity: var( --ak-chrome-texture );
+		background-image: radial-gradient( rgba( 255, 255, 255, 0.34 ) 1px, transparent 1.4px );
+		background-size: 6px 6px;
+		background-position: 0 1px;
+		-webkit-mask-image: linear-gradient( 90deg, transparent 52%, #000 100% );
+		mask-image: linear-gradient( 90deg, transparent 52%, #000 100% );
+	}
+
+	// Links in the bar do not take a visited colour: base.css's purple goes murky on black,
+	// and the user name / #p-personal / Echo entries are controls rather than prose links
+	a:visited {
+		color: inherit;
 	}
 }
 
@@ -266,6 +344,9 @@
 	width: auto;
 	max-width: 48px;
 	object-fit: contain;
+	// An event theme can swap the site mark from CSS alone (Chromium / WebKit honour
+	// `content` on <img>; Firefox ignores it, so there $wgLogos is still the way)
+	content: var( --ak-logo-image, normal );
 }
 
 .ak-header__wordmark {
@@ -294,7 +375,9 @@
 	font: 600 9px/1 var( --ak-font-label );
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
-	color: var( --ak-fg-muted );
+	// The one spot of event colour under the wordmark, like the current item on the
+	// official site's nav bar
+	color: var( --ak-theme-accent );
 	margin-top: 4px;
 	white-space: nowrap;
 }
@@ -314,18 +397,19 @@
 	position: relative;
 	margin: 0;
 
+	// padding-left clears the 32px icon well plus the 10px gap the trigger puts after it
 	#searchInput,
 	input[ type='search' ] {
 		box-sizing: border-box;
 		width: 100%;
 		min-height: 34px;
 		margin: 0;
-		padding: 0 34px 0 34px;
+		padding: 0 34px 0 42px;
 		font: inherit;
 		font-size: var( --ak-fs-sm );
 		color: var( --ak-fg );
 		background: var( --ak-bg-surface-2 );
-		border: 1px solid transparent;
+		border: 1px solid var( --ak-chrome-line );
 		border-radius: var( --ak-radius-sm );
 		transition: border-color var( --ak-dur-fast ), background var( --ak-dur-fast ), box-shadow var( --ak-dur-fast );
 		appearance: none;
@@ -351,46 +435,53 @@
 			border-color: var( --ak-border-strong );
 		}
 
-		// After :hover, so a hovered *and* focused field still reads as focused
+		// After :hover, so a hovered *and* focused field still reads as focused.
+		// The plate behind the field darkens rather than lights up — on a black bar a lit
+		// field would be the brightest thing in the header.
 		&:focus {
 			outline: 0;
-			background: var( --ak-bg-surface );
+			background: rgba( 0, 0, 0, 0.35 );
 			border-color: var( --ak-accent );
-			box-shadow: var( --ak-shadow-accent );
+			box-shadow: none;
 		}
 	}
 
-	&:hover .ak-search__icon-wrap {
-		color: var( --ak-fg-secondary );
-	}
-
-	// left: 11px rather than the 10px the trigger uses, because these offsets resolve
-	// against the *form*, which has no border of its own, while the field inside it does —
-	// so 10px here would land the icon 1px left of where the button puts it.
+	/**
+	 * The icon well — a darker square at the left end carrying the magnifier in the event
+	 * colour, after the icon slot on the game's HUD panels (announce_title_on). Inset by a
+	 * pixel on each side because these offsets resolve against the *form*, which has no
+	 * border of its own, while the field inside it does.
+	 *
+	 * 设计系统里的 .ak-search__icon 假设图标是 .ak-search 的直接子元素，自己 absolute 定位。
+	 * 这里为了给图标挂 <label for=searchInput>，外面又套了一层 .ak-search__icon-wrap，
+	 * 两次偏移会叠加——所以定位交给外层，图标回到常规流由 grid 居中。
+	 */
 	.ak-search__icon-wrap {
 		position: absolute;
-		left: 11px;
-		top: 50%;
-		transform: translateY( -50% );
+		left: 1px;
+		top: 1px;
+		bottom: 1px;
+		width: 32px;
 		display: grid;
 		place-items: center;
-		color: var( --ak-fg-muted );
+		background: rgba( 0, 0, 0, 0.35 );
+		color: var( --ak-theme-accent );
 		pointer-events: none;
 	}
 
-	// 设计系统里的 .ak-search__icon 假设图标是 .ak-search 的直接子元素，自己 absolute 到
-	// left: 10px。这里为了给图标挂 <label for=searchInput>，外面又套了一层同样 absolute 到
-	// left: 10px 的 .ak-search__icon-wrap，两次偏移叠加把图标推到 20px，正好顶在 input 的
-	// 34px 左内边距上——首屏看起来就是放大镜和占位文字黏在一起；等 search-palette.js 换成
-	// .ak-search-trigger（flex + gap: 8px）后才恢复正常间距。定位交给外层，图标回到常规流。
+	// The colour has to be restated: components.css pins .ak-search__icon to --ak-fg-muted
+	// on the element itself, so it would not inherit the well's accent — and this form and
+	// the trigger that replaces it have to draw the same magnifier in the same colour
 	.ak-search__icon {
 		position: static;
 		transform: none;
 		width: 16px;
 		height: 16px;
+		color: var( --ak-theme-accent );
 	}
 
-	// right: 9px for the same reason as the icon's 11px — one border's worth of correction
+	// right: 9px — the trigger's 8px padding plus one border's worth of correction, since
+	// this offset resolves against the borderless form
 	.ak-search__kbd {
 		position: absolute;
 		right: 9px;
@@ -427,12 +518,13 @@
 .ak-search-trigger {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	box-sizing: border-box;
 	width: 100%;
 	height: 34px;
-	padding: 0 8px 0 10px;
-	border: 1px solid transparent;
+	// No left padding: the icon well runs flush to the border
+	padding: 0 8px 0 0;
+	border: 1px solid var( --ak-chrome-line );
 	border-radius: var( --ak-radius-sm );
 	background: var( --ak-bg-surface-2 );
 	color: var( --ak-fg-muted );
@@ -454,14 +546,41 @@
 	}
 
 	&[ aria-expanded='true' ] {
-		border-color: var( --ak-accent );
-		background: var( --ak-bg-surface );
+		border-color: var( --ak-theme-accent );
+		background: rgba( 0, 0, 0, 0.35 );
+		color: var( --ak-fg );
 	}
 
+	/**
+	 * The icon well, matching .ak-search__icon-wrap on the no-JS form pixel for pixel.
+	 * searchPalette.js hangs the skin's masked glyph *inside* this box rather than on it:
+	 * .ak-icon paints itself with background-color, so it cannot also carry the well's
+	 * own background. Before that swap this element is the design system's inline SVG,
+	 * which draws itself from `color` and is sized by the padding instead.
+	 */
 	&__icon {
 		flex: none;
-		width: 16px;
-		height: 16px;
+		align-self: stretch;
+		box-sizing: border-box;
+		width: 32px;
+		height: auto;
+		padding: 8px;
+		display: grid;
+		place-items: center;
+		background: rgba( 0, 0, 0, 0.35 );
+		color: var( --ak-theme-accent );
+		transition: background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+		> .ak-icon {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	// Open: the well flips to a solid block of the event colour (the game's selected state)
+	&[ aria-expanded='true' ] &__icon {
+		background: var( --ak-theme-accent );
+		color: var( --ak-theme-accent-fg );
 	}
 
 	&__label {
@@ -471,6 +590,15 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+}
+
+// The `/` hint reads as a key pressed into the bar rather than a light chip on it
+.ak-header .ak-search__kbd,
+.ak-header .ak-kbd {
+	background: rgba( 0, 0, 0, 0.4 );
+	border-color: var( --ak-chrome-line-strong );
+	box-shadow: inset 0 -1px 0 var( --ak-chrome-line-strong );
+	color: var( --ak-fg-muted );
 }
 
 /* Tools */
@@ -487,6 +615,11 @@
 	display: none;
 }
 
+// Hovering a control in the bar brings up the event colour, like the official site's nav
+.ak-header .ak-icon-btn:hover {
+	color: var( --ak-theme-accent );
+}
+
 /* Echo notification badges */
 .ak-header__notifications {
 	display: flex;
@@ -498,6 +631,10 @@
 		display: flex;
 		align-items: center;
 		gap: 2px;
+	}
+
+	a:hover {
+		color: var( --ak-theme-accent );
 	}
 }
 
@@ -517,7 +654,7 @@
 
 	&:hover {
 		background: var( --ak-bg-hover );
-		color: var( --ak-fg );
+		color: var( --ak-theme-accent );
 	}
 
 	&:focus-visible {

@@ -1,9 +1,15 @@
 /**
- * Site footer — inverse block, striped top edge, wordmark watermark
+ * Site footer — striped top edge, wordmark watermark.
+ *
+ * Like the header, the footer is part of the frame rather than the page, so it is black in
+ * both themes and reads `--ak-chrome-*` (tokens.css §2d). It used to take `--ak-bg-inverse`,
+ * which is the token for reversed-out components and turns white in the dark palette — that
+ * needed a per-theme patch for every way a page can end up dark, and the `-os` branch of it
+ * kept coming apart.
  */
 .ak-footer {
-	background: var( --ak-bg-inverse );
-	color: var( --ak-fg-inverse );
+	background: var( --ak-chrome-bg-solid );
+	color: var( --ak-chrome-fg );
 	margin-top: auto;
 	position: relative;
 	overflow: hidden;
@@ -16,7 +22,7 @@
 		right: 0;
 		top: 0;
 		height: 4px;
-		background: repeating-linear-gradient( -45deg, var( --ak-accent ) 0 12px, transparent 12px 24px );
+		background: repeating-linear-gradient( -45deg, var( --ak-theme-accent ) 0 12px, transparent 12px 24px );
 		opacity: 0.9;
 	}
 
@@ -27,31 +33,13 @@
 
 		&:hover {
 			opacity: 1;
-			color: var( --ak-accent );
+			color: var( --ak-theme-accent );
 			text-decoration: none;
 		}
 	}
 
 	ul {
 		.ak-reset-list();
-	}
-}
-
-/**
- * The footer is an inverse block in every theme, but `--ak-bg-inverse` flips to white in the
- * dark tokens — so the dark themes restate it as a near-black plate one step below the canvas.
- * `-os` needs the same treatment as `-night`, otherwise the footer turns white on a dark page.
- */
-html.skin-theme-clientpref-night .ak-footer,
-:root[ data-theme='dark' ] .ak-footer {
-	background: #0a0a0b;
-	color: #f0f0f0;
-}
-
-@media ( prefers-color-scheme: dark ) {
-	html.skin-theme-clientpref-os .ak-footer {
-		background: #0a0a0b;
-		color: #f0f0f0;
 	}
 }
 

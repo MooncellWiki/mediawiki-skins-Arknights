@@ -60,21 +60,15 @@
 	}
 }
 
-// Dark theme: the badge glyphs are black background images — invert them, keep the counter readable
-html.skin-theme-clientpref-night .ak-header__notifications-list .mw-echo-notifications-badge {
+/**
+ * The badge glyphs are black background images and the header is a black bar in *both*
+ * themes now (see header.less), so the inversion is unconditional rather than a dark-theme
+ * branch. The counter re-inverts so it keeps its own red / accent fill.
+ */
+.ak-header__notifications-list .mw-echo-notifications-badge {
 	filter: invert( 1 ) hue-rotate( 180deg );
 
 	&::after {
 		filter: invert( 1 ) hue-rotate( 180deg );
-	}
-}
-
-@media ( prefers-color-scheme: dark ) {
-	html.skin-theme-clientpref-os .ak-header__notifications-list .mw-echo-notifications-badge {
-		filter: invert( 1 ) hue-rotate( 180deg );
-
-		&::after {
-			filter: invert( 1 ) hue-rotate( 180deg );
-		}
 	}
 }

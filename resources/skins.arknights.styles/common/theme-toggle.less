@@ -31,10 +31,13 @@
 			outline-offset: -2px;
 		}
 
+		// A solid block of accent for the selected segment (the game's selected_back /
+		// toggle_on). Inside the header --ak-accent is already the event colour, so this
+		// is the same cyan in both themes rather than a black/white flip.
 		&.is-active,
 		&[ aria-pressed='true' ] {
-			background: var( --ak-bg-inverse );
-			color: var( --ak-fg-inverse );
+			background: var( --ak-accent );
+			color: var( --ak-accent-fg );
 		}
 
 		.ak-icon {

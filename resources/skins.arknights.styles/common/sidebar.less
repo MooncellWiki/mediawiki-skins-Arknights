@@ -32,7 +32,9 @@
 		color: var( --ak-fg-muted );
 		margin: 0 0 6px;
 		padding: 0 0 6px 10px;
-		border-left: 2px solid var( --ak-accent );
+		// Group bars take the event colour, so an event theme carries into the sidebar;
+		// the current item and the links stay on --ak-accent
+		border-left: 2px solid var( --ak-theme-accent );
 		display: flex;
 		align-items: center;
 		gap: 6px;
@@ -50,7 +52,7 @@
 	color: var( --ak-fg-muted );
 	margin: 0 0 6px;
 	padding: 0 0 6px 10px;
-	border-left: 2px solid var( --ak-accent );
+	border-left: 2px solid var( --ak-theme-accent );
 	display: flex;
 	align-items: center;
 	gap: 6px;
