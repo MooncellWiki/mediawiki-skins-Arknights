@@ -1,5 +1,9 @@
 /**
- * Search — "/" focuses the search box; the mobile toggle reveals the form.
+ * Search (fallback) — "/" focuses the search box; the mobile toggle reveals the form.
+ *
+ * This is the pre-palette behaviour, kept for `$wgArknightsSearchPalette = false`. When the
+ * palette is on, searchPalette.js takes over the toggle, the shortcut keys and the form
+ * itself, and this module is never initialised.
  */
 function init() {
 	const form = document.getElementById( 'searchform' );

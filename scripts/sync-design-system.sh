@@ -19,7 +19,7 @@ if [ ! -f "$SRC/src/tokens.css" ]; then
 fi
 
 mkdir -p "$DEST"
-FILES=(tokens.css base.css components.css arknights.css utilities.css sidebar-tree.js)
+FILES=(tokens.css base.css components.css arknights.css utilities.css sidebar-tree.js search-palette.js)
 for f in "${FILES[@]}"; do
 	cp "$SRC/src/$f" "$DEST/$f"
 	echo "synced $f"

@@ -1,0 +1,746 @@
+/**
+ * Search palette — the floating command palette
+ *
+ * Ported from the design system's `src/skin.css` "Search palette" section. The DOM is
+ * built entirely by `design-system/search-palette.js`, so the class names below are the
+ * contract between the two — do not rename them here alone.
+ *
+ *   .ak-palette-backdrop
+ *   .ak-palette[role=dialog]
+ *     __head   [ __back ] __icon [ __chip ] form.__form > input#searchInput [ __clear ] __close  __loading
+ *     __body > __viewport > __list[role=listbox] > __group[role=group] > __label
+ *                                                + __item[role=option] > __link( __thumb __text( __title __desc ) __meta )
+ *                                                                      + __actions
+ *                         | __empty( __empty-title __empty-desc __shortcuts )
+ *     __foot   __foot-left  __hints > span > kbd.ak-kbd
+ *
+ * The header's `form.ak-header__search` is replaced by `button.ak-search-trigger` (styled in
+ * header.less) and the form itself is moved into `__head`, so `#searchform` / `#searchInput`
+ * survive and gadgets keep working. Without JS none of this exists and the plain form submits
+ * to Special:Search.
+ */
+
+.ak-palette-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: var( --ak-z-modal );
+	background: var( --ak-bg-overlay );
+	backdrop-filter: blur( 2px );
+	-webkit-backdrop-filter: blur( 2px );
+	animation: ak-fade-in var( --ak-dur-normal ) var( --ak-ease-out );
+
+	&[ hidden ] {
+		display: none !important;
+	}
+
+	&.is-closing {
+		animation: ak-fade-out var( --ak-dur-fast ) var( --ak-ease-in ) forwards;
+	}
+}
+
+.ak-palette {
+	--_top: ~'clamp( 48px, 10vh, 120px )';
+	--_head-h: 56px;
+	--_foot-h: 40px;
+	position: fixed;
+	z-index: calc( var( --ak-z-modal ) + 1 );
+	top: var( --_top );
+	left: 0;
+	right: 0;
+	margin-inline: auto;
+	width: ~'min( 720px, calc( 100vw - var( --ak-gutter ) * 2 ) )';
+	max-height: ~'calc( 100vh - var( --_top ) * 2 )';
+	display: flex;
+	flex-direction: column;
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+	border: 1px solid var( --ak-border );
+	// The accent hairline on top is the same device the page header and panels use
+	border-top: 3px solid var( --ak-accent );
+	box-shadow: var( --ak-shadow-lg );
+	font-size: var( --ak-fs-sm );
+	line-height: 1.4;
+	animation: ak-palette-in var( --ak-dur-normal ) var( --ak-ease-out );
+
+	&[ hidden ] {
+		display: none !important;
+	}
+
+	&.is-closing {
+		animation: ak-palette-out var( --ak-dur-fast ) var( --ak-ease-in ) forwards;
+		pointer-events: none;
+	}
+}
+
+@keyframes ak-palette-in {
+	from {
+		opacity: 0;
+		transform: translateY( -8px );
+		clip-path: inset( 0 0 100% 0 );
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+		clip-path: inset( 0 0 0 0 );
+	}
+}
+
+@keyframes ak-palette-out {
+	to {
+		opacity: 0;
+		transform: translateY( -6px );
+	}
+}
+
+@keyframes ak-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
+/* Head: icon · [mode chip] · input · [clear] · close · progress bar */
+.ak-palette__head {
+	position: relative;
+	flex: none;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	height: var( --_head-h );
+	padding-right: 10px;
+	border-bottom: 1px solid var( --ak-border );
+}
+
+.ak-palette__icon {
+	flex: none;
+	width: 20px;
+	height: 20px;
+	margin: 0 14px 0 18px;
+	color: var( --ak-fg-muted );
+
+	.ak-palette.has-mode & {
+		margin-left: 4px;
+	}
+}
+
+.ak-palette__back {
+	display: none;
+	flex: none;
+	width: 32px;
+	height: 32px;
+	margin-left: 10px;
+	border: 0;
+	background: transparent;
+	color: var( --ak-fg-secondary );
+	cursor: pointer;
+	place-items: center;
+
+	.ak-palette.has-mode & {
+		display: grid;
+	}
+
+	&:hover {
+		background: var( --ak-bg-hover );
+		color: var( --ak-fg );
+	}
+
+	svg {
+		width: 18px;
+		height: 18px;
+	}
+}
+
+// Mode label: the skewed tag lifted from the game's announce_title_on sprite
+.ak-palette__chip {
+	display: none;
+	flex: none;
+	align-items: center;
+	height: 24px;
+	margin-right: 6px;
+	padding: 0 14px 0 12px;
+	background: var( --ak-accent );
+	color: var( --ak-accent-fg );
+	font: 700 var( --ak-fs-xs )/1 var( --ak-font-label );
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	clip-path: polygon( 0 0, 100% 0, ~'calc( 100% - 7px )' 100%, 0 100% );
+
+	.ak-palette.has-mode & {
+		display: inline-flex;
+	}
+}
+
+.ak-palette__form {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	margin: 0;
+
+	input[ type='search' ],
+	input[ type='text' ] {
+		flex: 1;
+		min-width: 0;
+		height: var( --_head-h );
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		font-size: var( --ak-fs-body );
+		line-height: var( --_head-h );
+		outline: 0;
+		box-shadow: none;
+		appearance: none;
+		-webkit-appearance: none;
+
+		&::placeholder {
+			color: var( --ak-fg-subtle );
+		}
+
+		&::-webkit-search-cancel-button,
+		&::-webkit-search-decoration {
+			-webkit-appearance: none;
+			display: none;
+		}
+	}
+
+	// The form brings its own icon / kbd hint / no-JS submit buttons along; the palette
+	// head supplies its own, so hide the passengers rather than restyling them.
+	button,
+	.searchButton,
+	.mw-fallbackSearchButton,
+	.ak-search__icon-wrap,
+	.ak-search__kbd {
+		display: none;
+	}
+}
+
+// iOS Safari zooms the page when a focused input is under 16px
+@supports ( -webkit-touch-callout: none ) {
+	.ak-palette__form input[ type='search' ] {
+		font-size: 16px;
+	}
+}
+
+.ak-palette__clear,
+.ak-palette__close {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 28px;
+	min-width: 28px;
+	padding: 0 4px;
+	border: 1px solid transparent;
+	background: transparent;
+	color: var( --ak-fg-muted );
+	font: inherit;
+	font-size: var( --ak-fs-xs );
+	cursor: pointer;
+
+	&:hover {
+		color: var( --ak-fg );
+		border-color: var( --ak-border-strong );
+	}
+}
+
+.ak-palette__clear:focus-visible,
+.ak-palette__close:focus-visible,
+.ak-palette__back:focus-visible {
+	outline: 2px solid var( --ak-focus );
+	outline-offset: -2px;
+}
+
+.ak-palette__clear {
+	display: none;
+
+	.ak-palette.has-query & {
+		display: inline-flex;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+}
+
+// Desktop shows the bare Esc key cap; phones swap in the word (see the mobile block)
+.ak-palette__close > span {
+	display: none;
+}
+
+.ak-palette__loading {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -1px;
+	height: 2px;
+	background: transparent;
+	visibility: hidden;
+
+	.ak-palette.is-loading & {
+		visibility: visible;
+	}
+}
+
+/* Body: height-transition container — JS mirrors __viewport's height onto __body */
+.ak-palette__body {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+	transition: height var( --ak-dur-normal ) var( --ak-ease-out );
+}
+
+.ak-palette__list {
+	max-height: ~'calc( 100vh - var( --_top ) * 2 - var( --_head-h ) - var( --_foot-h ) - 4px )';
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	scrollbar-width: thin;
+	margin: 0;
+	padding: 6px 0;
+	list-style: none;
+
+	&:empty {
+		padding: 0;
+	}
+}
+
+/* A rule between groups, and above the pinned "full-text search" row that ends the list */
+.ak-palette__group + .ak-palette__group,
+.ak-palette__group--tail {
+	margin-top: 4px;
+	padding-top: 4px;
+	border-top: 1px solid var( --ak-border-subtle );
+}
+
+.ak-palette__label {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 8px 16px 4px;
+	font: 700 var( --ak-fs-overline )/1 var( --ak-font-label );
+	letter-spacing: var( --ak-tracking-overline );
+	text-transform: uppercase;
+	color: var( --ak-fg-muted );
+
+	.ak-en {
+		color: var( --ak-fg-subtle );
+		font-size: 10px;
+		letter-spacing: var( --ak-tracking-caps );
+	}
+
+	small {
+		margin-left: auto;
+		font: 500 10px/1 var( --ak-font-mono );
+		letter-spacing: 0;
+		text-transform: none;
+		color: var( --ak-fg-subtle );
+	}
+}
+
+.ak-palette__item {
+	position: relative;
+	display: flex;
+	align-items: stretch;
+	margin: 0;
+
+	// base.css draws a marker on list items inside content; the listbox is not content
+	&::before {
+		display: none !important;
+	}
+}
+
+.ak-palette__link {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 7px 16px 7px 14px;
+	border: 0;
+	border-left: 2px solid transparent;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	text-decoration: none;
+	cursor: pointer;
+
+	&:hover,
+	&:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	// Same highlight language as the current sidebar item and the menu rows
+	.ak-palette__item.is-active > & {
+		background: var( --ak-accent-subtle );
+		border-left-color: var( --ak-accent );
+	}
+}
+
+.ak-palette__item.is-active .ak-palette__title {
+	color: var( --ak-fg );
+}
+
+.ak-palette__thumb {
+	flex: none;
+	width: 40px;
+	height: 40px;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	background: var( --ak-bg-surface-3 );
+	border: 1px solid var( --ak-border );
+	color: var( --ak-fg-muted );
+
+	> img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	> svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	&--icon {
+		background: var( --ak-bg-surface-2 );
+	}
+
+	// Commands / full-text search: white line art on the ink swatch (.ak-glyph-box)
+	&--dark {
+		background: #1d1f20;
+		border-color: #1d1f20;
+		color: #fff;
+	}
+
+	&--mono {
+		font: 700 15px/1 var( --ak-font-mono );
+	}
+
+	&--sm {
+		width: 32px;
+		height: 32px;
+	}
+}
+
+.ak-palette__text {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.ak-palette__title {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	min-width: 0;
+	font-size: var( --ak-fs-body );
+	font-weight: 600;
+	color: var( --ak-fg );
+
+	> bdi {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	// Codex SearchResultTitle convention: what you typed stays regular, the completion is bold
+	mark {
+		background: none;
+		color: inherit;
+		font-weight: 400;
+	}
+
+	.ak-en {
+		flex: none;
+		font-size: 10px;
+		font-weight: 700;
+		color: var( --ak-fg-subtle );
+	}
+}
+
+.ak-palette__desc {
+	font-size: var( --ak-fs-xs );
+	color: var( --ak-fg-muted );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	// The redirect marker in front of an alias match. search-palette.js tags it
+	// `<svg class="ak-icon">` meaning nothing more than "icon-sized", but this skin's own
+	// .ak-icon is the OOUI mask sprite (icons.less) — a currentColor box shaped by
+	// mask-image. With no `--name` modifier there is no mask, so the sprite rules paint it
+	// as a solid square. Undo them for real SVGs; the skin's own <span> sprites are
+	// matched by neither selector and stay as they are.
+	svg.ak-icon {
+		width: 12px;
+		height: 12px;
+		vertical-align: -2px;
+		margin-right: 3px;
+		background-color: transparent;
+		-webkit-mask: none;
+		mask: none;
+	}
+}
+
+.ak-palette__meta {
+	flex: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: 4px;
+	color: var( --ak-fg-muted );
+	font-size: var( --ak-fs-xs );
+	white-space: nowrap;
+
+	.ak-prof {
+		--_s: 22px;
+	}
+
+	.ak-rarity {
+		font-size: 11px;
+	}
+
+	.ak-kbd {
+		color: var( --ak-fg-muted );
+	}
+}
+
+// Row actions always reserve their column so rows in a group stay the same width;
+// they only become visible on the active row. By design the only one we ship is
+// "remove" on a recent item — search results get a single click target, the link.
+.ak-palette__actions {
+	flex: none;
+	display: none;
+	align-items: center;
+	gap: 2px;
+	padding-right: 8px;
+
+	.ak-palette__item.is-active > &,
+	.ak-palette__item:focus-within > & {
+		display: flex;
+	}
+}
+
+.ak-palette__action {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border: 1px solid transparent;
+	background: transparent;
+	color: var( --ak-fg-muted );
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var( --ak-border-strong );
+		color: var( --ak-fg );
+		outline: 0;
+	}
+
+	svg {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+/* Empty state: hint + shortcuts */
+.ak-palette__empty {
+	padding: 20px 0 14px;
+
+	// Sitting under the recent list, only the shortcuts remain
+	&--compact {
+		padding: 4px 0 12px;
+		border-top: 1px solid var( --ak-border-subtle );
+	}
+}
+
+.ak-palette__empty-title {
+	margin: 0 20px 6px;
+	font-size: var( --ak-fs-body );
+	font-weight: 700;
+}
+
+.ak-palette__empty-desc {
+	margin: 0 20px 10px;
+	color: var( --ak-fg-muted );
+
+	.ak-kbd {
+		margin: 0 2px;
+	}
+}
+
+.ak-palette__shortcuts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 2px 16px 0;
+}
+
+.ak-palette__shortcut {
+	display: inline-flex;
+	align-items: center;
+	height: 28px;
+	padding: 0 12px;
+	border: 1px solid var( --ak-border-strong );
+	color: var( --ak-fg-secondary );
+	font-size: var( --ak-fs-xs );
+	font-weight: 500;
+	text-decoration: none;
+
+	&:hover {
+		border-color: var( --ak-accent );
+		color: var( --ak-accent );
+		text-decoration: none;
+	}
+}
+
+.ak-palette__notice {
+	padding: 14px 16px;
+	color: var( --ak-fg-muted );
+
+	&--error {
+		color: var( --ak-danger );
+	}
+}
+
+/* Foot: caption on the left, key hints on the right */
+.ak-palette__foot {
+	flex: none;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	height: var( --_foot-h );
+	padding: 0 12px 0 16px;
+	border-top: 1px solid var( --ak-border );
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg-muted );
+	font-size: var( --ak-fs-xs );
+}
+
+.ak-palette__foot-left {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	overflow: hidden;
+	white-space: nowrap;
+
+	.ak-en {
+		color: var( --ak-fg-subtle );
+		font-size: 10px;
+	}
+}
+
+.ak-palette__foot-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	height: 24px;
+	padding: 0 6px;
+	border: 0;
+	background: transparent;
+	color: var( --ak-fg-muted );
+	font: inherit;
+	font-size: var( --ak-fs-xs );
+	cursor: pointer;
+
+	&:hover {
+		color: var( --ak-fg );
+	}
+}
+
+.ak-palette__hints {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-left: auto;
+	white-space: nowrap;
+
+	> span {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.ak-kbd {
+		color: var( --ak-fg-muted );
+	}
+}
+
+.ak-palette__live {
+	.ak-sr-only();
+}
+
+// Touch devices have no keys to hint at
+@media ( hover: none ) and ( pointer: coarse ) {
+	.ak-palette__hints {
+		display: none;
+	}
+}
+
+@media ( max-width: @ak-bp-mobile-max ) {
+	.ak-palette {
+		--_top: 8px;
+		left: 8px;
+		right: 8px;
+		width: auto;
+		max-height: ~'calc( 100dvh - 16px )';
+	}
+
+	.ak-palette__list {
+		max-height: ~'calc( 100dvh - 16px - var( --_head-h ) - var( --_foot-h ) - 4px )';
+	}
+
+	.ak-palette__icon {
+		margin: 0 10px 0 14px;
+	}
+
+	.ak-palette__close {
+		.ak-kbd {
+			display: none;
+		}
+
+		> span {
+			display: inline;
+		}
+	}
+
+	// Narrow rows drop the type tag and the latin sub-label
+	.ak-palette__meta .ak-tag,
+	.ak-palette__title .ak-en,
+	.ak-palette__foot-left .ak-en {
+		display: none;
+	}
+
+	// The palette covers the viewport here, so stop the page scrolling behind it.
+	// Phones only: overlay scrollbars mean the lock costs no layout shift.
+	:root.ak-palette-open body {
+		overflow: hidden;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.ak-palette,
+	.ak-palette-backdrop,
+	.ak-palette.is-closing,
+	.ak-palette-backdrop.is-closing {
+		animation: none;
+	}
+
+	.ak-palette__body {
+		transition: none;
+	}
+}

@@ -11,7 +11,10 @@ function main() {
 	require( './dropdown.js' ).init();
 	require( './drawer.js' ).init();
 	require( './header.js' ).init();
-	require( './search.js' ).init();
+	// Floating search palette (lazily loaded on intent), with the plain header form as the opt-out
+	if ( !require( './searchLoader.js' ).init( config ) ) {
+		require( './search.js' ).init();
+	}
 	require( './toc.js' ).init();
 	require( './backToTop.js' ).init();
 	require( './catlinks.js' ).init();
