@@ -98,10 +98,8 @@ body.skin-arknights {
 	padding: var( --ak-space-3 ) var( --ak-space-4 );
 }
 
-.mw-hidden-cats-hidden,
-.catlinks-allhidden {
-	display: none;
-}
+// Hidden category rows are handled by design-system/base.css, which needs the higher
+// specificity to beat its own `.catlinks > div { display: flex }`.
 
 .printfooter,
 .client-nojs #t-print {
