@@ -14,6 +14,7 @@ function main() {
 	require( './search.js' ).init();
 	require( './toc.js' ).init();
 	require( './backToTop.js' ).init();
+	require( './catlinks.js' ).init();
 	require( './interactive.js' ).init();
 	// Multi-level sidebar navigation (shared with the design-system preview)
 	require( './sidebarTree.js' ).init( config );
