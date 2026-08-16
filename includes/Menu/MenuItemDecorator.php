@@ -18,7 +18,7 @@ final class MenuItemDecorator {
 	 * Items whose icon is not in this list are left untouched so no empty box renders.
 	 */
 	public const ICONS = [
-		'appearance', 'arrowUp', 'articleRedirect', 'bell', 'bellOutline', 'block', 'bright', 'close',
+		'appearance', 'articleRedirect', 'bell', 'bellOutline', 'block', 'bright', 'close',
 		'collapse', 'die', 'edit', 'ellipsis', 'expand', 'eye', 'halfBright', 'help', 'history', 'home',
 		'info', 'infoFilled', 'language', 'link', 'linkExternal', 'listBullet', 'lock', 'logIn', 'logOut',
 		'menu', 'moon', 'move', 'printer', 'recentChanges', 'reload', 'search', 'settings', 'share',

@@ -10,80 +10,172 @@
 	}
 }
 
-/* < 1400: table of contents column collapses into a floating drawer */
+/* < 1400: the TOC rail collapses — the header grows its local nav, which carries the TOC */
 @media ( max-width: @ak-bp-toc-max ) {
-	.ak-layout {
-		grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr );
+	.ak-local-nav {
+		display: flex;
 	}
 
-	.ak-main {
+	// Back to top moves into the TOC flyout rather than floating over the content
+	.ak-fab {
+		display: none;
+	}
+
+	// Matches the specificity of `.ak-layout--no-toc .ak-main`, so both kinds of page
+	// drop the rail here rather than only the ones that have a table of contents
+	.ak-layout .ak-main {
 		max-width: none;
+		padding-right: 0;
 	}
 
-	.ak-toc {
-		position: fixed;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		width: ~"min( 86vw, 320px )";
-		max-height: none;
-		z-index: var( --ak-z-modal );
-		background: var( --ak-bg-surface );
-		border-left: 1px solid var( --ak-border );
-		box-shadow: var( --ak-shadow-lg );
-		padding: var( --ak-space-4 );
-		transform: translateX( 100% );
-		transition: transform var( --ak-dur-normal ) var( --ak-ease );
-		visibility: hidden;
-		font-size: var( --ak-fs-sm );
+	// Scrolling down collapses the header's main row (html.ak-condensed, set by header.js;
+	// without JS the header simply stays two rows tall, which works just as well)
+	:root.ak-condensed .ak-header {
+		transform: translateY( calc( -1 * var( --ak-header-h ) ) );
+	}
 
-		&.is-open {
-			transform: none;
-			visibility: visible;
+	// The revealed search overlays the local nav instead of being pushed aside by it
+	.ak-header__search.is-open {
+		top: var( --ak-header-h );
+		z-index: 1;
+	}
+
+	// Anchor targets clear the header even while it is expanded
+	:where( .mw-body-content ) :is( h1, h2, h3, h4, h5, h6 ) {
+		scroll-margin-top: calc( var( --ak-header-h ) + var( --ak-local-nav-h ) + 8px );
+	}
+
+	/* TOC flyout: top edge follows the pinned bar, right-aligned with the local nav */
+	.ak-toc {
+		--_top: calc( var( --ak-header-h ) + var( --ak-local-nav-h ) );
+		position: fixed;
+		top: var( --_top );
+		right: var( --ak-gutter );
+		left: auto;
+		bottom: auto;
+		z-index: var( --ak-z-dropdown );
+		display: none;
+		flex-direction: column;
+		width: ~'min( 360px, calc( 100vw - var( --ak-gutter ) * 2 ) )';
+		max-height: calc( 100vh - var( --_top ) - var( --ak-space-4 ) );
+		background: var( --ak-bg-surface );
+		border: 1px solid var( --ak-border );
+		border-top: 3px solid var( --ak-accent );
+		box-shadow: var( --ak-shadow-lg );
+		font-size: var( --ak-fs-sm );
+	}
+
+	:root.ak-condensed .ak-toc {
+		--_top: var( --ak-local-nav-h );
+	}
+
+	// The switch and the flyout are not siblings, so :has() bridges them
+	body:has( .ak-toc-cb:checked ) .ak-toc {
+		display: flex;
+	}
+
+	.ak-toc__top {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: none;
+		padding: var( --ak-space-3 ) var( --ak-space-4 );
+		color: var( --ak-accent );
+		font-weight: bold;
+		text-decoration: none;
+		border-bottom: 1px solid var( --ak-border );
+
+		&:hover {
+			background: var( --ak-bg-hover );
+			text-decoration: none;
+		}
+
+		.ak-icon {
+			width: 16px;
+			height: 16px;
 		}
 	}
 
-	.ak-toc__close {
-		display: inline-grid;
+	.ak-toc__inner {
+		position: static;
+		min-height: 0;
+		max-height: none;
+		overflow-y: auto;
+		padding: var( --ak-space-3 ) var( --ak-space-4 );
 	}
 
-	.ak-toc-fab {
-		display: grid;
+	// The title is already on the button; the reading progress belongs to the rail
+	.ak-toc__title,
+	.ak-toc__progress {
+		display: none;
 	}
 
-	// TOC drawer + back-to-top share the bottom edge: nudge back-to-top up when both exist
-	.ak-toc-enabled .ak-back-to-top {
-		bottom: calc( var( --ak-space-5 ) + 56px );
+	// The flyout is roomier than the rail: wrap long headings instead of truncating
+	.ak-toc__link {
+		white-space: normal;
+	}
+
+	// Without :has(), the TOC falls back to a static card in the flow
+	@supports not selector( :has( * ) ) {
+		.ak-local-nav__toc,
+		.ak-toc__top {
+			display: none;
+		}
+
+		.ak-fab {
+			display: grid;
+		}
+
+		.ak-toc {
+			position: static;
+			display: flex;
+			width: auto;
+			max-height: none;
+			box-shadow: none;
+			margin: 0 0 var( --ak-space-5 );
+		}
+	}
+}
+
+/* 1120–1400 without a TOC: neither entry is needed, so don't leave an empty bar */
+@media ( min-width: @ak-bp-desktop ) and ( max-width: @ak-bp-toc-max ) {
+	.ak-local-nav:not( :has( .ak-toc-cb ) ) {
+		display: none;
 	}
 }
 
 /* < 1120: sidebar becomes an off-canvas drawer, header nav moves into it */
 @media ( max-width: @ak-bp-desktop-max ) {
-	.ak-layout,
-	.ak-layout--no-toc {
+	.ak-layout {
 		grid-template-columns: minmax( 0, 1fr );
 		padding-top: var( --ak-space-4 );
 	}
 
+	/**
+	 * The closed drawer is visibility:hidden — it stays out of the accessibility tree and
+	 * the tab order, and its shadow (32px of blur, wider than what translateX(-100%) hides)
+	 * cannot bleed back in along the left edge. The shadow itself is only painted when open.
+	 */
 	.ak-sidebar {
 		position: fixed;
 		top: 0;
 		bottom: 0;
 		left: 0;
-		width: ~"min( 86vw, 300px )";
+		width: ~'min( 86vw, 300px )';
 		max-height: none;
 		z-index: var( --ak-z-modal );
 		background: var( --ak-bg-surface );
 		border-right: 1px solid var( --ak-border );
 		padding: 0 var( --ak-space-3 ) var( --ak-space-6 );
-		box-shadow: var( --ak-shadow-lg );
 		transform: translateX( -100% );
-		transition: transform var( --ak-dur-normal ) var( --ak-ease );
 		visibility: hidden;
+		transition: transform var( --ak-dur-normal ) var( --ak-ease ), visibility 0s var( --ak-dur-normal );
 
 		&.is-open {
 			transform: none;
 			visibility: visible;
+			box-shadow: var( --ak-shadow-lg );
+			transition: transform var( --ak-dur-normal ) var( --ak-ease ), visibility 0s;
 		}
 	}
 
@@ -145,8 +237,9 @@
 		}
 	}
 
-	.ak-header__menu {
-		display: inline-grid;
+	// The drawer entry is only needed once the sidebar stops being a column
+	.ak-local-nav__menu {
+		display: inline-flex;
 	}
 
 	.ak-header__nav {
@@ -221,6 +314,20 @@
 		display: inline-grid;
 	}
 
+	.ak-local-nav {
+		padding: 0 calc( var( --ak-gutter ) - 8px );
+	}
+
+	.ak-local-nav__btn {
+		padding: 0 8px;
+	}
+
+	// The TOC flyout takes the full available width on phones
+	.ak-toc {
+		left: var( --ak-gutter );
+		width: auto;
+	}
+
 	.ak-theme-toggle > button[ data-theme='os' ] {
 		display: none;
 	}
@@ -286,6 +393,11 @@
 		justify-content: flex-start;
 	}
 
+	.ak-footer__bottom-inner {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
 	.ak-footer__watermark {
 		font-size: 5rem;
 	}
@@ -310,9 +422,5 @@
 	.ak-fab {
 		right: var( --ak-space-3 );
 		bottom: var( --ak-space-3 );
-	}
-
-	.ak-toc-fab {
-		left: var( --ak-space-3 );
 	}
 }

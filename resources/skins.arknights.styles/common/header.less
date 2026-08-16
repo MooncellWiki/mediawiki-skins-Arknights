@@ -1,28 +1,21 @@
 /**
- * Header — 56px sticky bar: drawer toggle · logo/wordmark · primary nav · search · tools
+ * Header — sticky, two rows:
+ *   .ak-header__inner    56px — logo/wordmark · primary nav · search · tools
+ *   .ak-local-nav        48px — second row, shown below 1400px only (drawer / table of contents)
+ *
+ * Below 1400px scrolling down shifts the whole header up by one __inner, so the
+ * main row slides out of view and the local nav alone stays pinned (see responsive.less).
  */
 .ak-header {
 	position: sticky;
 	top: 0;
 	z-index: var( --ak-z-header );
-	height: var( --ak-header-h );
 	background: var( --ak-bg-header );
 	-webkit-backdrop-filter: saturate( 1.4 ) blur( 10px );
 	backdrop-filter: saturate( 1.4 ) blur( 10px );
 	border-bottom: 1px solid var( --ak-border );
 	color: var( --ak-fg );
-	transition: box-shadow var( --ak-dur-fast );
-
-	// Official-site style short accent bar at the bottom-left
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		bottom: -1px;
-		height: 2px;
-		width: 160px;
-		background: var( --ak-accent );
-	}
+	transition: transform var( --ak-dur-normal ) var( --ak-ease ), box-shadow var( --ak-dur-fast );
 
 	&.is-scrolled {
 		box-shadow: var( --ak-shadow-sm );
@@ -30,7 +23,7 @@
 }
 
 .ak-header__inner {
-	height: 100%;
+	height: var( --ak-header-h );
 	max-width: @ak-page-max;
 	margin: 0 auto;
 	padding: 0 var( --ak-gutter );
@@ -38,11 +31,98 @@
 	align-items: center;
 	gap: var( --ak-space-3 );
 	box-sizing: border-box;
+	position: relative;
 }
 
-.ak-header__menu {
+/* Local nav — second header row (displayed by responsive.less below 1400px) */
+.ak-local-nav {
 	display: none;
-	margin-left: -8px;
+	height: var( --ak-local-nav-h );
+	max-width: @ak-page-max;
+	margin: 0 auto;
+	padding: 0 calc( var( --ak-gutter ) - 10px );
+	align-items: center;
+	border-top: 1px solid var( --ak-border );
+	box-sizing: border-box;
+}
+
+.ak-local-nav__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: var( --ak-local-nav-h );
+	padding: 0 10px;
+	margin: 0;
+	border: 0;
+	background: transparent;
+	color: var( --ak-fg-secondary );
+	font-family: inherit;
+	font-size: var( --ak-fs-sm );
+	font-weight: 600;
+	line-height: 1;
+	cursor: pointer;
+
+	&:hover {
+		color: var( --ak-fg );
+		background: var( --ak-bg-hover );
+	}
+
+	.ak-icon {
+		width: 18px;
+		height: 18px;
+	}
+}
+
+// The sidebar is still a column at ≥ 1120px, so its entry only appears below that
+.ak-local-nav__menu {
+	display: none;
+}
+
+.ak-local-nav__toc {
+	margin-left: auto;
+}
+
+// A real element rather than a pseudo, so it can be a flex item of the label
+.ak-local-nav__chevron {
+	width: 7px;
+	height: 7px;
+	border-right: 2px solid currentcolor;
+	border-bottom: 2px solid currentcolor;
+	transform: translateY( -2px ) rotate( 45deg );
+	transition: transform var( --ak-dur-fast ) var( --ak-ease );
+}
+
+/**
+ * TOC flyout switch — visually hidden but still focusable and toggled with Space.
+ * Opening the table of contents is pure CSS; see toc.less for the flyout itself.
+ */
+.ak-toc-cb {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	opacity: 0;
+	pointer-events: none;
+
+	&:checked ~ .ak-local-nav__toc {
+		color: var( --ak-accent );
+
+		.ak-local-nav__chevron {
+			transform: translateY( 2px ) rotate( -135deg );
+		}
+	}
+
+	&:focus-visible ~ .ak-local-nav__toc {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.ak-header,
+	.ak-local-nav__chevron {
+		transition: none;
+	}
 }
 
 /* Logo + wordmark */

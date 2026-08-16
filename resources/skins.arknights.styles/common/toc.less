@@ -1,36 +1,42 @@
 /**
- * Table of contents — sticky right column (≥ 1400px), floating drawer below.
+ * Table of contents — one DOM, two shapes (see responsive.less for the second):
+ *   ≥ 1400px  absolutely placed into the rail reserved by .ak-main, .ak-toc__inner sticks
+ *   < 1400px  a flyout pulled down from the local nav, its top edge hugging the pinned bar
+ *
+ * Opening it is pure CSS (.ak-toc-cb + label.ak-local-nav__toc, bridged with :has()),
+ * so it works without JS; toc.js only adds the scroll spy, progress and dismiss handling.
  */
 .ak-toc {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: var( --ak-toc-w );
+	font-size: var( --ak-fs-xs );
+	box-sizing: border-box;
+}
+
+.ak-toc__inner {
 	position: sticky;
 	top: calc( var( --ak-header-h ) + var( --ak-space-6 ) );
 	max-height: calc( 100vh - var( --ak-header-h ) - var( --ak-space-8 ) );
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	font-size: var( --ak-fs-xs );
 	scrollbar-width: thin;
-	box-sizing: border-box;
-}
-
-.ak-toc__head {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-bottom: 8px;
 }
 
 .ak-toc__title {
 	.ak-overline();
+	display: block;
 	color: var( --ak-fg-muted );
+	margin-bottom: 8px;
 	padding-left: 10px;
 	border-left: 2px solid var( --ak-accent );
-	flex: 1;
 }
 
-.ak-toc__close {
+// First row of the flyout; only shown below 1400px, where .ak-fab is hidden
+.ak-toc__top {
 	display: none;
-	width: 28px;
-	height: 28px;
 }
 
 .ak-toc__progress {
@@ -139,13 +145,4 @@
 	> .ak-toc__sublist {
 		display: none;
 	}
-}
-
-// Floating TOC button (shown below the TOC breakpoint by responsive.less)
-.ak-toc-fab {
-	display: none;
-	left: var( --ak-space-5 );
-	right: auto;
-	opacity: 1;
-	transform: none;
 }

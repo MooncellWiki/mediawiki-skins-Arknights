@@ -1,10 +1,15 @@
 /**
- * Layout — sidebar | main | toc grid
+ * Layout — sidebar | main grid.
+ *
+ * The table of contents is not a third column: the rail it lives in is reserved by
+ * .ak-main's right padding. That lets aside.ak-toc sit in the DOM under the page
+ * heading (it belongs to the page, not to the layout), so when the rail collapses it
+ * simply falls back into the flow — no second copy of the markup, no separate flyout.
  */
 .ak-layout {
 	flex: 1;
 	display: grid;
-	grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr ) var( --ak-toc-w );
+	grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr );
 	gap: var( --ak-gutter );
 	max-width: @ak-page-max;
 	width: 100%;
@@ -13,16 +18,23 @@
 	box-sizing: border-box;
 	align-items: start;
 
-	&--no-toc {
-		grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr );
+	// No table of contents, no rail to reserve
+	&--no-toc .ak-main {
+		max-width: var( --ak-content-max );
+		padding-right: 0;
 	}
 }
 
 .ak-main {
 	min-width: 0;
-	max-width: var( --ak-content-max );
+	// Reading column + the rail reserved for .ak-toc
+	max-width: calc( var( --ak-content-max ) + var( --ak-toc-w ) + var( --ak-gutter ) );
 	width: 100%;
+	padding-right: calc( var( --ak-toc-w ) + var( --ak-gutter ) );
+	box-sizing: border-box;
 	justify-self: start;
+	// Positioning context for the absolutely placed table of contents
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 0;

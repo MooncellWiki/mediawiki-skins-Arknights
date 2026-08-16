@@ -167,7 +167,6 @@
 			"variants": {},
 			"icons": [
 				"appearance",
-				"arrowUp",
 				"articleRedirect",
 				"bell",
 				"bellOutline",
@@ -234,6 +233,7 @@
 				"resources/skins.arknights.scripts/search.js",
 				"resources/skins.arknights.scripts/toc.js",
 				"resources/skins.arknights.scripts/backToTop.js",
+				"resources/skins.arknights.scripts/catlinks.js",
 				"resources/skins.arknights.scripts/interactive.js",
 				"resources/skins.arknights.scripts/sidebarTree.js",
 				"resources/design-system/sidebar-tree.js"

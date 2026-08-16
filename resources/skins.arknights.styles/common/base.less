@@ -23,18 +23,24 @@ body.skin-arknights {
 	.ak-sr-only();
 }
 
+/**
+ * Skip link — parked fully outside the viewport with a transform rather than a negative
+ * `top`, which used to leave a sliver of accent colour along the top of the header.
+ */
 .ak-skip {
 	position: absolute;
 	left: 8px;
-	top: -48px;
+	top: 8px;
 	z-index: calc( var( --ak-z-header ) + 10 );
 	background: var( --ak-accent );
 	color: var( --ak-accent-fg );
 	padding: 8px 12px;
 	font-weight: 700;
+	line-height: 1.3;
+	transform: translateY( calc( -100% - 12px ) );
 
 	&:focus {
-		top: 8px;
+		transform: none;
 		color: var( --ak-accent-fg );
 	}
 }
@@ -98,10 +104,8 @@ body.skin-arknights {
 	padding: var( --ak-space-3 ) var( --ak-space-4 );
 }
 
-.mw-hidden-cats-hidden,
-.catlinks-allhidden {
-	display: none;
-}
+// Hidden category rows are handled by design-system/base.css, which needs the higher
+// specificity to beat its own `.catlinks > div { display: flex }`.
 
 .printfooter,
 .client-nojs #t-print {
