@@ -37,10 +37,22 @@
 	}
 }
 
+/**
+ * The footer is an inverse block in every theme, but `--ak-bg-inverse` flips to white in the
+ * dark tokens — so the dark themes restate it as a near-black plate one step below the canvas.
+ * `-os` needs the same treatment as `-night`, otherwise the footer turns white on a dark page.
+ */
 html.skin-theme-clientpref-night .ak-footer,
 :root[ data-theme='dark' ] .ak-footer {
 	background: #0a0a0b;
 	color: #f0f0f0;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .ak-footer {
+		background: #0a0a0b;
+		color: #f0f0f0;
+	}
 }
 
 .ak-footer__inner {

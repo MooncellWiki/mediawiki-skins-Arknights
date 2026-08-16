@@ -16,7 +16,7 @@
 }
 
 // Pygments "default" palette is tuned for light backgrounds: soften the worst offenders in dark
-html.skin-theme-clientpref-night .mw-highlight {
+.ak-pygments-dark() {
 	.c,
 	.c1,
 	.cm {
@@ -51,5 +51,15 @@ html.skin-theme-clientpref-night .mw-highlight {
 	.mf,
 	.m {
 		color: var( --ak-lime-500 );
+	}
+}
+
+html.skin-theme-clientpref-night .mw-highlight {
+	.ak-pygments-dark();
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .mw-highlight {
+		.ak-pygments-dark();
 	}
 }
