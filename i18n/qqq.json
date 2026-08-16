@@ -17,6 +17,7 @@
 	"arknights-theme-night": "Label of the dark theme. In Arknights the dark UI is the PRTS terminal interface.",
 	"arknights-usermenu-toggle": "Label of the button that opens the user menu.",
 	"arknights-usermenu-anon": "Text shown on the user menu button for visitors who are not logged in.",
+	"arknights-usermenu-preferences": "Heading of the user-menu section that holds interface preferences, such as the UniversalLanguageSelector language switcher. MediaWiki core has no message for the \"user-interface-preferences\" portlet, so the skin supplies its own.",
 	"arknights-toc-toggle": "Label of the button that expands or collapses the subsections of a table of contents entry.",
 	"arknights-back-to-top": "Label of the floating button that scrolls to the top of the page.",
 	"arknights-page-tools-more": "Label of the dropdown holding additional page actions (move, delete, protect …).",

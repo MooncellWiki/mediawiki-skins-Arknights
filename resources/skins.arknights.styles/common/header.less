@@ -359,7 +359,14 @@
 		pointer-events: none;
 	}
 
+	// 设计系统里的 .ak-search__icon 假设图标是 .ak-search 的直接子元素，自己 absolute 到
+	// left: 10px。这里为了给图标挂 <label for=searchInput>，外面又套了一层同样 absolute 到
+	// left: 10px 的 .ak-search__icon-wrap，两次偏移叠加把图标推到 20px，正好顶在 input 的
+	// 34px 左内边距上——首屏看起来就是放大镜和占位文字黏在一起；等 search-palette.js 换成
+	// .ak-search-trigger（flex + gap: 8px）后才恢复正常间距。定位交给外层，图标回到常规流。
 	.ak-search__icon {
+		position: static;
+		transform: none;
 		width: 16px;
 		height: 16px;
 	}

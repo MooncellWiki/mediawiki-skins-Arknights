@@ -126,11 +126,15 @@
 		margin-bottom: 4px;
 	}
 
+	// 「←首页」这类返回链接（core 的 backlinksubtitle）走链接色：整行本来就是 fg-muted，
+	// 链接再跟着 muted 就和周围正文同色，完全看不出可以点。子页面路径（.subpages）不在此列，
+	// 由 base.css 的 `#contentSub .subpages a` 继续压低。
 	a {
-		color: var( --ak-fg-muted );
+		color: var( --ak-link );
 
 		&:hover {
-			color: var( --ak-accent );
+			color: var( --ak-link-hover );
+			text-decoration: underline;
 		}
 	}
 }
