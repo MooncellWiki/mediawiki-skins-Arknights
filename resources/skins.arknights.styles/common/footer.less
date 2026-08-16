@@ -133,16 +133,19 @@
  * Footer badges ($wgFooterIcons → #footer-icons: CC licence, Powered by MediaWiki, SMW, …).
  * Core renders each as a.cdx-button.cdx-button--fake-button > img, several to a <li>.
  *
- * The artwork assumes a light background — MediaWiki 1.43's poweredby_mediawiki.svg and
- * SMW's logo_footer.svg are black-on-transparent and would vanish on the dark footer — so,
- * like Vector (T256190) and Citizen, each link gets a fixed light plate that does not flip
- * with the theme. Greyscale and dimmed by default so the row reads as a line of stamps
- * rather than five colour advertisements; hover / focus brings the colour back.
+ * Shown as supplied: 26px tall, no plate, no greyscale, no dimming and no hover effect —
+ * only the keyboard focus ring remains. That asks something of the artwork, because the
+ * footer is black: the badges MediaWiki and Semantic MediaWiki ship are black on
+ * transparent and vanish here. Both the artwork and the order of the row are $wgFooterIcons'
+ * job — core renders the groups in key order — so the skin only ships the white line
+ * versions in `resources/badge/` and documents the config in the README. A site stuck with
+ * a colour badge that needs a light background can add `ak-footer__icons--plate` to
+ * #footer-icons and get the old plate back.
  */
 .ak-footer__icons ul {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var( --ak-space-2 );
+	gap: var( --ak-space-3 );
 	align-items: center;
 }
 
@@ -155,50 +158,47 @@
 .ak-footer__icons a.cdx-button {
 	display: inline-flex;
 	align-items: center;
-	height: 31px;
+	height: 26px;
 	min-height: 0;
-	padding: 0 4px;
+	padding: 0;
 	margin: 0;
 	border: 0;
 	border-radius: 0;
 	box-sizing: content-box;
 	font: inherit;
 	line-height: 0;
-	background: #f5f5f5;
-	opacity: 0.62;
-	transition: opacity var( --ak-dur-fast ) var( --ak-ease );
-
-	&:hover,
-	&:focus-visible {
-		opacity: 1;
-		background: #fff;
-	}
+	background: transparent;
+	opacity: 1;
 
 	&:focus-visible {
-		outline: 2px solid var( --ak-accent );
-		outline-offset: 2px;
+		outline: 2px solid var( --ak-theme-accent );
+		outline-offset: 4px;
 	}
 }
 
 .ak-footer__icons img {
 	display: block;
-	height: 31px;
+	height: 26px;
 	width: auto;
 	// !important overrides the inline margins some sites set in $wgFooterIcons
 	margin: 0 !important;
-	filter: grayscale( 1 );
-	transition: filter var( --ak-dur-fast ) var( --ak-ease );
 }
 
-.ak-footer__icons a:hover img,
-.ak-footer__icons a:focus-visible img {
-	filter: none;
-}
+/* Opt-in fallback for badges that only exist as colour artwork on a light background */
+.ak-footer__icons--plate {
+	ul {
+		gap: var( --ak-space-2 );
+	}
 
-@media ( prefers-reduced-motion: reduce ) {
-	.ak-footer__icons a,
-	.ak-footer__icons img {
-		transition: none;
+	a,
+	a.cdx-button {
+		height: 31px;
+		padding: 0 4px;
+		background: #f5f5f5;
+	}
+
+	img {
+		height: 31px;
 	}
 }
 

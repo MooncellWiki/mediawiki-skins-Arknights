@@ -90,6 +90,33 @@ html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
 - 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
 
+### 页脚徽章（`$wgFooterIcons`）
+
+徽章原样显示：26px 高、无底板、不灰度、不降透明、无悬停效果（只保留键盘焦点描边）。皮肤不改徽章本身——**换图与排序都由 `$wgFooterIcons` 决定**（核心按键序渲染分组），皮肤只负责把白描版素材放进 `resources/badge/`。
+
+视觉稿的排法是：站点自己的徽章 → Powered by MediaWiki → Semantic MediaWiki → 许可；通用的三枚用白描版（由官方矢量重着色，文案与许可不变）——MW 自带的 `poweredby_mediawiki.svg` 与 SMW 的 `logo_footer.svg` 都是透明底黑字，在黑页脚上看不见。整份写下来就是：
+
+```php
+$badge = "$wgScriptPath/skins/Arknights/resources/badge";
+$wgFooterIcons = [
+  'sponsors' => [
+    'mooncellproject' => [ 'src' => '//project.mooncell.wiki/project1.png', 'url' => '//project.mooncell.wiki', 'alt' => 'a Mooncell project' ],
+    'horain'          => [ 'src' => '//static.prts.wiki/horain/90x32.min.png', 'url' => '//www.horain.net/', 'alt' => 'horain' ],
+  ],
+  'poweredby'    => [ 'mediawiki'        => [ 'src' => "$badge/mediawiki.svg", 'url' => 'https://www.mediawiki.org/', 'alt' => 'Powered by MediaWiki' ] ],
+  'poweredbysmw' => [ 'semanticmediawiki' => [ 'src' => "$badge/smw.svg", 'url' => 'https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki', 'alt' => 'Powered by Semantic MediaWiki', 'class' => 'smw-footer' ] ],
+  'copyright'    => [ 'copyright'         => [ 'src' => "$badge/cc-by-nc-sa.svg", 'url' => $wgRightsUrl, 'alt' => $wgRightsText ] ],
+];
+```
+
+三点要注意：
+
+- **必须整份赋值**，不能只 `$wgFooterIcons['sponsors'] = …` 追加：核心默认的键序是 `copyright` 在最前、`poweredby` 在后，追加只会排到末尾。
+- 写了 `poweredbysmw` 就会**抢在 SMW 自己注册之前占位**——它见到该键已存在就不再注册（`SemanticMediaWiki/src/Setup.php`），所以顺序与图都归你管。
+- `copyright` 显式写了 `src` 后，核心不再用 `$wgRightsIcon` 填充（它只在该项为空数组时才填）；换许可时记得同时换这里的图。
+
+若某枚徽章只有浅底彩色版、在黑页脚上不好看，给 `#footer-icons` 加 `ak-footer__icons--plate` 可以恢复旧的浅色底板。
+
 ## 目录结构
 
 ```
@@ -108,6 +135,7 @@ templates/*.mustache              skin · Header · Header__logo · Search · Th
                                   Sidebar · PageHeader · PageTools · Indicators · TableOfContents(+__list/__line) ·
                                   PageFooter · Footer · SectionLinks · Link
 resources/
+  badge/                          页脚徽章的白描版（MediaWiki / SMW / CC BY-NC-SA，见下文「页脚徽章」）
   design-system/                  ← 从 prts-design/src 原样同步（tokens/base/components/arknights/utilities.css +
                                   sidebar-tree.js + search-palette.js），勿改
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
