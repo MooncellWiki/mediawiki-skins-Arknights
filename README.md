@@ -1,6 +1,6 @@
 # Skin:Arknights — PRTS.wiki 明日方舟皮肤
 
-基于 [AKDS 设计系统](https://github.com/MooncellWiki/prts-redesign)（prts-redesign）实现的 MediaWiki 1.43+ 皮肤，
+基于 [AKDS 设计系统](https://github.com/MooncellWiki/prts-design)（prts-design）实现的 MediaWiki 1.43+ 皮肤，
 结构参考 [Citizen](https://github.com/StarCitizenTools/mediawiki-skins-Citizen)：`SkinMustache` + PHP 组件 + Mustache 模板 + LESS + ResourceLoader 包模块。
 
 - 终端（暗）/ 档案（亮）/ 跟随系统 三态主题，`<html class="skin-theme-clientpref-*">`，与 Vector 2022 / Minerva 同一套类名（`.skin-invert` `.notheme` `.mw-no-invert` 约定同样支持）
@@ -75,7 +75,7 @@ templates/*.mustache              skin · Header · Header__logo · Search · Th
                                   Sidebar · PageHeader · PageTools · Indicators · TableOfContents(+__list/__line) ·
                                   PageFooter · Footer · SectionLinks · Link
 resources/
-  design-system/                  ← 从 prts-redesign/src 原样同步（tokens/base/components/arknights/utilities.css +
+  design-system/                  ← 从 prts-design/src 原样同步（tokens/base/components/arknights/utilities.css +
                                   sidebar-tree.js + search-palette.js），勿改
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
   skins.arknights.styles/         皮肤骨架 LESS（header / sidebar / menu-sidebar / page-header / page-tools / toc / footer / responsive / print …）
@@ -88,12 +88,12 @@ scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重
 ```
 
 分层：`tokens.css`（令牌+主题+Codex 桥接）→ `base.css`（wikitext 产物）→ `components.css` / `arknights.css`（组件与方舟装饰）→ `utilities.css` → `skin.less`（皮肤骨架）。前五个文件是设计系统的产物，
-**只在 prts-redesign 里改**，然后运行 `scripts/sync-design-system.sh [path/to/prts-redesign]`。
+**只在 prts-design 里改**，然后运行 `scripts/sync-design-system.sh [path/to/prts-design]`。
 
 ## 搜索：悬浮命令面板
 
 `$wgArknightsSearchPalette`（默认开）把页眉搜索框换成一块居中悬浮的面板，参考 Citizen 的 Command Palette，
-但不引 Vue/Codex —— 核心是设计系统脚本 `resources/design-system/search-palette.js`（与 prts-redesign 预览共用），
+但不引 Vue/Codex —— 核心是设计系统脚本 `resources/design-system/search-palette.js`（与 prts-design 预览共用），
 皮肤侧只提供数据源。
 
 - **渐进增强**：`templates/Search.mustache` 渲染的仍是真表单。面板挂载后表单被换成 `button.ak-search-trigger`，
@@ -198,7 +198,7 @@ $wgArknightsSearchIndex = [
 
 ## 与设计系统的对应
 
-- 页眉 `.ak-header`、侧栏 `.ak-sidebar`、页面头 `.ak-page-header`、目录 `.ak-toc`、页脚 `.ak-footer` 等类名与 prts-redesign 的 `src/skin.css` 一致，但骨架样式由本皮肤的 LESS 维护（DOM 由模板定义）。
+- 页眉 `.ak-header`、侧栏 `.ak-sidebar`、页面头 `.ak-page-header`、目录 `.ak-toc`、页脚 `.ak-footer` 等类名与 prts-design 的 `src/skin.css` 一致，但骨架样式由本皮肤的 LESS 维护（DOM 由模板定义）。
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
 - **<1120 页眉**回到 flex，只留 品牌 / 搜索（<640 收成图标）/ ≡。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ≡ 拉下、贴主行右下沿的 320px 卡片。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录浮层的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起，以及卡片开着时不收页眉。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
 - 图标：`skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `.ak-icon.ak-icon--{name}`；可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）。
@@ -208,7 +208,7 @@ $wgArknightsSearchIndex = [
 ## 开发
 
 ```bash
-scripts/sync-design-system.sh ../../JSWorkspace/prts-redesign   # 同步设计系统
+scripts/sync-design-system.sh [path/to/prts-design]   # 同步设计系统；不给路径时在皮肤/MediaWiki 的相邻目录里找 prts-design
 ```
 
 本地验证：把仓库放到 MediaWiki 的 `skins/Arknights`，`wfLoadSkin( 'Arknights' )`，打开 `?debug=2` 查看未压缩的 LESS 输出。

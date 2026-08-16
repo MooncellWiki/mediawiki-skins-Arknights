@@ -1,20 +1,32 @@
 #!/usr/bin/env bash
 # Sync the AKDS design-system layer (tokens / base / components / arknights / utilities / sidebar-tree)
-# from the prts-redesign repository into resources/design-system/.
+# from the prts-design repository into resources/design-system/.
 #
-# Usage: scripts/sync-design-system.sh [path/to/prts-redesign]
-#        AKDS_SRC=/path/to/prts-redesign scripts/sync-design-system.sh
+# Usage: scripts/sync-design-system.sh [path/to/prts-design]
+#        AKDS_SRC=/path/to/prts-design scripts/sync-design-system.sh
 #
 # Files under resources/design-system/ are copied VERBATIM and must not be edited here —
-# change them upstream (prts-redesign/src) and re-run this script.
+# change them upstream (prts-design/src) and re-run this script.
 set -euo pipefail
 
 SKIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-SRC="${1:-${AKDS_SRC:-$SKIN_DIR/../../JSWorkspace/prts-redesign}}"
 DEST="$SKIN_DIR/resources/design-system"
 
+# Without an explicit path: look for a prts-design checkout next to the skin (dev layout),
+# then next to MediaWiki (skin installed as skins/Arknights).
+SRC="${1:-${AKDS_SRC:-}}"
+if [ -z "$SRC" ]; then
+	for candidate in "$SKIN_DIR/.." "$SKIN_DIR/../.." "$SKIN_DIR/../../.."; do
+		if [ -f "$candidate/prts-design/src/tokens.css" ]; then
+			SRC="$candidate/prts-design"
+			break
+		fi
+	done
+	SRC="${SRC:-$SKIN_DIR/../prts-design}"
+fi
+
 if [ ! -f "$SRC/src/tokens.css" ]; then
-	echo "prts-redesign not found at: $SRC (set AKDS_SRC or pass the path)" >&2
+	echo "prts-design not found at: $SRC (set AKDS_SRC or pass the path)" >&2
 	exit 1
 fi
 
@@ -35,10 +47,10 @@ fi
 {
 	echo "# AKDS design system — synced copy"
 	echo ""
-	echo "Source: prts-redesign/src @ $REV"
+	echo "Source: prts-design/src @ $REV"
 	echo "Synced: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 	echo ""
-	echo "Do not edit files in this directory. Edit them in prts-redesign/src and run"
+	echo "Do not edit files in this directory. Edit them in prts-design/src and run"
 	echo "\`scripts/sync-design-system.sh\`."
 } > "$DEST/README.md"
 echo "recorded upstream revision: $REV"

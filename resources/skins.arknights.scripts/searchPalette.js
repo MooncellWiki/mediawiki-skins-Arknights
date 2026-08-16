@@ -2,7 +2,7 @@
  * Search palette — MediaWiki data sources for the floating command palette.
  *
  * The palette itself is the design-system script (resources/design-system/search-palette.js,
- * synced verbatim from prts-redesign); it owns the DOM, the keyboard model and the
+ * synced verbatim from prts-design); it owns the DOM, the keyboard model and the
  * accessibility plumbing but ships no data of its own. This file supplies the wiki half:
  *
  *   1. Title search   REST `/rest.php/v1/search/title` — the same endpoint Vector 2022 and
