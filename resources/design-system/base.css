@@ -124,7 +124,13 @@ pre, .mw-code, .mw-highlight pre {
 .mw-highlight .linenos { color: var(--ak-fg-subtle); user-select: none; padding-right: 1em; border-right: 1px solid var(--ak-border); }
 
 /* ─── Tables ────────────────────────────────────────────────────────────── */
-.mw-parser-output table { border-collapse: collapse; border-spacing: 0; }
+/* border-collapse 必须跟着表格样式走，不能只挂在 .mw-parser-output 下：Cargo 的
+   action=pagevalues、action=info、各类特殊页表格都渲染在解析器输出之外，只能拿到
+   UA 默认的 separate + 2px border-spacing，于是下面给单元格加的 1px 边框被逐格
+   画成一圈，表格看上去"全是框"。 */
+.mw-body-content table, .mw-parser-output table, .wikitable, .cargoTable, table.mw-datatable {
+  border-collapse: collapse; border-spacing: 0;
+}
 .wikitable {
   margin: var(--ak-space-4) 0; background: var(--ak-bg-surface); color: var(--ak-fg);
   border: 1px solid var(--ak-border); font-size: var(--ak-fs-sm); line-height: 1.5;
