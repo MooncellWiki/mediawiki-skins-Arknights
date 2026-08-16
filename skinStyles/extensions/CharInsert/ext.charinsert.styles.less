@@ -1,0 +1,48 @@
+/**
+ * CharInsert — MediaWiki:Edittools 的特殊字符面板
+ *
+ * PRTS 的 MediaWiki:Edittools 走的是老的 edittools 站点脚本：它把 <charinsert> 生成的
+ * a.mw-charinsert-item 换成裸的 <input type="button">，再配一个 <select> 切分组。这些按钮
+ * 既没有 cdx-button 也没有 mw-ui-button，皮肤的按钮样式一条都命中不了，浏览器默认外观
+ * （Arial 13px、2px outset 边框、#efefef 底）就直接暴露在编辑页上。这里按皮肤的小号按钮补齐；
+ * 字体走等宽，因为按钮上印的多半是 wikitext 片段（{{#invoke:}}、<nowiki></nowiki> …）。
+ */
+.mw-charinsert-buttons {
+	line-height: 2;
+
+	input[ type='button' ] {
+		-webkit-appearance: none;
+		appearance: none;
+		background: var( --ak-bg-surface );
+		color: var( --ak-fg );
+		border: 1px solid var( --ak-border );
+		border-radius: var( --ak-radius );
+		padding: 2px 8px;
+		min-height: 24px;
+		font-family: var( --ak-font-mono );
+		font-size: var( --ak-fs-sm );
+		line-height: 1.4;
+		cursor: pointer;
+		transition: background var( --ak-dur-fast ) var( --ak-ease );
+
+		&:hover {
+			background: var( --ak-bg-hover );
+			border-color: var( --ak-fg-muted );
+		}
+
+		&:active {
+			background: var( --ak-bg-surface-3 );
+			border-color: var( --ak-accent );
+		}
+	}
+
+	select {
+		margin-bottom: var( --ak-space-2 );
+		font-family: var( --ak-font-body );
+	}
+}
+
+// JS 关闭时 charinsert 仍然是链接，让它读起来像一段可点的记号而不是正文里的红蓝链接
+.client-nojs .mw-charinsert-item {
+	color: var( --ak-fg-secondary );
+}

@@ -38,9 +38,13 @@ final class MenuItemDecorator {
 				continue;
 			}
 			$icon = $item['icon'] ?? '';
-			if ( is_string( $icon ) && $icon !== '' && in_array( $icon, self::ICONS, true )
-				&& !isset( $item['link-html'] )
-			) {
+			if ( !is_string( $icon ) || $icon === '' || isset( $item['link-html'] ) ) {
+				continue;
+			}
+			// Some extensions still name icons the way mw-ui-icon did, e.g. ULS asks for
+			// 'wikimedia-language' where OOUI (and skins.arknights.icons) calls it 'language'.
+			$icon = preg_replace( '/^wikimedia-/', '', $icon );
+			if ( in_array( $icon, self::ICONS, true ) ) {
 				$items[$key]['link-html'] = self::getIconHtml( $icon );
 			}
 		}

@@ -35,6 +35,14 @@ class ArknightsComponentUserMenu implements ArknightsComponent {
 		$uiPrefs = $this->userInterfacePreferencesData
 			? ( new ArknightsComponentMenu( $this->userInterfacePreferencesData ) )->getTemplateData()
 			: null;
+		if ( $uiPrefs ) {
+			// MediaWiki core ships no `user-interface-preferences` message, so
+			// Skin::getPortletData() falls back to the raw portlet name and the section ends up
+			// headed by a literal "user-interface-preferences". Supply our own label.
+			// (Not null/'' — LightnCandy resolves a missing key up the context stack, so an
+			// empty label would inherit `label` from the user menu, i.e. the user name.)
+			$uiPrefs['label'] = $this->localizer->msg( 'arknights-usermenu-preferences' )->text();
+		}
 
 		$label = $isAnon
 			? $this->localizer->msg( 'arknights-usermenu-anon' )->text()

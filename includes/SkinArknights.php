@@ -105,7 +105,11 @@ class SkinArknights extends SkinMustache {
 			}
 		}
 
-		foreach ( [ 'user-menu', 'user-page', 'views', 'actions', 'associated-pages', 'variants' ] as $menu ) {
+		$menus = [
+			'user-interface-preferences', 'user-menu', 'user-page',
+			'views', 'actions', 'associated-pages', 'variants',
+		];
+		foreach ( $menus as $menu ) {
 			if ( isset( $content_navigation[$menu] ) && is_array( $content_navigation[$menu] ) ) {
 				MenuItemDecorator::addIconsToMenuItems( $content_navigation[$menu] );
 			}

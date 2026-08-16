@@ -24,9 +24,18 @@ git clone https://github.com/MooncellWiki/mediawiki-skins-Arknights Arknights
 wfLoadSkin( 'Arknights' );
 $wgDefaultSkin = 'arknights';          // 可选
 
+// 必需：切到 MW 1.43 的新版标题 DOM。皮肤已声明 supportsMwHeading，但解析器要等站点
+// 关掉 legacy DOM 才会输出 <div class="mw-heading"><h2>…</h2><span class="mw-editsection">…
+// </span></div>。仍用 legacy DOM 的话，章节标题排版（编辑链接靠右）和「悬停标题才显形」
+// 都会失效——那些规则全挂在 .mw-heading 上，而 legacy DOM 里根本没有这个元素。
+$wgParserEnableLegacyHeadingDOM = false;
+
 // PRTS：用 MediaWiki:MenuSidebar 作为侧栏（替代 Extension:VectorMenuSidebar 的作用）
 $wgArknightsMenuSidebar = true;
 ```
+
+改动 `$wgParserEnableLegacyHeadingDOM` 会改变解析产物，既有的解析缓存需要失效
+（`$wgCacheEpoch` 或逐页 `action=purge`）才能看到效果。
 
 无需 composer / npm 构建；ResourceLoader 直接编译 LESS 与 CSS。
 

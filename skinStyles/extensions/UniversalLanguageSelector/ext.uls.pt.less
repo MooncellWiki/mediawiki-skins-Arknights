@@ -1,7 +1,14 @@
 /**
- * UniversalLanguageSelector — personal tools trigger
+ * UniversalLanguageSelector — 语言切换入口（$wgULSPosition = 'personal'）
+ *
+ * ext.uls.pt.less 给所有 .uls-trigger 画了一张 `background-size: contain` 的 language.svg，
+ * 用来在模块懒加载前先占住图标。上游只在 #pt-uls 里把它清掉——但在拆分了用户菜单的现代皮肤里，
+ * ULS 是挂进 `user-interface-preferences` portlet 的（元素 id 为 ca-uls，不是 pt-uls），
+ * 于是那条兜底规则漏了出来：菜单行是 flex 布局、高度约 32px，`contain` 会把「文A」放大到整行高
+ * 压在文字底下。图标改由 MenuItemDecorator 以 .ak-icon 渲染，这里把背景图整体去掉即可。
  */
-.ak-menu-portlet #pt-uls a.uls-trigger {
-	background-image: none;
-	padding-left: 14px;
+.ak-menu-portlet .uls-trigger,
+.ak-dropdown .uls-trigger,
+#pt-uls .uls-trigger {
+	background: none;
 }

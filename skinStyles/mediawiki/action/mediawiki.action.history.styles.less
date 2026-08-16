@@ -7,11 +7,28 @@
 		padding: 6px 8px;
 		margin: 0;
 
-		&.selected {
+		// mediawiki.action.history.js 给每一行打上 selected / between / before / after：
+		// selected 是对比区间的两个端点，between 夹在两者之间（也会被算进 diff），
+		// before / after 在区间之外。原来只给 .after 铺了灰底，.before 和 .between 一片空白，
+		// 中间那几行看着就像漏了样式。改成按「区间内 / 区间外」两组上色：区间内统一淡蓝，
+		// 端点再用轮廓线和实心色条标出来。
+		&.selected,
+		&.between {
 			background: var( --ak-accent-subtle );
-			border-color: var( --ak-accent-muted );
 		}
 
+		&.selected {
+			border-left-color: var( --ak-accent );
+			// 盖掉 core 的 `outline: 1px dashed #a2a9b1`；offset 往里收，避免和相邻行的边压在一起
+			outline: 1px solid var( --ak-accent-muted );
+			outline-offset: -1px;
+		}
+
+		&.between {
+			border-left-color: var( --ak-accent-muted );
+		}
+
+		&.before,
 		&.after {
 			background: var( --ak-bg-surface-2 );
 		}
@@ -36,11 +53,10 @@
 	}
 }
 
-.mw-history-compareselectedversions,
-#mw-history-compare .mw-history-compareselectedversions {
-	background: var( --ak-bg-surface-2 );
-	border-color: var( --ak-border );
-	color: var( --ak-fg );
+// core 只给这一块 `margin-top: 8px`，不画底色。这里同样不加：它横跨整个内容宽度，
+// 铺一层 --ak-bg-surface-2 只会变成一条突兀的灰带，还会和里面的中性按钮撞成同色。
+.mw-history-compareselectedversions {
+	margin-bottom: var( --ak-space-3 );
 }
 
 .mw-history-histlinks,
