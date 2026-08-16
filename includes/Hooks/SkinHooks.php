@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace MediaWiki\Skins\Arknights\Hooks;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Hook\SidebarBeforeOutputHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
@@ -11,6 +12,7 @@ use MediaWiki\Output\Hook\OutputPageAfterGetHeadLinksArrayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Skins\Arknights\Menu\MenuItemDecorator;
+use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
 use Skin;
 
 /**
@@ -19,11 +21,36 @@ use Skin;
 class SkinHooks implements
 	BeforePageDisplayHook,
 	OutputPageAfterGetHeadLinksArrayHook,
-	SidebarBeforeOutputHook
+	SidebarBeforeOutputHook,
+	SkinPageReadyConfigHook
 {
 	public const SKIN_NAME = 'arknights';
 
 	private static ?string $inlineScript = null;
+
+	public function __construct( private readonly Config $config ) {
+	}
+
+	/**
+	 * Stop core wiring up its legacy search suggestions while the palette is on.
+	 *
+	 * `mediawiki.page.ready` lazy-loads `mediawiki.searchSuggest` the first time a search
+	 * input takes focus. The palette keeps the real `#searchInput` alive — it moves the
+	 * whole form into its own head so gadgets and no-JS submits keep working — so without
+	 * this the old dropdown would attach to that very field and draw a second, competing
+	 * list inside the palette. Vector 2022 switches the same flag off for the same reason.
+	 *
+	 * @param RL\Context $context
+	 * @param mixed[] &$config
+	 */
+	public function onSkinPageReadyConfig( RL\Context $context, array &$config ): void {
+		if ( $context->getSkin() !== self::SKIN_NAME ) {
+			return;
+		}
+		if ( $this->config->get( 'ArknightsSearchPalette' ) === true ) {
+			$config['search'] = false;
+		}
+	}
 
 	/**
 	 * Adds the inline theme bootstrap script (applies the visitor's stored theme

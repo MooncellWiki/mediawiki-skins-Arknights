@@ -333,6 +333,60 @@
 	}
 }
 
+/**
+ * With JS, search-palette.js replaces the form above with this button — it looks like the
+ * field it stands in for, but opens the floating palette (see search-palette.less). The
+ * script copies `ak-header__search` onto it, so the header layout rules above still apply.
+ */
+.ak-search-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	box-sizing: border-box;
+	width: 100%;
+	height: 34px;
+	padding: 0 8px 0 10px;
+	border: 1px solid transparent;
+	border-radius: var( --ak-radius-sm );
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg-muted );
+	font: inherit;
+	font-size: var( --ak-fs-sm );
+	text-align: left;
+	// A text caret rather than a pointer: this reads as a field, not a button
+	cursor: text;
+	transition: border-color var( --ak-dur-fast ), background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+	&:hover {
+		border-color: var( --ak-border-strong );
+		color: var( --ak-fg-secondary );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: 1px;
+	}
+
+	&[ aria-expanded='true' ] {
+		border-color: var( --ak-accent );
+		background: var( --ak-bg-surface );
+	}
+
+	&__icon {
+		flex: none;
+		width: 16px;
+		height: 16px;
+	}
+
+	&__label {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
 /* Tools */
 .ak-header__tools {
 	display: flex;

@@ -112,13 +112,17 @@
 	},
 	"HookHandlers": {
 		"SkinHooks": {
-			"class": "MediaWiki\\Skins\\Arknights\\Hooks\\SkinHooks"
+			"class": "MediaWiki\\Skins\\Arknights\\Hooks\\SkinHooks",
+			"services": [
+				"MainConfig"
+			]
 		}
 	},
 	"Hooks": {
 		"BeforePageDisplay": "SkinHooks",
 		"OutputPageAfterGetHeadLinksArray": "SkinHooks",
-		"SidebarBeforeOutput": "SkinHooks"
+		"SidebarBeforeOutput": "SkinHooks",
+		"SkinPageReadyConfig": "SkinHooks"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
@@ -231,6 +235,7 @@
 				"resources/skins.arknights.scripts/dropdown.js",
 				"resources/skins.arknights.scripts/header.js",
 				"resources/skins.arknights.scripts/search.js",
+				"resources/skins.arknights.scripts/searchLoader.js",
 				"resources/skins.arknights.scripts/toc.js",
 				"resources/skins.arknights.scripts/backToTop.js",
 				"resources/skins.arknights.scripts/catlinks.js",
@@ -242,6 +247,68 @@
 				"mediawiki.storage",
 				"mediawiki.util",
 				"mediawiki.user"
+			],
+			"messages": [
+				"arknights-search-load-error"
+			]
+		},
+		"skins.arknights.search": {
+			"packageFiles": [
+				"resources/skins.arknights.scripts/searchPalette.js",
+				"resources/design-system/search-palette.js"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.storage",
+				"mediawiki.util"
+			],
+			"messages": [
+				"arknights-search-label",
+				"arknights-search-placeholder",
+				"arknights-search-recent",
+				"arknights-search-pages",
+				"arknights-search-modes",
+				"arknights-search-fulltext",
+				"arknights-search-fulltext-desc",
+				"arknights-search-empty-title",
+				"arknights-search-empty-desc",
+				"arknights-search-shortcuts",
+				"arknights-search-noresults",
+				"arknights-search-noresults-desc",
+				"arknights-search-error",
+				"arknights-search-results",
+				"arknights-search-redirect",
+				"arknights-search-hint-navigate",
+				"arknights-search-hint-open",
+				"arknights-search-hint-fulltext",
+				"arknights-search-hint-close",
+				"arknights-search-hint-clear",
+				"arknights-search-hint-back",
+				"arknights-search-hint-commands",
+				"arknights-search-close",
+				"arknights-search-clear",
+				"arknights-search-back",
+				"arknights-search-remove",
+				"arknights-search-mode-action",
+				"arknights-search-mode-action-desc",
+				"arknights-search-mode-action-placeholder",
+				"arknights-search-mode-category",
+				"arknights-search-mode-category-desc",
+				"arknights-search-mode-category-placeholder",
+				"arknights-search-mode-category-thispage",
+				"arknights-search-mode-user",
+				"arknights-search-mode-user-desc",
+				"arknights-search-mode-user-placeholder",
+				"arknights-search-mode-user-row",
+				"arknights-search-mode-file",
+				"arknights-search-mode-file-desc",
+				"arknights-search-mode-file-placeholder",
+				"allpages",
+				"categories",
+				"randompage",
+				"recentchanges",
+				"specialpages",
+				"statistics"
 			]
 		}
 	},
@@ -373,6 +440,12 @@
 		"TableOfContentsCollapseAtCount": {
 			"value": 28,
 			"description": "Minimum number of headings required to collapse the sub-sections of the sticky table of contents by default."
+		},
+		"SearchPalette": {
+			"value": true,
+			"description": "Replace the header search field with the floating command palette (grouped title search, / > # @ ~ modes, recent pages, keyboard driven). Set false to keep the plain form and core's search suggestions.",
+			"descriptionmsg": "arknights-config-searchpalette",
+			"public": true
 		}
 	},
 	"manifest_version": 2

@@ -26,6 +26,8 @@ class ResourceLoaderHooks {
 			'wgArknightsEnableThemeToggle' => (bool)$config->get( 'ArknightsEnableThemeToggle' ),
 			'wgArknightsSidebarFlyout' => (bool)$config->get( 'ArknightsSidebarFlyout' ),
 			'wgArknightsTableOfContentsCollapseAtCount' => (int)$config->get( 'ArknightsTableOfContentsCollapseAtCount' ),
+			'wgArknightsSearchPalette' => (bool)$config->get( 'ArknightsSearchPalette' ),
 		];
 	}
+
 }

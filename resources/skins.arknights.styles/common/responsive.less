@@ -34,7 +34,8 @@
 		transform: translateY( calc( -1 * var( --ak-header-h ) ) );
 	}
 
-	// The revealed search overlays the local nav instead of being pushed aside by it
+	// Palette disabled: the revealed search overlays the local nav instead of being
+	// pushed aside by it
 	.ak-header__search.is-open {
 		top: var( --ak-header-h );
 		z-index: 1;
@@ -284,8 +285,21 @@
 		display: none;
 	}
 
+	// Search collapses into the icon button in the tools area, which opens the palette.
+	// There is no room for the field itself next to the logo and the tools at this width.
 	.ak-header__search {
 		display: none;
+	}
+
+	.ak-header__search-toggle {
+		display: inline-grid;
+	}
+
+	// Fallback for $wgArknightsSearchPalette = false, where search.js reveals the real
+	// form in place instead. Inert while the palette is on: it replaces the form with
+	// a trigger button and nothing ever sets `is-open`.
+	.ak-header__search.is-open {
+		display: block;
 		position: absolute;
 		left: 0;
 		right: 0;
@@ -297,10 +311,6 @@
 		border-bottom: 1px solid var( --ak-border );
 		box-shadow: var( --ak-shadow-md );
 
-		&.is-open {
-			display: block;
-		}
-
 		.ak-search__icon-wrap {
 			left: calc( var( --ak-gutter ) + 10px );
 		}
@@ -308,10 +318,6 @@
 		.ak-search__kbd {
 			display: none;
 		}
-	}
-
-	.ak-header__search-toggle {
-		display: inline-grid;
 	}
 
 	.ak-local-nav {
