@@ -1,10 +1,19 @@
 /**
  * Header — sticky, two rows:
- *   .ak-header__inner    56px — logo/wordmark · primary nav · search · tools
+ *   .ak-header__inner    56px — logo/wordmark · search · tools
  *   .ak-local-nav        48px — second row, shown below 1400px only (drawer / table of contents)
+ *
+ * The main row is a three-column grid sharing its column widths with .ak-layout: the brand
+ * sits over the sidebar column, search starts at the content column's left edge (capped at
+ * 560px, on the same line as the breadcrumb and the heading) and the tools go right. The
+ * header is the heading of each column rather than a bar floating above them — which is why
+ * it carries no site navigation of its own: that would need the content column, and the
+ * sidebar already renders it once, at every width.
  *
  * Below 1400px scrolling down shifts the whole header up by one __inner, so the
  * main row slides out of view and the local nav alone stays pinned (see responsive.less).
+ * Below 1120px the grid gives way to flex and the tools move into the burger card, both
+ * also in responsive.less.
  */
 .ak-header {
 	position: sticky;
@@ -27,11 +36,30 @@
 	max-width: @ak-page-max;
 	margin: 0 auto;
 	padding: 0 var( --ak-gutter );
-	display: flex;
+	// Same columns and gap as .ak-layout, and border-box like it — otherwise past
+	// 1680 + 2 × gutter the header is a gutter wider and the brand misses the sidebar edge
+	display: grid;
+	grid-template-columns: var( --ak-sidebar-w ) minmax( 0, 1fr ) auto;
+	gap: var( --ak-gutter );
 	align-items: center;
-	gap: var( --ak-space-3 );
 	box-sizing: border-box;
+	// Positioning context for the tools card pulled down below 1120px
 	position: relative;
+}
+
+/**
+ * Grouping wrappers, not boxes: on desktop their children take part in the grid / the tools
+ * row directly. Below 1120px .ak-header__screen becomes the card and .ak-header__tool a row
+ * inside it (responsive.less).
+ */
+.ak-header__screen,
+.ak-header__tool {
+	display: contents;
+}
+
+// Row labels ("Appearance") exist for the card only — on desktop the controls are icons
+.ak-header__tool-label {
+	display: none;
 }
 
 /* Local nav — second header row (displayed by responsive.less below 1400px) */
@@ -118,22 +146,111 @@
 	}
 }
 
+/**
+ * Tools card switch — the same pure-CSS pattern as .ak-toc-cb above: hidden from sight but
+ * still focusable and toggled with Space. Only shown below 1120px, where .ak-header__screen
+ * turns into the card it opens (responsive.less). The checkbox precedes both the card and
+ * the burger in the DOM so `~` can reach them.
+ */
+.ak-nav-cb {
+	display: none;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	opacity: 0;
+	pointer-events: none;
+
+	&:checked ~ .ak-header__burger {
+		color: var( --ak-fg );
+
+		i:nth-child( 1 ) {
+			transform: translateY( 6px ) rotate( 45deg );
+		}
+
+		i:nth-child( 2 ) {
+			opacity: 0;
+			transform: scaleX( 0 );
+		}
+
+		i:nth-child( 3 ) {
+			transform: translateY( -6px ) rotate( -45deg );
+		}
+	}
+
+	&:focus-visible ~ .ak-header__burger {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+}
+
+.ak-header__burger {
+	display: none;
+	flex: none;
+	width: 40px;
+	height: 40px;
+	// Pulls the icon's optical edge back onto the gutter line
+	margin-right: -8px;
+	align-items: center;
+	justify-content: center;
+	color: var( --ak-fg-secondary );
+	cursor: pointer;
+
+	&:hover {
+		color: var( --ak-fg );
+		background: var( --ak-bg-hover );
+	}
+}
+
+// Three bars folding into a cross; real elements so the checked state can move them
+.ak-header__burger-icon {
+	position: relative;
+	display: block;
+	width: 18px;
+	height: 14px;
+
+	> i {
+		position: absolute;
+		left: 0;
+		width: 18px;
+		height: 2px;
+		background: currentcolor;
+		transition: transform var( --ak-dur-fast ) var( --ak-ease ), opacity var( --ak-dur-fast );
+
+		&:nth-child( 1 ) {
+			top: 0;
+		}
+
+		&:nth-child( 2 ) {
+			top: 6px;
+		}
+
+		&:nth-child( 3 ) {
+			top: 12px;
+		}
+	}
+}
+
 @media ( prefers-reduced-motion: reduce ) {
 	.ak-header,
-	.ak-local-nav__chevron {
+	.ak-local-nav__chevron,
+	.ak-header__burger-icon > i {
 		transition: none;
 	}
 }
 
-/* Logo + wordmark */
+/**
+ * Logo + wordmark — sits over the sidebar column. No divider on its right: that line
+ * separated the brand from the primary nav, and without the nav it just hangs there.
+ */
 .ak-header__logo {
+	grid-column: 1;
+	justify-self: start;
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
 	flex: none;
 	height: 100%;
-	padding-right: var( --ak-space-4 );
-	border-right: 1px solid var( --ak-border );
 	color: inherit;
 	text-decoration: none;
 
@@ -182,83 +299,20 @@
 	white-space: nowrap;
 }
 
-/* Primary navigation (parsed wikitext <ul>) */
-.ak-header__nav {
-	display: flex;
-	align-items: center;
-	height: 100%;
-	flex: 1 1 auto;
-	min-width: 0;
-	overflow: hidden;
-
-	ul {
-		.ak-reset-list();
-		display: flex;
-		align-items: center;
-		height: 100%;
-		gap: 2px;
-	}
-
-	li {
-		display: flex;
-		align-items: center;
-		height: 100%;
-		margin: 0;
-	}
-
-	a {
-		display: inline-flex;
-		align-items: center;
-		height: var( --ak-header-h );
-		padding: 0 12px;
-		font-weight: 600;
-		font-size: var( --ak-fs-sm );
-		color: var( --ak-fg-secondary );
-		text-decoration: none;
-		position: relative;
-		white-space: nowrap;
-
-		&:hover {
-			color: var( --ak-fg );
-			background: var( --ak-bg-hover );
-			text-decoration: none;
-		}
-
-		&.external {
-			background-image: none;
-			padding-right: 12px;
-		}
-	}
-
-	a.mw-selflink,
-	li.is-active > a,
-	a.is-active {
-		color: var( --ak-accent );
-
-		&::after {
-			content: '';
-			position: absolute;
-			left: 12px;
-			right: 12px;
-			bottom: 0;
-			height: 3px;
-			background: var( --ak-accent );
-		}
-	}
-
-	// Parsed wikitext may wrap the list in <p> / <div>
-	p {
-		margin: 0;
-	}
-}
-
-/* Search */
+/**
+ * Search — starts at the content column's left edge, so it lines up with the breadcrumb
+ * and the page heading below it. With JS this very element is the trigger button
+ * (search-palette.js copies the class onto it) and that carries width: 100% of its own,
+ * which is why the cap has to be a max-width rather than a width.
+ */
 .ak-header__search {
-	flex: 0 1 320px;
-	min-width: 160px;
+	grid-column: 2;
+	justify-self: start;
+	width: 100%;
+	max-width: 560px;
+	min-width: 0;
 	position: relative;
 	margin: 0;
-	margin-left: auto;
 
 	#searchInput,
 	input[ type='search' ] {
@@ -389,11 +443,12 @@
 
 /* Tools */
 .ak-header__tools {
+	grid-column: 3;
+	justify-self: end;
 	display: flex;
 	align-items: center;
 	gap: 4px;
 	flex: none;
-	height: 100%;
 }
 
 .ak-header__search-toggle {

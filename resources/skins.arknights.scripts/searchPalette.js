@@ -346,8 +346,29 @@ function init() {
 
 	/* ── 3. Empty state ── */
 
+	/**
+	 * Where the empty state's shortcuts come from, most specific first. The header carries
+	 * no navigation of its own, so these are the sidebar's own top entries: the wikitext
+	 * sidebar's first groups (children of branches are left out — the leaf links are the
+	 * useful ones), else MediaWiki:Sidebar's first portlet, else whatever the panel holds.
+	 *
+	 * @type {string[]}
+	 */
+	const shortcutSources = [
+		'#MenuSidebar > ul > li > a[href]',
+		'#p-navigation a[href]',
+		'#mw-panel a[href]'
+	];
+
 	function shortcuts() {
-		return Array.from( document.querySelectorAll( '.ak-header__nav a' ) )
+		let links = [];
+		for ( const selector of shortcutSources ) {
+			links = Array.from( document.querySelectorAll( selector ) );
+			if ( links.length ) {
+				break;
+			}
+		}
+		return links
 			.slice( 0, 8 )
 			.map( ( link ) => ( { label: ( link.textContent || '' ).trim(), url: link.href } ) )
 			.filter( ( item ) => item.label );

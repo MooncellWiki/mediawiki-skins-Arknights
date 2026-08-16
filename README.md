@@ -5,10 +5,10 @@
 
 - 终端（暗）/ 档案（亮）/ 跟随系统 三态主题，`<html class="skin-theme-clientpref-*">`，与 Vector 2022 / Minerva 同一套类名（`.skin-invert` `.notheme` `.mw-no-invert` 约定同样支持）
 - **wikitext 侧栏**：`MediaWiki:MenuSidebar` 以当前页面为上下文解析后直接渲染进侧栏（VectorMenuSidebar 的皮肤原生实现，见下文）
-- wikitext 页眉主导航（`MediaWiki:Arknights-header-nav`）
+- 页眉主行是与正文三列对齐的 **品牌 · 搜索 · 工具** 网格，不放站点级主导航（导航只由侧栏承担）
 - 多层树形侧栏（任意深度展开、记忆、当前页路径自动展开、桌面悬停飞出）
 - 右侧粘性目录（scrollspy + 阅读进度 + 折叠），窄屏变浮动抽屉
-- 响应式：≥1400 三栏 · ≥1120 双栏 · <1120 侧栏抽屉 · <640 紧凑页眉
+- 响应式：≥1400 三栏 · ≥1120 双栏 · <1120 侧栏抽屉 + 页眉工具卡片 · <640 紧凑页眉
 - Codex/OOUI/核心特殊页面/常用扩展（Echo、TabberNeue、WikiEditor、CodeMirror、ULS、Cargo、SMW …）的 skinStyles
 
 ## 安装
@@ -41,7 +41,6 @@ $wgArknightsMenuSidebar = true;
 | `$wgArknightsMenuSidebarMessage` | `'MenuSidebar'` | 侧栏 wikitext 所在的 MediaWiki 名字空间消息名 |
 | `$wgArknightsMenuSidebarAfterMessage` | `'MenuSidebarAfter'` | 侧栏下方追加内容的消息名，`''` 关闭 |
 | `$wgArknightsMenuSidebarHidePortlets` | `true` | 启用 MenuSidebar 时隐藏 `MediaWiki:Sidebar` 门户（工具箱与语言除外），与 VMS 行为一致 |
-| `$wgArknightsHeaderNavMessage` | `'Arknights-header-nav'` | 页眉主导航的消息名（`*` 列表 wikitext）；消息不存在或为 `-` 时不显示 |
 | `$wgArknightsShowPageTools` | `true` | 页面工具可见性：`true` / `false` / `'login'` / `'permission-edit'` 等 |
 | `$wgArknightsSidebarFlyout` | `true` | 桌面端侧栏折叠分支的悬停飞出预览 |
 | `$wgArknightsTableOfContentsCollapseAtCount` | `28` | 标题数 ≥ 此值时目录默认折叠子节 |
@@ -54,7 +53,6 @@ $wgArknightsMenuSidebar = true;
 | 页面 | 用途 |
 |---|---|
 | `MediaWiki:MenuSidebar` / `MediaWiki:MenuSidebarAfter` | 侧栏（同 VMS 语法：`分组标题` 独立一行 / `*` 项 / `'''粗体'''` = 有子级的分组项 / `**` 子项，深度不限；支持 `{{#tsl:}}` `{{FULLPAGENAME}}` `{{PAGEID}}` `{{#widget:}}` 等） |
-| `MediaWiki:Arknights-header-nav` | 页眉主导航，`* [[干员一览|干员]]` 列表；解析器自动给当前页加 `a.mw-selflink` → 高亮 |
 | `MediaWiki:Arknights-header-tagline` | 页眉/页脚站名下方的拉丁小字（如 `ARKNIGHTS WIKI`） |
 | `MediaWiki:Arknights-footer-desc` / `-footer-tagline` | 页脚描述段 / 底栏一句话（wikitext，默认关闭） |
 | `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间覆盖标题下方的 tagline |
@@ -66,14 +64,14 @@ $wgArknightsMenuSidebar = true;
 skin.json                         注册：ValidSkinNames / ResourceModules / skinStyles / config
 includes/
   SkinArknights.php               SkinMustache 子类：模板数据、<html> 主题类、watch 星标搬到 views、菜单图标
-  Components/*.php                每块 UI 一个组件（Citizen 风格）：MainMenu / MenuSidebar / HeaderNav / UserMenu /
+  Components/*.php                每块 UI 一个组件（Citizen 风格）：MainMenu / MenuSidebar / UserMenu /
                                   PageHeading / PageTools / TableOfContents / PageFooter / Footer / Menu
   Menu/WikitextMenuParser.php     以当前页为上下文解析 MediaWiki 名字空间 wikitext，并把 RL 模块转发给 OutputPage
   Menu/MenuItemDecorator.php      把核心的 icon 键变成 <span class="ak-icon ak-icon--x">
   Hooks/SkinHooks.php             BeforePageDisplay（内联主题脚本）/ viewport / 工具箱图标
   Hooks/ResourceLoaderHooks.php   config.json
   Api/ApiArknightsSearchIndex.php 搜索面板的本地索引（Cargo → JSON，含服务端拼音）
-templates/*.mustache              skin · Header · Header__logo · HeaderNav · Search · ThemeToggle · UserMenu · Menu ·
+templates/*.mustache              skin · Header · Header__logo · Search · ThemeToggle · UserMenu · Menu ·
                                   Sidebar · PageHeader · PageTools · Indicators · TableOfContents(+__list/__line) ·
                                   PageFooter · Footer · SectionLinks · Link
 resources/
@@ -108,7 +106,8 @@ scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重
   所以预取失败可以完全静默，只有用户主动点了才需要提示（`arknights-search-load-error`）。
   唯一的约束：挂载会把输入框搬走，所以光标在框里或框里有字时不做静默挂载，留给下一次主动打开一起做。
 - 打开：点触发器 / 手机上的搜索图标 / 按 `/`、`Ctrl(⌘)K`、accesskey F。关闭：Esc（有字先清空，模式中先退出）、点遮罩、选中结果。
-- 空态显示最近访问（`localStorage['arknights-search-recent']`）与页眉导航做的快捷入口；
+- 空态显示最近访问（`localStorage['arknights-search-recent']`）与侧栏顶部做的快捷入口
+  （依次取 `#MenuSidebar` 首层链接 → `#p-navigation` → `#mw-panel`）；
   `/` 列出命令，`>` 动作 · `#` 分类 · `@` 用户 · `~` 文件。
 - 面板开启时 `SkinHooks::onSkinPageReadyConfig()` 会把 `mediawiki.page.ready` 的 `search` 开关置 false
   （与 Vector 2022 同一做法）。核心是在搜索框**聚焦时**才懒加载 `mediawiki.searchSuggest` 的，不关掉的话
@@ -200,6 +199,8 @@ $wgArknightsSearchIndex = [
 ## 与设计系统的对应
 
 - 页眉 `.ak-header`、侧栏 `.ak-sidebar`、页面头 `.ak-page-header`、目录 `.ak-toc`、页脚 `.ak-footer` 等类名与 prts-redesign 的 `src/skin.css` 一致，但骨架样式由本皮肤的 LESS 维护（DOM 由模板定义）。
+- **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
+- **<1120 页眉**回到 flex，只留 品牌 / 搜索（<640 收成图标）/ ≡。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ≡ 拉下、贴主行右下沿的 320px 卡片。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录浮层的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起，以及卡片开着时不收页眉。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
 - 图标：`skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `.ak-icon.ak-icon--{name}`；可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）。
 - 模板/TemplateStyles 中直接使用 `.ak-*` 组件与 `var(--ak-*)` 令牌，与预览页一致；`data-bind`/`.ak-tabs`/`.ak-phase-tabs` 等交互约定由 `interactive.js` 提供。
 - 小工具可用的钩子：`mw.hook('skin.arknights.clientPrefs')`（主题变化）、`mw.hook('skin.arknights.toast').fire(msg, type, title)`、`mw.hook('skin.arknights.sidebar').fire()`（侧栏内容变化后重新增强树）、`mw.hook('skin.arknights.search').fire(fn)`（注入搜索面板的本地即时索引）。

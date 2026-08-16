@@ -1,28 +1,53 @@
 {{!
 	string msg-arknights-drawer-toggle / msg-toc
-	object data-header-nav   { html-items, label }
+	string msg-arknights-appearance / msg-arknights-nav-screen
 	object data-search-box   core search box data
 	bool has-theme-toggle
 	bool toc-enabled
 	object data-user-menu
+
+	The main row carries no site navigation: that lives in the sidebar only (MediaWiki:MenuSidebar
+	or the MediaWiki:Sidebar portlets), which is reachable at every width — as a column at ≥ 1120px
+	and as the drawer opened from the local nav below it.
 }}
 <header class="ak-header mw-header" id="mw-head">
 	<div class="ak-header__inner">
 		{{>Header__logo}}
-		{{#data-header-nav}}{{>HeaderNav}}{{/data-header-nav}}
 		{{#data-search-box}}{{>Search}}{{/data-search-box}}
-		<div class="ak-header__tools">
-			{{!
-				Phones (< 640): search collapses to this icon, which opens the palette.
-				With the palette off, search.js falls back to revealing #searchform in place —
-				hence both aria-haspopup and the aria-controls/-expanded pair.
-			}}
-			<button type="button" class="ak-header__search-toggle ak-icon-btn" id="ak-search-toggle" aria-label="{{msg-arknights-search-toggle}}" title="{{msg-arknights-search-toggle}}" aria-haspopup="dialog" aria-controls="searchform" aria-expanded="false">
-				<span class="ak-icon ak-icon--search"></span>
-			</button>
-			{{#has-theme-toggle}}{{>ThemeToggle}}{{/has-theme-toggle}}
-			{{#data-user-menu}}{{>UserMenu}}{{/data-user-menu}}
+		{{!
+			Phones (< 640): search collapses to this icon, which opens the palette.
+			With the palette off, search.js falls back to revealing #searchform in place —
+			hence both aria-haspopup and the aria-controls/-expanded pair.
+		}}
+		<button type="button" class="ak-header__search-toggle ak-icon-btn" id="ak-search-toggle" aria-label="{{msg-arknights-search-toggle}}" title="{{msg-arknights-search-toggle}}" aria-haspopup="dialog" aria-controls="searchform" aria-expanded="false">
+			<span class="ak-icon ak-icon--search"></span>
+		</button>
+		{{!
+			Below 1120px the tools (theme toggle, notifications, user menu) collapse into the card
+			pulled down by the burger; above it .ak-header__screen is display:contents, so they take
+			part in the main row's grid directly. One DOM either way — the Echo and #p-personal ids
+			are never duplicated.
+
+			Opening the card is pure CSS, so it works without JS: the checkbox has to precede both
+			the card and the label for `~` to reach them. header.js only adds Escape, outside
+			clicks and closing again on the way back to desktop widths.
+		}}
+		<input type="checkbox" id="ak-nav-toggle" class="ak-nav-cb" aria-controls="ak-nav-screen">
+		<div class="ak-header__screen" id="ak-nav-screen">
+			<div class="ak-header__tools">
+				{{#has-theme-toggle}}
+				<div class="ak-header__tool">
+					<span class="ak-header__tool-label">{{msg-arknights-appearance}}</span>
+					{{>ThemeToggle}}
+				</div>
+				{{/has-theme-toggle}}
+				{{#data-user-menu}}{{>UserMenu}}{{/data-user-menu}}
+			</div>
 		</div>
+		<label class="ak-header__burger" for="ak-nav-toggle">
+			<span class="ak-header__burger-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+			<span class="ak-sr-only">{{msg-arknights-nav-screen}}</span>
+		</label>
 	</div>
 	{{!
 		Local nav — the header's second row, shown by CSS below 1400px only.
