@@ -65,25 +65,31 @@
 		padding-top: var( --ak-space-4 );
 	}
 
+	/**
+	 * The closed drawer is visibility:hidden — it stays out of the accessibility tree and
+	 * the tab order, and its shadow (32px of blur, wider than what translateX(-100%) hides)
+	 * cannot bleed back in along the left edge. The shadow itself is only painted when open.
+	 */
 	.ak-sidebar {
 		position: fixed;
 		top: 0;
 		bottom: 0;
 		left: 0;
-		width: ~"min( 86vw, 300px )";
+		width: ~'min( 86vw, 300px )';
 		max-height: none;
 		z-index: var( --ak-z-modal );
 		background: var( --ak-bg-surface );
 		border-right: 1px solid var( --ak-border );
 		padding: 0 var( --ak-space-3 ) var( --ak-space-6 );
-		box-shadow: var( --ak-shadow-lg );
 		transform: translateX( -100% );
-		transition: transform var( --ak-dur-normal ) var( --ak-ease );
 		visibility: hidden;
+		transition: transform var( --ak-dur-normal ) var( --ak-ease ), visibility 0s var( --ak-dur-normal );
 
 		&.is-open {
 			transform: none;
 			visibility: visible;
+			box-shadow: var( --ak-shadow-lg );
+			transition: transform var( --ak-dur-normal ) var( --ak-ease ), visibility 0s;
 		}
 	}
 
