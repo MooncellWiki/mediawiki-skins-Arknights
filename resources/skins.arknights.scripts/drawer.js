@@ -1,6 +1,7 @@
 /**
- * Off-canvas drawers — the sidebar (< 1120px) and the table of contents (< 1400px).
+ * Off-canvas drawer — the sidebar below 1120px, opened from the local nav.
  * A drawer is any element toggled with .is-open; an overlay is inserted behind it.
+ * (The table of contents is not a drawer: it is a CSS flyout, see toc.js.)
  */
 let overlay = null;
 let openDrawer = null;
@@ -72,7 +73,6 @@ function toggle( drawer, toggle ) {
 
 function init() {
 	const sidebar = document.getElementById( 'ak-sidebar' );
-	const toc = document.getElementById( 'ak-toc' );
 
 	document.addEventListener( 'click', ( e ) => {
 		const target = e.target;
@@ -85,19 +85,8 @@ function init() {
 			toggle( sidebar, sidebarToggle );
 			return;
 		}
-		const tocToggle = target.closest( '#ak-toc-fab' );
-		if ( tocToggle && toc ) {
+		if ( target.closest( '.ak-sidebar__close' ) ) {
 			e.preventDefault();
-			toggle( toc, tocToggle );
-			return;
-		}
-		if ( target.closest( '.ak-sidebar__close, .ak-toc__close' ) ) {
-			e.preventDefault();
-			close();
-			return;
-		}
-		// Following a TOC link on small screens closes the TOC drawer
-		if ( openDrawer === toc && target.closest( '.ak-toc__link' ) ) {
 			close();
 		}
 	} );
@@ -109,7 +98,7 @@ function init() {
 	} );
 
 	// Leaving the drawer breakpoint: make sure nothing stays stuck open
-	const mq = window.matchMedia( '(min-width: 1400px)' );
+	const mq = window.matchMedia( '(min-width: 1120px)' );
 	const onChange = () => {
 		if ( mq.matches && openDrawer ) {
 			close();

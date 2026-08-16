@@ -1,6 +1,55 @@
 /**
- * Table of contents — scroll spy, reading progress, collapsible top-level sections.
+ * Table of contents — scroll spy, reading progress, collapsible top-level sections and
+ * dismissing the flyout.
+ *
+ * Below 1400px the TOC is a flyout pulled down from the local nav. Opening and closing it
+ * is pure CSS (#ak-toc-toggle + its label), so it works without JS; this module only adds
+ * the parts a checkbox cannot express: close after following an entry, on Escape, or on a
+ * click outside.
  */
+
+function setupFlyout() {
+	const cb = document.getElementById( 'ak-toc-toggle' );
+	if ( !cb ) {
+		return;
+	}
+
+	document.addEventListener( 'click', ( e ) => {
+		if ( !cb.checked ) {
+			return;
+		}
+		const target = e.target;
+		if ( !( target instanceof Element ) ) {
+			return;
+		}
+		if ( target.closest( '.ak-toc__link, .ak-toc__top' ) ) {
+			cb.checked = false;
+			return;
+		}
+		// Clicking the label dispatches a second click on the checkbox itself —
+		// that one must not count as "outside", or the flyout would close as it opens.
+		if ( !target.closest( '.ak-toc, .ak-local-nav__toc, .ak-toc-cb' ) ) {
+			cb.checked = false;
+		}
+	} );
+
+	document.addEventListener( 'keydown', ( e ) => {
+		if ( e.key === 'Escape' && cb.checked ) {
+			cb.checked = false;
+			cb.focus( { preventScroll: true } );
+		}
+	} );
+
+	// Leaving the flyout breakpoint: do not leave it stuck open behind the rail
+	const mq = window.matchMedia( '(min-width: 1400px)' );
+	if ( mq.addEventListener ) {
+		mq.addEventListener( 'change', () => {
+			if ( mq.matches ) {
+				cb.checked = false;
+			}
+		} );
+	}
+}
 
 /**
  * @param {HTMLElement} toc
@@ -77,9 +126,9 @@ function setupScrollSpy( toc ) {
 			}
 			parent = parent.parentElement.closest( '.ak-toc__item' );
 		}
-		// Keep the active entry visible inside a scrolling TOC
+		// Keep the active entry visible inside the scrolling part of the TOC
 		const rect = li.getBoundingClientRect();
-		const box = toc.getBoundingClientRect();
+		const box = ( toc.querySelector( '.ak-toc__inner' ) || toc ).getBoundingClientRect();
 		if ( rect.top < box.top || rect.bottom > box.bottom ) {
 			li.scrollIntoView( { block: 'nearest' } );
 		}
@@ -142,6 +191,7 @@ function init() {
 	setupCollapse( toc );
 	setupScrollSpy( toc );
 	setupProgress( toc );
+	setupFlyout();
 }
 
 module.exports = { init };
