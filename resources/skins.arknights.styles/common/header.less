@@ -336,10 +336,22 @@
 			-webkit-appearance: none;
 		}
 
+		// --ak-fg-muted, not the -subtle you would reach for on a placeholder: this text has
+		// to survive being re-read as the trigger button's label, which inherits the button's
+		// own colour. See the mount note above .ak-search-trigger.
 		&::placeholder {
-			color: var( --ak-fg-subtle );
+			color: var( --ak-fg-muted );
 		}
 
+		&:hover::placeholder {
+			color: var( --ak-fg-secondary );
+		}
+
+		&:hover {
+			border-color: var( --ak-border-strong );
+		}
+
+		// After :hover, so a hovered *and* focused field still reads as focused
 		&:focus {
 			outline: 0;
 			background: var( --ak-bg-surface );
@@ -348,9 +360,16 @@
 		}
 	}
 
+	&:hover .ak-search__icon-wrap {
+		color: var( --ak-fg-secondary );
+	}
+
+	// left: 11px rather than the 10px the trigger uses, because these offsets resolve
+	// against the *form*, which has no border of its own, while the field inside it does —
+	// so 10px here would land the icon 1px left of where the button puts it.
 	.ak-search__icon-wrap {
 		position: absolute;
-		left: 10px;
+		left: 11px;
 		top: 50%;
 		transform: translateY( -50% );
 		display: grid;
@@ -371,9 +390,10 @@
 		height: 16px;
 	}
 
+	// right: 9px for the same reason as the icon's 11px — one border's worth of correction
 	.ak-search__kbd {
 		position: absolute;
-		right: 8px;
+		right: 9px;
 		top: 50%;
 		transform: translateY( -50% );
 		font: 600 10px/1 var( --ak-font-mono );
@@ -398,6 +418,11 @@
  * With JS, search-palette.js replaces the form above with this button — it looks like the
  * field it stands in for, but opens the floating palette (see search-palette.less). The
  * script copies `ak-header__search` onto it, so the header layout rules above still apply.
+ *
+ * That replacement happens on hover, under the cursor, so anything the two boxes disagree
+ * about reads as the search box flinching. Everything above is therefore written to land on
+ * the same pixels and the same colours as the rules here — including the icon, which
+ * searchPalette.js re-points at `.ak-icon--search` so both states draw the same magnifier.
  */
 .ak-search-trigger {
 	display: inline-flex;

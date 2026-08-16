@@ -405,8 +405,10 @@
 		border-bottom: 1px solid var( --ak-border );
 		box-shadow: var( --ak-shadow-md );
 
+		// + 11px, not 10px — same one-border correction as the docked header field, since
+		// this offset also resolves against the form rather than the field inside it
 		.ak-search__icon-wrap {
-			left: calc( var( --ak-gutter ) + 10px );
+			left: calc( var( --ak-gutter ) + 11px );
 		}
 
 		.ak-search__kbd {

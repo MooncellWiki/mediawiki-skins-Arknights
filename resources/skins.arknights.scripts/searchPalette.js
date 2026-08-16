@@ -71,6 +71,29 @@ function iconForAction( href ) {
 }
 
 /**
+ * Give the trigger button the skin's own magnifier.
+ *
+ * The palette builds its trigger with an inline stroke SVG, because the design system has to
+ * stand up in the prts-design preview with no icon pipeline behind it. The header's no-JS
+ * form draws the same idea from `skins.arknights.icons` (the OOUI glyph, as a mask), and the
+ * two are not the same drawing: same lens, a handle about 30% shorter on the design-system
+ * one. Since the swap happens on hover with the cursor already on the box, that difference
+ * reads as the magnifier shrinking on its own. Re-point it at the skin's glyph instead of
+ * forking the vendored file, and the mount goes unnoticed.
+ */
+function adoptSkinIcon() {
+	const svg = document.querySelector( '.ak-search-trigger__icon' );
+	if ( !svg ) {
+		return;
+	}
+	const icon = document.createElement( 'span' );
+	// Keeps the trigger's own class so header.less still sizes it to 16px
+	icon.className = 'ak-icon ak-icon--search ak-search-trigger__icon';
+	icon.setAttribute( 'aria-hidden', 'true' );
+	svg.replaceWith( icon );
+}
+
+/**
  * Aliases are only worth showing when they are not just a spelling of the target — the
  * same test Citizen applies, so "陈sir → 陈" stays quiet but "银老板 → 银灰" does not.
  *
@@ -403,6 +426,8 @@ function init() {
 		modes: modes,
 		recent: { key: 'arknights-search-recent', max: 8 }
 	} );
+
+	adoptSkinIcon();
 
 	// Registers itself through the same hook a gadget would use, and only fetches once the
 	// palette is actually opened — a hover-driven prefetch should not cost an API request.
