@@ -353,6 +353,12 @@
 	&::before {
 		display: none !important;
 	}
+
+	// Tint the whole row, not just the link: the actions column is a sibling of
+	// __link, so highlighting the link alone leaves the "remove ×" cell unpainted
+	&.is-active {
+		background: var( --ak-accent-subtle );
+	}
 }
 
 .ak-palette__link {
@@ -379,7 +385,6 @@
 
 	// Same highlight language as the current sidebar item and the menu rows
 	.ak-palette__item.is-active > & {
-		background: var( --ak-accent-subtle );
 		border-left-color: var( --ak-accent );
 	}
 }
@@ -522,14 +527,15 @@
 // "remove" on a recent item — search results get a single click target, the link.
 .ak-palette__actions {
 	flex: none;
-	display: none;
+	display: flex;
 	align-items: center;
 	gap: 2px;
 	padding-right: 8px;
+	visibility: hidden;
 
 	.ak-palette__item.is-active > &,
 	.ak-palette__item:focus-within > & {
-		display: flex;
+		visibility: visible;
 	}
 }
 
