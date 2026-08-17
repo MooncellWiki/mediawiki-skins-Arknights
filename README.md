@@ -68,24 +68,26 @@ $wgArknightsMenuSidebar = true;
 | `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间覆盖标题下方的 tagline |
 | `MediaWiki:Arknights.css` / `MediaWiki:Arknights.js` | 皮肤专属站点样式/脚本（MediaWiki 自动加载） |
 
-## 活动主题：头图 · 顶栏底图 · 站标 · 主色
+## 活动主题：头图 · 顶栏角饰 · 站标 · 主色
 
 页眉与页脚是皮肤的「框」，在**两套主题下都是黑的**（官网导航栏 / 游戏主界面顶栏 / 干员档案页顶部黑边的框架语言），配色不读明暗主题，只读 `design-system/tokens.css §2d` 的 `--ak-chrome-*`。大活换皮不需要改选择器——现网 `ext.gadget.seventhStyle` 改的那几处（`body` 大图、`#mw-head` 左右底图、`.mw-wiki-logo`、侧栏分组渐变）都被抽成了接口变量，Gadget 或 `MediaWiki:Common.css` 只写变量即可，卸载即恢复：
 
 ```css
 :root {
   --ak-theme-accent: #72a330;                       /* 页眉标语 / 悬停 / 外观开关选中项 / 搜索图标框、侧栏与目录分组条、页脚斜纹一起换 */
-  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 220px;   /* 头图 .ak-keyart：页眉之下的通栏画，默认 0 高不占位 */
-  --ak-chrome-image: url(//media.prts.wiki/…/headleft.png), url(//media.prts.wiki/…/headright.png);
-  --ak-chrome-image-position: left top, right top;   --ak-chrome-texture: 0;    /* 顶栏底图（现网 PRTSheadleft / Garanheadright）；有底图就关掉默认网点 */
+  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 220px;   /* 头图 .ak-keyart：从页面顶端铺起、页眉压在它上面，-h 是页眉之下露出的那段，默认 0 不占位 */
+  --ak-chrome-bg: rgba(8, 9, 10, .8);                                           /* 可选：页眉玻璃调淡些让头图多透一点（默认 .9，别低于 .72） */
+  --ak-chrome-image: url(//media.prts.wiki/…/headleft.png);
+  --ak-chrome-image-position: left top;   --ak-chrome-texture: 0;               /* 可选：顶栏角饰（现网 PRTSheadleft 那种活动徽章 / 深色底纹），有角饰就关掉默认网点 */
   --ak-logo-image: url(//media.prts.wiki/…/logo.png);                           /* 站标（Chromium / WebKit 生效；Firefox 请改 $wgLogos） */
   --ak-canvas-image: url(//media.prts.wiki/…/bkg.png);  --ak-canvas-repeat: no-repeat;   /* 画布底纹 */
 }
-html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/kv-night.jpg); }   /* 头图 / 画布图要分昼夜就这样写；页眉本身两套主题同色，底图与站标只需一套 */
+html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/kv-night.jpg); }   /* 头图 / 画布图要分昼夜就这样写；页眉本身两套主题同色，角饰与站标只需一套 */
 ```
 
-完整变量表见 prts-design 的 `docs/01-design-system.md §2.10`，可运行示例见 `preview/demo-theme.css`。三点注意：
+完整变量表见 prts-design 的 `docs/01-design-system.md §2.10`，可运行示例见 `preview/demo-theme.css`。四点注意：
 
+- **页眉是压在头图上的一块均匀黑玻璃**：头图从页面顶端铺起（CSS 负外边距，DOM 顺序不变），页眉之下露出 `--ak-keyart-h` 那一段，`--ak-keyart-position` / `-size` 按「页眉 + 露出段」整块取景。可读性由 `--ak-chrome-bg` 的 alpha 保证，与底下是什么画无关——所以头图不必自己压暗顶部，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
 - 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
@@ -138,6 +140,8 @@ resources/
   badge/                          页脚徽章的白描版（MediaWiki / SMW / CC BY-NC-SA，见下文「页脚徽章」）
   design-system/                  ← 从 prts-design/src 原样同步（tokens/base/components/arknights/utilities.css +
                                   sidebar-tree.js + search-palette.js），勿改
+  design-system/fonts.css         ← 同上：121 条 @font-face（自托管 web 字体，见下文「字体」）
+  design-system/fonts/            ← 同上：woff2 与各族授权全文（Noto Sans SC 101 片 + 5 族，≈5MB）
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
   skins.arknights.styles/         皮肤骨架 LESS（header / sidebar / menu-sidebar / page-header / page-tools / toc / footer / responsive / print …）
   skins.arknights.scripts/        常驻：theme · dropdown · drawer · header · toc · backToTop · interactive ·
@@ -148,8 +152,30 @@ i18n/                             en · qqq · zh-hans · zh-hant · ja
 scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重置
 ```
 
-分层：`tokens.css`（令牌+主题+Codex 桥接）→ `base.css`（wikitext 产物）→ `components.css` / `arknights.css`（组件与方舟装饰）→ `utilities.css` → `skin.less`（皮肤骨架）。前五个文件是设计系统的产物，
+分层：`fonts.css`（@font-face）→ `tokens.css`（令牌+主题+Codex 桥接）→ `base.css`（wikitext 产物）→ `components.css` / `arknights.css`（组件与方舟装饰）→ `utilities.css` → `skin.less`（皮肤骨架）。前六个文件（连同 `fonts/`）是设计系统的产物，
 **只在 prts-design 里改**，然后运行 `scripts/sync-design-system.sh [path/to/prts-design]`。
+
+## 字体：自托管
+
+`skins.arknights.fonts`（`resources/design-system/fonts.css` + `fonts/`）在所有页面加载，是 `styles` 的第一项。设计系统的字体链在 `tokens.css` 的 Typography 段，前两段都自托管，因此访客装没装字体看到的都是同一套：
+
+| 角色 | 字族 | 来源 |
+|---|---|---|
+| 正文 `--ak-font-body` | Noto Sans SC 100–900 可变 | OFL；沿用 Google 的 101 片 `unicode-range` 切分，一页典型只下 5–15 片 |
+| 展示 `--ak-font-display` | Novecento Sans Wide 500–800 → Bender → Oswald | 前两族取自明日方舟官网静态资源（**ASCII 子集**，`·` `»` `—` 等非 ASCII 逐字落到后面的 OFL 字体） |
+| HUD 标签 / 数值 `--ak-font-label` | Bender 400/700 → Chakra Petch | 同上；Chakra Petch（OFL）接非 ASCII |
+| 压缩 `--ak-font-condensed` / 等宽 `--ak-font-mono` | Oswald / JetBrains Mono | OFL |
+
+- **授权**：Novecento Sans Wide 与 Bender 是商用字，PRTS.wiki 作为明日方舟官方赞助站点按与鹰角同一组织下共用授权使用；各族授权全文与来源说明随字体文件放在 `resources/design-system/fonts/<族>/{LICENSE,NOTICE.md}`。上游 `prts-design/scripts/fetch-fonts.py` 负责抓取与生成，这里只做同步。
+- **落盘 ≈5MB，但按需下载**：`font-display: swap` + `unicode-range` 分片，ResourceLoader 只重写 `url()` 不内联。上线后建议确认 CSSMin 没有动 `unicode-range`。
+- **要关掉**（用户偏好 / Gadget / 低带宽）：把 `skins.arknights.fonts` 从 `skin.json` 的 `styles` 里去掉即可，字体链会自然退到装机字与系统字，排版不塌。
+- **数字**：Bender 只做 HUD 层（徽章、面板数值、大字号）。正文尺寸的连续数字（时间戳、差异行号、分页页数、表格数字列）走正文字体 + `font-variant-numeric: tabular-nums` —— Noto Sans SC 的数字本身等宽，天然对齐，而官网 Bender 子集没有 `tnum`、小字号又偏细。
+
+## 表单控件
+
+Widget / 小工具 / 模板里直接写裸 `<input>` `<select>` `<textarea>` `<button>` 即可，皮肤按设计系统 `docs/01-design-system.md §4` 兜底：36px 定高、正文（`.mw-body-content`，即解析产物）的表格单元格内自动收到 30px 且**文字对齐跟随单元格**（`text-align: center` 的属性计算器里输入框也居中，`td.num` 右对齐的列里输入也右对齐）、主题化的焦点 / 只读 / 禁用 / 校验失败四态、iOS 上 <640px 提到 16px 防聚焦缩放。规则整组包在 `:where()` 里（零特指度），任何带 class 的控件——`.ak-input`、Codex 的 `.cdx-text-input__input`、OOUI 的 `.oo-ui-inputWidget-input`、模板自己的 class——都稳稳压在它上面。
+
+因此 Widget 里针对旧皮肤的补丁（`.skin-minerva #calc input { border… }`、`width: calc(100% - .8em)` 之类）可以删掉，只保留 `width: 100%` 这类布局意图（控件已是 `border-box`）。要标签 / 帮助 / 错误文案、前后缀拼接、常显 − / + 步进、方舟风勾选开关，再用 `.ak-field` / `.ak-input-group` / `.ak-number` / `.ak-check` / `.ak-switch`。
 
 ## 搜索：悬浮命令面板
 

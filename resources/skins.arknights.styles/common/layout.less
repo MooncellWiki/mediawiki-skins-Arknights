@@ -1,18 +1,32 @@
 /**
- * Key art — the full-bleed band between the header and the layout, where the live site
- * puts the event picture. The markup is always emitted and costs nothing: --ak-keyart-h
- * defaults to 0, so the band takes no space until an event theme sets --ak-keyart-image
- * and a height (tokens.css §2d). The foot of it fades into the canvas over
- * --ak-keyart-fade, and the header is a translucent plate, so the art shows through it
- * as the page scrolls.
+ * Key art — the full-bleed picture the live site hangs at the top of the page. The markup
+ * is always emitted and costs nothing: --ak-keyart-h defaults to 0, so the band takes no
+ * space until an event theme sets --ak-keyart-image and a height (tokens.css §2d).
+ *
+ * The picture starts at the very top of the page rather than below the header: the box is
+ * pulled up by one header height and the same amount of padding pushes its content back
+ * down, so the top of the art sits behind the sticky header (which has the higher z-index)
+ * and the header reads as one even sheet of black glass laid over it. How much shows
+ * through is the alpha of --ak-chrome-bg alone — black frame and picture are a single
+ * block, not a top-bar crop plus a second banner underneath. --ak-keyart-h is the strip
+ * left visible below the header; -position / -size frame the whole block (header + strip).
+ *
+ * The foot of it fades into the canvas over --ak-keyart-fade — clamped to the visible
+ * strip, so a height of 0 does not draw a gradient up behind the header. --ak-keyart-bg
+ * defaults to transparent for the same reason.
  */
 .ak-keyart {
+	// How far the art reaches up behind the header; below 1400 that is two rows (responsive.less)
+	--_over: var( --ak-header-h );
 	position: relative;
 	// Never absorbed by the column flex on <body>, whatever the page height
 	flex: none;
+	// The reach-up is padding, so it must not be taken out of --ak-keyart-h
+	box-sizing: content-box;
 	height: var( --ak-keyart-h );
+	padding-top: var( --_over );
+	margin: calc( -1 * var( --_over ) ) 0 0;
 	overflow: hidden;
-	margin: 0;
 	// Longhands: less.php reads the shorthand's `position / size` slash as a division
 	background-color: var( --ak-keyart-bg );
 	background-image: var( --ak-keyart-image );
@@ -26,13 +40,14 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		height: var( --ak-keyart-fade );
+		height: ~'min( var( --ak-keyart-fade ), var( --ak-keyart-h ) )';
 		background: linear-gradient( to bottom, transparent, var( --ak-bg-canvas ) );
 		pointer-events: none;
 	}
 }
 
-// Room for an event theme to hang a title or a countdown in, on the header's column grid
+// Room for an event theme to hang a title or a countdown in, on the header's column grid.
+// It sits inside the padding, so it stays clear of the header.
 .ak-keyart__inner {
 	position: relative;
 	height: 100%;
@@ -42,9 +57,13 @@
 	box-sizing: border-box;
 }
 
-@media ( max-width: 639px ) {
+@media ( max-width: @ak-bp-mobile-max ) {
 	.ak-keyart {
 		height: ~'min( var( --ak-keyart-h ), 40vw )';
+
+		&::after {
+			height: ~'min( var( --ak-keyart-fade ), var( --ak-keyart-h ), 40vw )';
+		}
 	}
 }
 

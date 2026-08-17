@@ -66,6 +66,7 @@
 						"skins.arknights.scripts"
 					],
 					"styles": [
+						"skins.arknights.fonts",
 						"skins.arknights.styles",
 						"skins.arknights.icons"
 					],
@@ -140,6 +141,11 @@
 		"remoteSkinPath": "Arknights"
 	},
 	"ResourceModules": {
+		"skins.arknights.fonts": {
+			"styles": [
+				"resources/design-system/fonts.css"
+			]
+		},
 		"skins.arknights.styles": {
 			"class": "MediaWiki\\ResourceLoader\\SkinModule",
 			"features": {

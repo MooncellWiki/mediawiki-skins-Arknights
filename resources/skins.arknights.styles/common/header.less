@@ -59,9 +59,16 @@
 	z-index: var( --ak-z-header );
 	color: var( --ak-fg );
 	/**
-	 * --ak-chrome-image is the event theme's top-bar artwork (where PRTSheadleft /
-	 * Garanheadright sit on the live site), over a translucent plate — the key art and the
-	 * canvas image show through it as they scroll underneath.
+	 * The bar is one even sheet of dark glass — translucent --ak-chrome-bg plus a blur —
+	 * laid over the key art, which starts at the very top of the page and runs on behind
+	 * it (layout.less). Legibility comes from the glass rather than from whatever is
+	 * underneath, so an event theme only turns the alpha down (.78–.85; below .72 white
+	 * artwork stops clearing 7:1) to let more of the picture through. No horizontal fade,
+	 * no vertical gradient.
+	 *
+	 * --ak-chrome-image is painted over the glass, not under it: corner marks and dark
+	 * textures (the event badge at PRTSheadleft, the ripple at Garanheadright), never a
+	 * photograph — that is what --ak-keyart-image is for, and it is not dimmed here.
 	 *
 	 * Longhands rather than the `background` shorthand: less.php reads the shorthand's
 	 * `position / size` slash as a division and refuses to compile.

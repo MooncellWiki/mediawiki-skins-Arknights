@@ -47,9 +47,10 @@
 	padding-top: var( --ak-space-3 );
 	border-top: 1px solid var( --ak-border );
 
+	// Body font, figures lined up: Bender is the HUD layer, and a date at body size is a
+	// run of digits the body face sets better (design-system base.css, "数字列")
 	&__item--lastmod {
-		font-family: var( --ak-font-label );
-		letter-spacing: 0.02em;
+		font-variant-numeric: tabular-nums;
 	}
 
 	&__item--copyright,

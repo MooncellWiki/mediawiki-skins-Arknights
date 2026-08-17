@@ -37,7 +37,9 @@
 	}
 }
 
+// Body font for the page-size digits (20 | 50 | 100 …): design-system components.css
+// dropped its own .mw-pager-navigation-bar rule for the same reason
 .mw-pager-navigation-bar {
-	font-family: var( --ak-font-label );
 	color: var( --ak-fg-secondary );
+	font-variant-numeric: tabular-nums;
 }

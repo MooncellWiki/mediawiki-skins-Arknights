@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sync the AKDS design-system layer (tokens / base / components / arknights / utilities / sidebar-tree)
+# Sync the AKDS design-system layer (fonts / tokens / base / components / arknights / utilities / sidebar-tree)
 # from the prts-design repository into resources/design-system/.
 #
 # Usage: scripts/sync-design-system.sh [path/to/prts-design]
@@ -31,11 +31,18 @@ if [ ! -f "$SRC/src/tokens.css" ]; then
 fi
 
 mkdir -p "$DEST"
-FILES=(tokens.css base.css components.css arknights.css utilities.css sidebar-tree.js search-palette.js)
+FILES=(fonts.css tokens.css base.css components.css arknights.css utilities.css sidebar-tree.js search-palette.js)
 for f in "${FILES[@]}"; do
 	cp "$SRC/src/$f" "$DEST/$f"
 	echo "synced $f"
 done
+
+# The self-hosted web fonts fonts.css declares (≈5MB of woff2 + the OFL / NOTICE files that
+# have to travel with them). Replaced wholesale so faces dropped upstream do not linger here;
+# ResourceLoader rewrites the relative url()s against resources/design-system/.
+rm -rf "$DEST/fonts"
+cp -R "$SRC/src/fonts" "$DEST/fonts"
+echo "synced fonts/ ($(find "$DEST/fonts" -name '*.woff2' | wc -l | tr -d ' ') woff2)"
 
 REV="unknown"
 if git -C "$SRC" rev-parse --short HEAD >/dev/null 2>&1; then

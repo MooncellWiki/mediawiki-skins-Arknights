@@ -17,6 +17,12 @@
 		display: flex;
 	}
 
+	// The header is two rows here, and the art reaches up behind both of them — one
+	// picture under one sheet of glass, rather than a seam at the local nav
+	.ak-keyart {
+		--_over: calc( var( --ak-header-h ) + var( --ak-local-nav-h ) );
+	}
+
 	// Back to top moves into the TOC flyout rather than floating over the content
 	.ak-fab {
 		display: none;
@@ -143,6 +149,13 @@
 @media ( min-width: @ak-bp-desktop ) and ( max-width: @ak-bp-toc-max ) {
 	.ak-local-nav:not( :has( .ak-toc-cb ) ) {
 		display: none;
+	}
+
+	// …and with that row gone the header is one row again, so the key art reaches up by
+	// one. `ak-toc-enabled` is set by SkinArknights alongside the .ak-toc-cb the rule
+	// above tests, so the two conditions cannot drift apart.
+	body:not( .ak-toc-enabled ) .ak-keyart {
+		--_over: var( --ak-header-h );
 	}
 }
 
