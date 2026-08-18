@@ -105,7 +105,8 @@ function headingOf( a ) {
  *     because the last few sections never reach the baseline and the "bottom of the page"
  *     rule below would take the highlight straight back;
  *   - nothing is active at the very top, the last entry is active at the very bottom;
- *   - headings with no box at all (collapsed section, hidden tab) are skipped.
+ *   - headings with no box at all (collapsed section, hidden tab) are skipped;
+ *   - the active entry is kept in view by scrolling the TOC itself, never the window.
  *
  * @param {HTMLElement} toc
  */
@@ -122,6 +123,7 @@ function setupScrollSpy( toc ) {
 	}
 
 	const headings = Array.from( items.keys() );
+	const box = toc.querySelector( '.ak-toc__inner' ) || toc;
 	const shown = ( h ) => {
 		const r = h.getBoundingClientRect();
 		return r.width > 0 || r.height > 0;
@@ -158,11 +160,14 @@ function setupScrollSpy( toc ) {
 			}
 			parent = parent.parentElement.closest( '.ak-toc__item' );
 		}
-		// Keep the active entry visible inside the scrolling part of the TOC
+		// Keep the active entry visible inside the scrolling part of the TOC. Nudging
+		// box.scrollTop rather than scrollIntoView(), which would also scroll the window.
 		const rect = li.getBoundingClientRect();
-		const box = ( toc.querySelector( '.ak-toc__inner' ) || toc ).getBoundingClientRect();
-		if ( rect.top < box.top || rect.bottom > box.bottom ) {
-			li.scrollIntoView( { block: 'nearest' } );
+		const view = box.getBoundingClientRect();
+		if ( rect.top < view.top ) {
+			box.scrollTop -= view.top - rect.top;
+		} else if ( rect.bottom > view.bottom ) {
+			box.scrollTop += rect.bottom - view.bottom;
 		}
 	};
 
