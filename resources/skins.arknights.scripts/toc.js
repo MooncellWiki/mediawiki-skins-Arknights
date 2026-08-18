@@ -70,23 +70,33 @@ function setupCollapse( toc ) {
 }
 
 /**
+ * Resolve the heading a TOC entry points at.
+ *
+ * @param {Element} a
+ * @return {HTMLElement|null}
+ */
+function headingOf( a ) {
+	const href = a.getAttribute( 'href' ) || '';
+	if ( href.charAt( 0 ) !== '#' ) {
+		return null;
+	}
+	let id = href.slice( 1 );
+	try {
+		id = decodeURIComponent( id );
+	} catch ( e ) {
+		// A fragment the browser accepts but decodeURIComponent rejects — match it raw
+	}
+	return id ? document.getElementById( id ) : null;
+}
+
+/**
  * @param {HTMLElement} toc
  */
 function setupScrollSpy( toc ) {
-	const links = Array.from( toc.querySelectorAll( '.ak-toc__link' ) );
-	if ( !links.length ) {
-		return;
-	}
 	const items = new Map();
-	links.forEach( ( a ) => {
-		let id = '';
-		try {
-			id = decodeURIComponent( ( a.getAttribute( 'href' ) || '' ).slice( 1 ) );
-		} catch ( e ) {
-			id = ( a.getAttribute( 'href' ) || '' ).slice( 1 );
-		}
-		const heading = id && document.getElementById( id );
-		if ( heading ) {
+	toc.querySelectorAll( '.ak-toc__link' ).forEach( ( a ) => {
+		const heading = headingOf( a );
+		if ( heading && !items.has( heading ) ) {
 			items.set( heading, a.parentElement );
 		}
 	} );
