@@ -90,6 +90,23 @@ function headingOf( a ) {
 }
 
 /**
+ * Scroll spy — walk the headings in document order and take the last one above the
+ * baseline, the way VitePress (useActiveAnchor) and Docusaurus (useTOCHighlight) do.
+ *
+ * Deliberately not IntersectionObserver: after an anchor jump the target heading and the
+ * one right below it enter the observed band in the same batch, the last entry of the
+ * callback wins, and the highlight lands on the *next* item — and whether they arrive
+ * together depends on where the jump started, so it only misbehaves some of the time.
+ *
+ *   - the baseline is each heading's own scroll-margin-top (exactly where the browser
+ *     parks it after an anchor jump) plus 4px of slack, so clicking an entry always
+ *     lights up that entry;
+ *   - clicking an entry highlights it immediately and skips the one scroll it triggers,
+ *     because the last few sections never reach the baseline and the "bottom of the page"
+ *     rule below would take the highlight straight back;
+ *   - nothing is active at the very top, the last entry is active at the very bottom;
+ *   - headings with no box at all (collapsed section, hidden tab) are skipped.
+ *
  * @param {HTMLElement} toc
  */
 function setupScrollSpy( toc ) {
@@ -105,8 +122,13 @@ function setupScrollSpy( toc ) {
 	}
 
 	const headings = Array.from( items.keys() );
-	const headerH = parseInt( getComputedStyle( document.documentElement ).getPropertyValue( '--ak-header-h' ), 10 ) || 56;
+	const shown = ( h ) => {
+		const r = h.getBoundingClientRect();
+		return r.width > 0 || r.height > 0;
+	};
 	let current = null;
+	let ignoreOnce = false;
+	let ticking = false;
 
 	const activate = ( li ) => {
 		if ( li === current ) {
@@ -144,20 +166,55 @@ function setupScrollSpy( toc ) {
 		}
 	};
 
-	let ticking = false;
 	const update = () => {
 		ticking = false;
-		const line = headerH + 24;
+		if ( ignoreOnce ) {
+			ignoreOnce = false;
+			return;
+		}
+		const d = document.documentElement;
+		if ( window.scrollY < 1 ) {
+			activate( null );
+			return;
+		}
+		if ( window.scrollY + window.innerHeight >= d.scrollHeight - 1 ) {
+			for ( let i = headings.length - 1; i >= 0; i-- ) {
+				if ( shown( headings[ i ] ) ) {
+					activate( items.get( headings[ i ] ) );
+					return;
+				}
+			}
+			return;
+		}
 		let best = null;
 		for ( let i = 0; i < headings.length; i++ ) {
-			if ( headings[ i ].getBoundingClientRect().top - line <= 0 ) {
-				best = headings[ i ];
-			} else {
+			const h = headings[ i ];
+			if ( !shown( h ) ) {
+				continue;
+			}
+			const line = parseFloat( getComputedStyle( h ).scrollMarginTop ) || 0;
+			if ( h.getBoundingClientRect().top > line + 4 ) {
 				break;
 			}
+			best = h;
 		}
 		activate( best ? items.get( best ) : null );
 	};
+
+	toc.addEventListener( 'click', ( e ) => {
+		const target = e.target;
+		if ( !( target instanceof Element ) ) {
+			return;
+		}
+		const a = target.closest( '.ak-toc__link' );
+		const heading = a && headingOf( a );
+		const li = heading && items.get( heading );
+		if ( li ) {
+			ignoreOnce = true;
+			activate( li );
+		}
+	} );
+
 	window.addEventListener( 'scroll', () => {
 		if ( !ticking ) {
 			ticking = true;
