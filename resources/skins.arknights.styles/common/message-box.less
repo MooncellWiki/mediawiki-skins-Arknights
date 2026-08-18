@@ -1,0 +1,189 @@
+/**
+ * Codex message boxes → the design system's `.ak-message`
+ *
+ * Every core message box goes through Html::messageBox() (warningBox / errorBox /
+ * successBox / noticeBox) and comes out as
+ *   .cdx-message.cdx-message--block.cdx-message--{notice,warning,error,success}
+ *     > span.cdx-message__icon + div.cdx-message__content
+ * with the same markup produced by CdxMessage in Vue code (Special:Block…) and by
+ * HTMLForm field validation.
+ *
+ * tokens.css already bridges Codex's colour custom properties to the AKDS palette, so the
+ * boxes are themed — but the *shape* is still Codex's (16/24px padding, full 1px frame,
+ * no colour bar). This file finishes the job: `.ak-message` geometry, left colour bar,
+ * accent-tinted icon, heading demoted to a component title.
+ *
+ * CdxMessage's CSS rides along with any module that lists it in `codexComponents`
+ * (mediawiki.codex.messagebox.styles, codex-styles, extension modules …), so the mapping
+ * cannot rely on load order the way a skinStyles file would — hence `.skin-arknights`,
+ * which outranks Codex's own `.cdx-message…` selectors whichever module dragged them in.
+ */
+.skin-arknights {
+	.cdx-message {
+		--_c: var( --ak-info );
+		--_bg: var( --ak-info-bg );
+		display: flex;
+		align-items: flex-start;
+		gap: var( --ak-space-3 );
+		position: relative;
+		margin: 0 0 var( --ak-space-4 );
+		padding: var( --ak-space-3 ) var( --ak-space-4 );
+		background: var( --_bg );
+		color: var( --ak-fg );
+		border: 1px solid var( --ak-border );
+		border-left: var( --ak-bar-w ) solid var( --_c );
+		font-size: var( --ak-fs-sm );
+	}
+
+	.cdx-message--notice {
+		--_c: var( --ak-info );
+		--_bg: var( --ak-info-bg );
+	}
+
+	.cdx-message--warning {
+		--_c: var( --ak-warning );
+		--_bg: var( --ak-warning-bg );
+	}
+
+	.cdx-message--error {
+		--_c: var( --ak-danger );
+		--_bg: var( --ak-danger-bg );
+	}
+
+	.cdx-message--success {
+		--_c: var( --ak-success );
+		--_bg: var( --ak-success-bg );
+	}
+
+	// Codex draws the icon as a mask over `background-color` (the SVG travels in the
+	// mask-image), so recolouring it is a one-liner — but only in the masking branch:
+	// in the `@supports not` fallback the SVG *is* the background-image and a colour
+	// would paint a solid square behind it.
+	.cdx-message .cdx-message__icon {
+		flex: none;
+		width: 20px;
+		min-width: 20px;
+		// Codex's own optical trick: one line-height tall, so the glyph centres against
+		// the first line of the message instead of the top of the box.
+		height: calc( var( --ak-lh-body ) * 1em );
+		min-height: 20px;
+	}
+
+	// A heading-led box (Html::errorBox with a heading) opens on a tighter line, so the
+	// icon has to shrink with it to stay centred on that line.
+	.cdx-message:has( > .cdx-message__content > :is( h2, h3 ):first-child ) .cdx-message__icon {
+		height: calc( var( --ak-lh-tight ) * var( --ak-fs-body ) );
+	}
+
+	// The Vue flavour renders a real <svg class="cdx-icon">, which takes `color`.
+	.cdx-message .cdx-message__icon--vue {
+		flex: none;
+		color: var( --_c );
+	}
+
+	.cdx-message__content {
+		flex: 1 1 auto;
+		align-self: auto;
+		width: auto;
+		min-width: 0;
+		margin-left: 0;
+	}
+
+	// One line-height for the box and its blocks, so the icon (a line tall, see above)
+	// centres on the first line. Codex sets 1.6 straight on `.cdx-message__content > *`,
+	// which would beat inheritance from the content box.
+	.cdx-message__content,
+	.cdx-message__content > * {
+		line-height: var( --ak-lh-body );
+	}
+
+	// MediaWiki wraps a message body in a language div (div.mw-content-ltr, sometimes
+	// div.mw-parser-output around that), so Codex's `> *:first-child` reset lands on the
+	// wrapper and misses the <p> inside it — a bare <p> keeps the browser's 1em margins
+	// (the skin only zeroes them inside .mw-parser-output), which drops the first line a
+	// line below the icon. Reset through the wrappers instead.
+	.cdx-message__content > :first-child,
+	.cdx-message__content > :first-child > :first-child,
+	.cdx-message__content > :first-child > :first-child > :first-child {
+		margin-top: 0;
+	}
+
+	.cdx-message__content > :last-child,
+	.cdx-message__content > :last-child > :last-child,
+	.cdx-message__content > :last-child > :last-child > :last-child {
+		margin-bottom: 0;
+	}
+
+	// Html::errorBox( …, $heading ) prepends an <h2>; strip the section-heading
+	// decoration (colour bar, rules, ::after tick) and demote it to `.ak-message__title`.
+	.cdx-message__content > h2,
+	.cdx-message__content > h3 {
+		margin: 0 0 var( --ak-space-1 );
+		padding: 0;
+		border: 0;
+		font-size: var( --ak-fs-body );
+		font-weight: bold;
+		line-height: var( --ak-lh-tight );
+		color: inherit;
+
+		&::after {
+			content: none;
+		}
+	}
+
+	// Log excerpt under a protection / block warning (.mw-warning-with-logexcerpt)
+	.cdx-message .mw-logevent-loglines {
+		margin: var( --ak-space-2 ) 0 0;
+		color: var( --ak-fg-secondary );
+	}
+
+	// Inline messages carry no box: transparent, unpadded, bold, tinted by severity.
+	.cdx-message--inline {
+		gap: var( --ak-space-2 );
+		margin: 0;
+		padding: 0;
+		background: transparent;
+		border: 0;
+		font-weight: bold;
+	}
+
+	.cdx-message--inline.cdx-message--warning,
+	.cdx-message--inline.cdx-message--error,
+	.cdx-message--inline.cdx-message--success {
+		color: var( --_c );
+	}
+
+	// Dismiss button (CdxMessage `allowUserDismiss`) sits in the top right corner.
+	.cdx-message--user-dismissable {
+		padding-right: var( --ak-space-10 );
+	}
+
+	// …and stays quiet: base.css frames every .cdx-button like a neutral button.
+	.cdx-message__dismiss-button.cdx-button {
+		position: absolute;
+		top: var( --ak-space-2 );
+		right: var( --ak-space-2 );
+		min-height: 0;
+		padding: var( --ak-space-1 );
+		background: transparent;
+		color: var( --ak-fg-muted );
+		border: 0;
+		line-height: 0;
+	}
+
+	.cdx-message__dismiss-button.cdx-button:hover {
+		background: var( --ak-bg-hover );
+		color: var( --ak-fg );
+	}
+
+	// HTMLForm validation messages hang under their field — no trailing gap.
+	.cdx-field__validation-message .cdx-message {
+		margin-bottom: 0;
+	}
+}
+
+@supports ( ( -webkit-mask-image: none ) or ( mask-image: none ) ) {
+	.skin-arknights .cdx-message .cdx-message__icon {
+		background-color: var( --_c );
+	}
+}
