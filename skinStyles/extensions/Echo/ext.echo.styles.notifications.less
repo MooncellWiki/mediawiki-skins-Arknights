@@ -1,11 +1,12 @@
 /**
  * Echo — notification popup / list widgets
  */
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
 .mw-echo-ui-notificationBadgeButtonPopupWidget-popup {
 	.oo-ui-popupWidget-popup {
 		background: var( --ak-bg-surface );
-		border-color: var( --ak-border );
-		border-top: 2px solid var( --ak-accent );
+		.ak-bar-top( 2px );
 		box-shadow: var( --ak-shadow-lg );
 		color: var( --ak-fg );
 	}

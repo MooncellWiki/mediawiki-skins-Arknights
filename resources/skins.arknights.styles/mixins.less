@@ -1,6 +1,4 @@
-/**
- * Arknights — LESS mixins
- */
+// Arknights — LESS mixins
 
 .ak-overline() {
 	font-family: var( --ak-font-label );
@@ -40,4 +38,28 @@
 	li::before {
 		display: none !important;
 	}
+}
+
+// Colour bar + 1px frame, joined at right angles.
+//
+// A thick `border-left` (or `border-top`) meeting a 1px `border-top`/`border-bottom` is
+// mitred by the browser into a small 45° bevel, which reads as a deliberate chamfer — and
+// upstream dropped every 45° edge from the system (prts-design 6e09a60). Painting the frame
+// with a `border-image` gradient instead butts the two colours together squarely. The slice
+// numbers have to match the border widths, so the bar width is a literal length.
+//
+// Line comments on purpose: skinStyles files import this one, and a /* */ block would be
+// copied into every module that does.
+.ak-bar-left( @w: 4px, @color: var( --ak-accent ), @frame: var( --ak-border ) ) {
+	@slice: unit( @w );
+	border: 1px solid @frame;
+	border-left-width: @w;
+	border-image: linear-gradient( to right, @color @w, @frame @w ) ~'1 1 1 @{slice}';
+}
+
+.ak-bar-top( @w: 3px, @color: var( --ak-accent ), @frame: var( --ak-border ) ) {
+	@slice: unit( @w );
+	border: 1px solid @frame;
+	border-top-width: @w;
+	border-image: linear-gradient( @color @w, @frame @w ) ~'@{slice} 1 1 1';
 }

@@ -1,6 +1,8 @@
 /**
  * Login / signup — common
  */
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
 .mw-ui-container,
 .mw-htmlform-login,
 #userloginForm,
@@ -15,8 +17,7 @@
 #userloginForm .mw-ui-vform,
 #userlogin2 .mw-ui-vform {
 	background: var( --ak-bg-surface );
-	border: 1px solid var( --ak-border );
-	border-top: 3px solid var( --ak-accent );
+	.ak-bar-top( 3px );
 	padding: var( --ak-space-6 );
 	max-width: 30em;
 }

@@ -22,8 +22,14 @@
 	border-radius: 0;
 }
 
+// Same treatment as the design system's .ak-dialog__head: accent bar on the left, a themed
+// 1px rule underneath, nothing on the other two edges (the dialog itself is already framed).
+// Written out rather than via .ak-bar-left(), which frames all four sides — and painted with
+// a border-image so the 4px bar does not mitre into the 1px rule (see mixins.less).
 .ui-dialog .ui-dialog-titlebar {
-	border-left: var( --ak-bar-w ) solid var( --ak-accent );
+	border: 0 solid var( --ak-border );
+	border-width: 0 0 1px 4px;
+	border-image: linear-gradient( to right, var( --ak-accent ) 4px, var( --ak-border ) 4px ) 0 0 1 4;
 }
 
 .ui-dialog .ui-dialog-buttonpane {

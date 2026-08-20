@@ -1,6 +1,8 @@
 /**
  * Edit page — textarea, edit options, preview box
  */
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
 #wpTextbox1,
 .mw-editform textarea,
 textarea#wpTextbox1 {
@@ -34,8 +36,7 @@ textarea#wpTextbox1 {
 .previewnote,
 .mw-editform .previewnote {
 	background: var( --ak-warning-bg );
-	border: 1px solid var( --ak-border );
-	border-left: var( --ak-bar-w ) solid var( --ak-warning );
+	.ak-bar-left( 4px, var( --ak-warning ) );
 	padding: var( --ak-space-3 ) var( --ak-space-4 );
 	margin-bottom: var( --ak-space-4 );
 }
