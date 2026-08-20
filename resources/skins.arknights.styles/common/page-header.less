@@ -17,9 +17,12 @@
 	}
 }
 
+// Same call as .ak-card__eyebrow: the namespace is a decorative label, not something you
+// can click, so it stays off the accent — which is reserved for links and selection (and at
+// 11px the light theme's cyan only reaches 3.2:1).
 .ak-page-header__ns {
 	.ak-overline();
-	color: var( --ak-accent );
+	color: var( --ak-fg-muted );
 }
 
 .ak-indicators {
