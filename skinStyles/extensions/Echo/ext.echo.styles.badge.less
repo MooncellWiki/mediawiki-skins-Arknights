@@ -17,29 +17,54 @@
 		border-radius: 0;
 		opacity: 0.8;
 
+		// Anything unread lights the whole badge up. The counter is composited inside the
+		// badge, and a child cannot opt out of its parent's opacity, so the 0.8 that keeps
+		// the glyph in line with the other header icons dims the count along with it.
+		// Quiet is for the all-read state, where there is no count to read anyway.
+		&:not( .mw-echo-notifications-badge-all-read ) {
+			opacity: 1;
+		}
+
 		&:hover {
 			background-color: var( --ak-bg-hover );
 			opacity: 1;
 		}
 
+		// Echo draws its own focus shadow; the ring itself is handled below.
 		&:focus {
 			box-shadow: none;
-			outline: 2px solid var( --ak-focus );
-			outline-offset: -2px;
 		}
 
+		// Geometry copied from the design system's .ak-badge (prts-design aee7ea4), which the
+		// preview's own bell uses — Echo just paints its counter in ::after instead:
+		//   · body face + tabular-nums, not Bender, whose bold strokes thin out at this size;
+		//   · border-box with min-width = height, so a single digit is a true circle and only
+		//     two digits stretch it into a pill (content-box kept it a 28×18 slab, with the
+		//     digit floating in the middle looking off-centre);
+		//   · padding-bottom 1px offsets Source Han Sans' asymmetric hhea metrics (1160/288),
+		//     which otherwise drop the digit ~0.7px below the box centre at line-height 1;
+		//   · anchored top/right 2px rather than left 50%, so the 18px circle sits on the
+		//     glyph's top-right corner instead of spreading across it.
 		&::after {
-			top: 4px;
-			left: 50%;
-			min-width: 8px;
-			height: 16px;
-			line-height: 16px;
-			padding: 0 4px;
-			font: 700 10px/16px var( --ak-font-label );
+			top: 2px;
+			right: 2px;
+			left: auto;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-sizing: border-box;
+			min-width: 18px;
+			height: 18px;
+			padding: 0 5px 1px;
+			font: bold 12px/1 var( --ak-font-body );
+			font-variant-numeric: tabular-nums;
 			border: 0;
 			border-radius: var( --ak-radius-pill );
-			background-color: var( --ak-fg-subtle );
-			color: var( --ak-bg-surface );
+			// Opaque, from the raw scale: --ak-fg-subtle resolves to rgba(255,255,255,.5) in
+			// the header, and that sits on translucent glass — over a key art the fill drifts
+			// with the picture and washes out entirely on a bright frame.
+			background-color: var( --ak-gray-300 );
+			color: var( --ak-gray-900 );
 		}
 
 		&.mw-echo-notifications-badge-all-read::after {
@@ -47,6 +72,34 @@
 		}
 	}
 
+	/**
+	 * Focus ring.
+	 *
+	 * It cannot live on the badge itself: that element carries `filter: invert(1)` to flip
+	 * Echo's black glyphs white, and a filter repaints everything the element draws — the
+	 * outline included, which turned the cyan --ak-focus into its inverse, #E72E00. So the
+	 * ring goes on the <li>, which has no filter of its own.
+	 *
+	 * :focus-visible, not :focus, matching the design system's own controls (.ak-btn
+	 * upstream) — a mouse click on the bell should not leave a ring sitting behind the
+	 * popup it just opened.
+	 */
+	#pt-notifications-alert:has( .mw-echo-notifications-badge:focus-visible ),
+	#pt-notifications-notice:has( .mw-echo-notifications-badge:focus-visible ) {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+	}
+
+	/**
+	 * Unseen counters take the design system's two badge colours verbatim (prts-design
+	 * c4bb6b1): yellow is .ak-badge's default, because an unread count is a prompt rather
+	 * than a hazard, and red is .ak-badge--danger, which the docs hand to Echo's alerts
+	 * (a revert, a permission change) and nothing else.
+	 *
+	 * Neither is one of the tokens header.less remaps to the chrome palette, so both stay
+	 * the same colour in either theme and neither drifts when an event theme swaps the
+	 * accent — matching how the preview's own .ak-badge renders inside the black bar.
+	 */
 	#pt-notifications-alert .mw-echo-notifications-badge.mw-echo-unseen-notifications::after,
 	#pt-notifications-alert .mw-echo-notifications-badge.oo-ui-flaggedElement-unseen::after {
 		background-color: var( --ak-red-600 );
@@ -55,20 +108,35 @@
 
 	#pt-notifications-notice .mw-echo-notifications-badge.mw-echo-unseen-notifications::after,
 	#pt-notifications-notice .mw-echo-notifications-badge.oo-ui-flaggedElement-unseen::after {
-		background-color: var( --ak-accent );
-		color: var( --ak-accent-fg );
+		background-color: var( --ak-accent-2 );
+		color: var( --ak-accent-2-fg );
 	}
 }
 
 /**
  * The badge glyphs are black background images and the header is a black bar in *both*
  * themes now (see header.less), so the inversion is unconditional rather than a dark-theme
- * branch. The counter re-inverts so it keeps its own red / accent fill.
+ * branch. The counter re-inverts so it keeps its own fill.
+ *
+ * invert() and nothing else: a filter on the badge also applies to the ::after composited
+ * inside it, so the counter's colours only survive if the two passes cancel exactly, and
+ * `invert(1)` twice is exactly identity. The hue-rotate(180deg) this used to carry did not
+ * cancel — it is a linear approximation, and running it twice turned #FFD800 into #E8C18B
+ * and #C82A36 into #AD3E4A. It was never doing any work either: hue-rotate leaves greys
+ * untouched (its matrix rows each sum to 1), and the glyphs it exists for are black.
  */
 .ak-header__notifications-list .mw-echo-notifications-badge {
-	filter: invert( 1 ) hue-rotate( 180deg );
+	filter: invert( 1 );
 
 	&::after {
-		filter: invert( 1 ) hue-rotate( 180deg );
+		filter: invert( 1 );
+	}
+}
+
+// Only silence the browser's own ring where the rule above can actually replace it —
+// without :has() support the badge would otherwise focus with no visible indicator at all.
+@supports selector( :has( * ) ) {
+	.ak-header__notifications-list .mw-echo-notifications-badge:focus-visible {
+		outline: 0;
 	}
 }
