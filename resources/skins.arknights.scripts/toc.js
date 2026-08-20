@@ -3,16 +3,41 @@
  * dismissing the flyout.
  *
  * Below 1400px the TOC is a flyout pulled down from the local nav. Opening and closing it
- * is pure CSS (#ak-toc-toggle + its label), so it works without JS; this module only adds
- * the parts a checkbox cannot express: close after following an entry, on Escape, or on a
- * click outside.
+ * is pure CSS (#ak-toc-toggle + its label), so it works without JS; this module adds the
+ * parts a checkbox cannot express:
+ *
+ *   - the checkbox state is mirrored onto html.ak-toc-open, which is what actually shows
+ *     the flyout. The stylesheet's `body:has( .ak-toc-cb:checked )` is the no-JS bridge,
+ *     and an engine with neither (.client-nojs plus no :has()) falls back to a static card
+ *     in the flow — so the flyout stays a real flyout in the older WebViews a lot of phone
+ *     browsers ship;
+ *   - the page behind it is scroll-locked while it is open;
+ *   - it closes after following an entry, on Escape, on a click outside, and on the way
+ *     back up to the rail breakpoint.
  */
+const scrollLock = require( './scrollLock.js' );
 
 function setupFlyout() {
 	const cb = document.getElementById( 'ak-toc-toggle' );
 	if ( !cb ) {
 		return;
 	}
+
+	const mq = window.matchMedia( '(max-width: 1399.98px)' );
+	const sync = () => {
+		const open = cb.checked && mq.matches;
+		document.documentElement.classList.toggle( 'ak-toc-open', open );
+		scrollLock.set( 'toc', open );
+	};
+	const dismiss = () => {
+		if ( cb.checked ) {
+			cb.checked = false;
+			sync();
+		}
+	};
+	// Clicking the label or pressing space fires `change`; closing from code calls sync()
+	cb.addEventListener( 'change', sync );
+	sync();
 
 	document.addEventListener( 'click', ( e ) => {
 		if ( !cb.checked ) {
@@ -23,29 +48,31 @@ function setupFlyout() {
 			return;
 		}
 		if ( target.closest( '.ak-toc__link, .ak-toc__top' ) ) {
-			cb.checked = false;
+			dismiss();
 			return;
 		}
 		// Clicking the label dispatches a second click on the checkbox itself —
 		// that one must not count as "outside", or the flyout would close as it opens.
 		if ( !target.closest( '.ak-toc, .ak-local-nav__toc, .ak-toc-cb' ) ) {
-			cb.checked = false;
+			dismiss();
 		}
 	} );
 
 	document.addEventListener( 'keydown', ( e ) => {
 		if ( e.key === 'Escape' && cb.checked ) {
-			cb.checked = false;
+			dismiss();
 			cb.focus( { preventScroll: true } );
 		}
 	} );
 
-	// Leaving the flyout breakpoint: do not leave it stuck open behind the rail
-	const mq = window.matchMedia( '(min-width: 1400px)' );
+	// Leaving the flyout breakpoint: do not leave it stuck open behind the rail — and,
+	// more to the point, do not leave the page locked with nothing on top of it
 	if ( mq.addEventListener ) {
 		mq.addEventListener( 'change', () => {
 			if ( mq.matches ) {
-				cb.checked = false;
+				sync();
+			} else {
+				dismiss();
 			}
 		} );
 	}

@@ -53,7 +53,18 @@
 		scroll-margin-top: calc( var( --ak-header-h ) + var( --ak-local-nav-h ) + 8px );
 	}
 
-	/* TOC flyout: top edge follows the pinned bar, right-aligned with the local nav */
+	/**
+	 * TOC flyout: top edge follows the pinned bar, right-aligned with the local nav.
+	 * Both axes are pinned (VitePress's LocalNavOutlineDropdown .items does the same):
+	 *   · 360px fixed width, border-box — it does not grow or shrink with the headings;
+	 *   · height capped at the gap between the pinned bar and the bottom of the viewport,
+	 *     with .ak-toc__inner scrolling inside. 100dvh, because with 100vh (the *largest*
+	 *     viewport) a phone's address bar covers the bottom of the flyout while the box
+	 *     still counts as "not too tall" and never grows a scrollbar; 100vh only stands as
+	 *     the fallback for engines without dvh.
+	 * While it is open toc.js locks page scrolling (html.ak-scroll-lock, at the end of this
+	 * file), so scrolling to the end of the list does not carry the page along with it.
+	 */
 	.ak-toc {
 		--_top: calc( var( --ak-header-h ) + var( --ak-local-nav-h ) );
 		position: fixed;
@@ -66,6 +77,7 @@
 		flex-direction: column;
 		width: ~'min( 360px, calc( 100vw - var( --ak-gutter ) * 2 ) )';
 		max-height: calc( 100vh - var( --_top ) - var( --ak-space-4 ) );
+		max-height: calc( 100dvh - var( --_top ) - var( --ak-space-4 ) );
 		background: var( --ak-bg-surface );
 		.ak-bar-top( 3px );
 		box-shadow: var( --ak-shadow-lg );
@@ -76,9 +88,19 @@
 		--_top: var( --ak-local-nav-h );
 	}
 
-	// The switch and the flyout are not siblings, so :has() bridges them
+	// The switch and the flyout are not siblings. toc.js mirrors the checkbox onto
+	// html.ak-toc-open — the main path, since it does not need :has() and so stays a real
+	// flyout in the older WebViews a lot of phone browsers still ship; :has() bridges the
+	// two without JS. The two selectors must stay in separate rules: an engine that does
+	// not know :has() throws away the whole rule it appears in, list-mates included.
+	:root.ak-toc-open .ak-toc {
+		display: flex;
+		animation: ak-nav-screen-in var( --ak-dur-normal ) var( --ak-ease );
+	}
+
 	body:has( .ak-toc-cb:checked ) .ak-toc {
 		display: flex;
+		animation: ak-nav-screen-in var( --ak-dur-normal ) var( --ak-ease );
 	}
 
 	.ak-toc__top {
@@ -103,8 +125,12 @@
 		}
 	}
 
+	// A flex child defaults to min-height: auto and refuses to shrink, so min-height: 0 is
+	// what actually makes it scroll inside the capped flyout (overscroll-behavior comes
+	// along from the rail rules in toc.less)
 	.ak-toc__inner {
 		position: static;
+		flex: 1 1 auto;
 		min-height: 0;
 		max-height: none;
 		overflow-y: auto;
@@ -122,25 +148,40 @@
 		white-space: normal;
 	}
 
-	// Without :has(), the TOC falls back to a static card in the flow
+	// Neither :has() nor JS (core puts client-nojs on <html> and swaps it for client-js):
+	// the TOC falls back to a static card in the flow
 	@supports not selector( :has( * ) ) {
-		.ak-local-nav__toc,
-		.ak-toc__top {
-			display: none;
-		}
+		.client-nojs {
+			.ak-local-nav__toc,
+			.ak-toc__top {
+				display: none;
+			}
 
-		.ak-fab {
-			display: grid;
-		}
+			.ak-fab {
+				display: grid;
+			}
 
-		.ak-toc {
-			position: static;
-			display: flex;
-			width: auto;
-			max-height: none;
-			box-shadow: none;
-			margin: 0 0 var( --ak-space-5 );
+			.ak-toc {
+				position: static;
+				display: flex;
+				width: auto;
+				max-height: none;
+				box-shadow: none;
+				margin: 0 0 var( --ak-space-5 );
+			}
 		}
+	}
+}
+
+// Straight after the block above: same selectors, same specificity, so `animation: none`
+// only wins by coming later
+@media ( max-width: @ak-bp-toc-max ) and ( prefers-reduced-motion: reduce ) {
+	:root.ak-toc-open .ak-toc {
+		animation: none;
+	}
+
+	body:has( .ak-toc-cb:checked ) .ak-toc {
+		animation: none;
 	}
 }
 
