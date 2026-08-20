@@ -182,6 +182,10 @@
 	 * The closed drawer is visibility:hidden — it stays out of the accessibility tree and
 	 * the tab order, and its shadow (32px of blur, wider than what translateX(-100%) hides)
 	 * cannot bleed back in along the left edge. The shadow itself is only painted when open.
+	 *
+	 * While it is open drawer.js locks page scrolling (html.ak-scroll-lock, at the end of
+	 * this file, as VitePress's VPSidebar does): the drawer scrolls on its own and
+	 * overscroll-behavior: contain keeps that from chaining out to the page behind it.
 	 */
 	.ak-sidebar {
 		position: fixed;
@@ -527,4 +531,18 @@
 		right: var( --ak-space-3 );
 		bottom: var( --ak-space-3 );
 	}
+}
+
+/**
+ * Page scroll lock, set on <html> by drawer.js / toc.js while the sidebar drawer or the
+ * TOC flyout is open (VitePress's useBodyScrollLock does the same job).
+ *
+ * overflow: hidden leaves the scroll position alone — unlike the body { position: fixed }
+ * recipe, which jumps back to the top. Where the scrollbar takes up real width (Windows, or
+ * "always show scrollbars"), the JS also sets scrollbar-gutter: stable so the page does not
+ * shift sideways as it disappears. The panels keep their own overflow-y: auto. iOS ignores
+ * overflow: hidden for touch scrolling, so the JS blocks touchmove on top of this.
+ */
+:root.ak-scroll-lock {
+	overflow: hidden;
 }

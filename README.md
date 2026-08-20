@@ -145,7 +145,8 @@ resources/
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
   skins.arknights.styles/         皮肤骨架 LESS（header / sidebar / menu-sidebar / page-header / page-tools / toc / footer / responsive / print …）
   skins.arknights.scripts/        常驻：theme · dropdown · drawer · header · toc · backToTop · interactive ·
-                                  sidebarTree · searchLoader(搜索面板的懒加载存根) · search(面板关闭时的回退) · inline(<head>)
+                                  scrollLock(抽屉/浮层共用的页面滚动锁) · sidebarTree ·
+                                  searchLoader(搜索面板的懒加载存根) · search(面板关闭时的回退) · inline(<head>)
                                   懒加载 skins.arknights.search：searchPalette(数据源) · searchIndex(Cargo 索引)
 skinStyles/                       核心 / OOUI / jQuery / 扩展 的皮肤覆盖
 i18n/                             en · qqq · zh-hans · zh-hant · ja
@@ -309,6 +310,7 @@ $wgArknightsSearchIndex = [
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
 - **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`header.less` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。活动主题的接口见上文「活动主题」。
 - **<1120 页眉**回到 flex，只留 品牌 / 搜索（<640 收成图标）/ ≡。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ≡ 拉下、贴主行右下沿的 320px 卡片。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录浮层的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起，以及卡片开着时不收页眉。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
+- **抽屉 / 浮层开着时锁页面滚动**（`scrollLock.js`，两者共用一把按持有者计数的锁）：`html.ak-scroll-lock` 是 `overflow: hidden`，不改滚动位置；有实体滚动条时同时写 `scrollbar-gutter: stable`，页面不会左右抖一下；两者都没有的老桌面浏览器退回拦 `wheel` / `touchmove` / 翻页键（浮层内真正可滚的元素放行），iOS 另外拦 `touchmove`。
 - 图标：`skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `.ak-icon.ak-icon--{name}`；可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）。
 - 模板/TemplateStyles 中直接使用 `.ak-*` 组件与 `var(--ak-*)` 令牌，与预览页一致；`data-bind`/`.ak-tabs`/`.ak-phase-tabs` 等交互约定由 `interactive.js` 提供。
 - 小工具可用的钩子：`mw.hook('skin.arknights.clientPrefs')`（主题变化）、`mw.hook('skin.arknights.toast').fire(msg, type, title)`、`mw.hook('skin.arknights.sidebar').fire()`（侧栏内容变化后重新增强树）、`mw.hook('skin.arknights.search').fire(fn)`（注入搜索面板的本地即时索引）。

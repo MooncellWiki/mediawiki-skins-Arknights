@@ -3,6 +3,8 @@
  * A drawer is any element toggled with .is-open; an overlay is inserted behind it.
  * (The table of contents is not a drawer: it is a CSS flyout, see toc.js.)
  */
+const scrollLock = require( './scrollLock.js' );
+
 let overlay = null;
 let openDrawer = null;
 let lastFocus = null;
@@ -35,6 +37,8 @@ function open( drawer, toggle ) {
 		document.body.appendChild( overlay );
 	}
 	document.body.classList.add( 'ak-drawer-open' );
+	// The drawer scrolls on its own; the page behind it must not follow along
+	scrollLock.set( 'drawer', true );
 	openDrawer = drawer;
 	// Move focus into the drawer for keyboard / screen-reader users
 	const focusable = drawer.querySelector( 'a[href], button:not([disabled]), input, [tabindex="0"]' );
@@ -51,6 +55,7 @@ function close() {
 		t.setAttribute( 'aria-expanded', 'false' );
 	} );
 	document.body.classList.remove( 'ak-drawer-open' );
+	scrollLock.set( 'drawer', false );
 	removeOverlay();
 	if ( lastFocus && typeof lastFocus.focus === 'function' ) {
 		lastFocus.focus( { preventScroll: true } );

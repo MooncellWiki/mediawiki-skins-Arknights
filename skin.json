@@ -248,6 +248,7 @@
 					"callback": "MediaWiki\\Skins\\Arknights\\Hooks\\ResourceLoaderHooks::getSkinResourceLoaderConfig"
 				},
 				"resources/skins.arknights.scripts/theme.js",
+				"resources/skins.arknights.scripts/scrollLock.js",
 				"resources/skins.arknights.scripts/drawer.js",
 				"resources/skins.arknights.scripts/dropdown.js",
 				"resources/skins.arknights.scripts/header.js",
