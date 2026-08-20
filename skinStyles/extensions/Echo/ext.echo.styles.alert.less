@@ -1,0 +1,20 @@
+/**
+ * Echo — the "you have new talk page messages" item (#pt-talk-alert)
+ *
+ * Hidden, because with Echo installed it is a second copy of something already on screen:
+ * the same event is an `edit-user-talk` notification in the alerts bell sitting right next
+ * to it, and Special:Notifications keeps the full history either way.
+ *
+ * Its own styling is core's (mw.echo.alert.less): a #fc3 slab with `border-radius` and em
+ * padding, sized to sit among Vector's text links. Dropped into this skin it lands in the
+ * header's tools column — a bright yellow block with a corner radius the design system uses
+ * nowhere, wide enough to push the three-column grid around.
+ *
+ * One caveat worth knowing: Echo gates this item on core's newtalk flag
+ * (TalkPageNotificationManager::userHasNewMessages), not on the Echo notification, so the
+ * two are separate data sources and could in principle disagree. The bell is treated as the
+ * canonical surface here.
+ */
+#pt-talk-alert {
+	display: none;
+}
