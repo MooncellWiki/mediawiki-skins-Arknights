@@ -78,13 +78,12 @@ b = re.search(r'/\* ═══ 3\. CODEX.*?\*/\s*[^{]*\{(.*?)\n\}', css, re.S)
 if not b:
     sys.exit('could not find the Codex bridge block (3) in tokens.css')
 body = m.group(1) + '\n' + b.group(1)
+# Drop comments first, across the whole block: upstream annotates tokens with /* ... */ that
+# spans several lines, and stripping line by line would leak those lines in as declarations.
+body = re.sub(r'/\*.*?\*/', '', body, flags=re.S)
 decls = []
 for line in body.splitlines():
     line = line.strip()
-    if not line or line.startswith('/*') and line.endswith('*/') and ':' not in line:
-        continue
-    # keep declarations, drop trailing comments
-    line = re.sub(r'/\*.*?\*/', '', line).strip()
     if not line:
         continue
     for part in re.split(r';\s*', line):

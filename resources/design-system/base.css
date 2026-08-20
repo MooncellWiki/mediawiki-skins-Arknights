@@ -65,7 +65,10 @@ small, .ak-text-sm { font-size: var(--ak-fs-sm); }
 /* Links */
 a { color: var(--ak-link); text-decoration: none; transition: color var(--ak-dur-fast) var(--ak-ease); }
 a:hover { color: var(--ak-link-hover); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+/* 已访问：同一个链接色褪一层（tokens.css --ak-link-visited，亮色往灰褪 / 暗色往画布褪），不换色相——整套只有青、不出现紫；
+ * 悬停时回到完整的 --ak-link-hover（等于「透明度收回来、再深一点」）。注意 :visited 里写 alpha 无效（浏览器为防历史嗅探只取 RGB），褪色必须是实色。 */
 a:visited { color: var(--ak-link-visited); }
+a:visited:hover { color: var(--ak-link-hover); }
 a.new, a.new:visited { color: var(--ak-link-new); }
 a.mw-selflink { color: inherit; font-weight: 700; }
 a.external { color: var(--ak-link-external); }
@@ -99,7 +102,7 @@ a.external { color: var(--ak-link-external); }
 hr { border: 0; height: 1px; background: var(--ak-border); margin: var(--ak-space-8) 0; }
 .mw-parser-output hr.ak-hr-accent { height: 2px; background: linear-gradient(90deg, var(--ak-accent) 0 96px, var(--ak-border) 96px); }
 abbr[title] { text-decoration: underline dotted; text-underline-offset: 2px; cursor: help; }
-mark { background: rgba(255,216,0,.35); color: inherit; padding: 0 .15em; }
+mark { background: var(--ak-mark-bg); color: inherit; padding: 0 .15em; }   /* 淡青底（tokens.css --ak-mark-bg 有取舍说明）：与 :target 引用 / tr.is-hl / 面板当前项同一套高亮语言，不是荧光笔黄 */
 kbd { font-family: var(--ak-font-mono); font-size: .85em; padding: .1em .4em; border: 1px solid var(--ak-border-strong); border-bottom-width: 2px; background: var(--ak-bg-surface-2); }
 sup, sub { line-height: 0; }
 
@@ -116,7 +119,8 @@ sup, sub { line-height: 0; }
 code, .mw-code, pre, tt { font-family: var(--ak-font-mono); font-size: .9em; }
 :not(pre) > code { background: var(--ak-bg-surface-2); border: 1px solid var(--ak-border); padding: .1em .35em; color: var(--ak-fg); }
 pre, .mw-code, .mw-highlight pre {
-  background: var(--ak-bg-inset); border: 1px solid var(--ak-border); border-left: 3px solid var(--ak-accent);
+  background: var(--ak-bg-inset); border: 1px solid var(--ak-border); border-left-width: 3px;
+  border-image: linear-gradient(to right, var(--ak-accent) 3px, var(--ak-border) 3px) 1 1 1 3;   /* 色条与细框直角拼接，不让 border 斜接出斜边（tokens.css §Shape） */
   padding: var(--ak-space-3) var(--ak-space-4); overflow-x: auto; line-height: 1.55; color: var(--ak-fg);
   margin: 0 0 var(--ak-space-4);
 }
@@ -143,8 +147,8 @@ pre, .mw-code, .mw-highlight pre {
 .wikitable.ak-dense { font-size: var(--ak-fs-xs); }
 .wikitable.ak-borderless, .wikitable.ak-borderless > * > tr > th, .wikitable.ak-borderless > * > tr > td { border-left: 0; border-right: 0; }
 .wikitable.ak-borderless { border-left: 0; border-right: 0; }
-.wikitable th.ak-th-accent { border-top: 3px solid var(--ak-accent); }
-/* 数字列：正文字体（Noto Sans SC 数字默认等宽，天然对齐；Bender 数字是比例宽度、子集无 tnum，小字号又细，不进表格）。.ak-num 是显式的 HUD 数字（粗体 Bender），表格里只在面板级数值上用 */
+.wikitable th.ak-th-accent { box-shadow: inset 0 3px 0 var(--ak-accent); }   /* 表头顶部色条画在格子内（collapse 表格里 border-image 无效，而 3px 的 border-top 会和 1px 的竖线斜接） */
+/* 数字列：正文字体（Noto Sans SC 数字默认等宽，天然对齐；Bender 数字是比例宽度、子集无 tnum，小字号又细）。硬规则：表格数据数字一律不用 Bender——.ak-num 等 HUD 数字类掉进 td / th / 键值表 dd 由 arknights.css B99 兜底回正文字体 */
 .wikitable td.num, .wikitable .num { font-variant-numeric: tabular-nums; text-align: right; }
 .wikitable .ak-num { text-align: right; }
 /* sortable (jquery.tablesorter) */
@@ -170,7 +174,6 @@ figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"], .thumb {
 }
 figure[typeof~="mw:File/Thumb"] > a > img, .thumbimage { display: block; max-width: 100%; height: auto; background: var(--ak-bg-inset); }
 figure[typeof~="mw:File/Thumb"] > figcaption, .thumbcaption { padding: var(--ak-space-2) var(--ak-space-2) var(--ak-space-1); border-top: 1px solid var(--ak-border-subtle); line-height: 1.5; }
-figure[typeof~="mw:File/Thumb"] > figcaption::before { content: ""; display: inline-block; width: 6px; height: 6px; background: var(--ak-accent); margin-right: .5em; vertical-align: .05em; }
 .mw-halign-right, .tright, figure.mw-halign-right { float: right; clear: right; margin: .25em 0 var(--ak-space-4) var(--ak-space-5); }
 .mw-halign-left, .tleft, figure.mw-halign-left { float: left; clear: left; margin: .25em var(--ak-space-5) var(--ak-space-4) 0; }
 .mw-halign-center, .center { text-align: center; }
@@ -192,8 +195,9 @@ ul.gallery.mw-gallery-packed li.gallerybox, ul.gallery.mw-gallery-packed-hover l
 
 /* ─── TOC (inline, legacy) ─────────────────────────────────────────────── */
 .toc, .mw-parser-output .toc, #toc {
-  display: inline-block; background: var(--ak-bg-surface); border: 1px solid var(--ak-border);
-  border-top: 3px solid var(--ak-accent); padding: var(--ak-space-3) var(--ak-space-4); margin: 0 0 var(--ak-space-4);
+  display: inline-block; background: var(--ak-bg-surface); border: 1px solid var(--ak-border); border-top-width: 3px;
+  border-image: linear-gradient(var(--ak-accent) 3px, var(--ak-border) 3px) 3 1 1 1;
+  padding: var(--ak-space-3) var(--ak-space-4); margin: 0 0 var(--ak-space-4);
   font-size: var(--ak-fs-sm); min-width: 240px;
 }
 .toc .toctitle { display: flex; align-items: center; gap: var(--ak-space-3); }
@@ -229,20 +233,20 @@ sup.reference a { padding: 0 .1em; }
 
 /* ─── Hatnotes / message boxes / notices ───────────────────────────────── */
 .hatnote, .dablink, .rellink { font-style: normal; color: var(--ak-fg-muted); font-size: var(--ak-fs-sm); padding: .3em 0 .3em 1em; border-left: 2px solid var(--ak-border-strong); margin: 0 0 var(--ak-space-3); }
-.mw-message-box, .cdx-message {
-  border: 1px solid var(--ak-border); border-left-width: var(--ak-bar-w); background: var(--ak-bg-surface);
+.mw-message-box, .cdx-message { --_c: var(--ak-border-strong);
+  border: 1px solid var(--ak-border); border-left-width: var(--ak-bar-w); border-image: linear-gradient(to right, var(--_c) 4px, var(--ak-border) 4px) 1 1 1 4; background: var(--ak-bg-surface);
   color: var(--ak-fg); padding: var(--ak-space-3) var(--ak-space-4); margin: 0 0 var(--ak-space-4); font-size: var(--ak-fs-sm);
 }
-.mw-message-box-notice, .cdx-message--notice { border-left-color: var(--ak-info); background: var(--ak-info-bg); }
-.mw-message-box-warning, .cdx-message--warning { border-left-color: var(--ak-warning); background: var(--ak-warning-bg); }
-.mw-message-box-error, .cdx-message--error { border-left-color: var(--ak-danger); background: var(--ak-danger-bg); }
-.mw-message-box-success, .cdx-message--success { border-left-color: var(--ak-success); background: var(--ak-success-bg); }
-.mw-parser-output .messagebox, .mw-parser-output .ambox { border: 1px solid var(--ak-border); border-left: var(--ak-bar-w) solid var(--ak-fg-muted); background: var(--ak-bg-surface-2); margin: 0 0 var(--ak-space-3); font-size: var(--ak-fs-sm); }
+.mw-message-box-notice, .cdx-message--notice { --_c: var(--ak-info); background: var(--ak-info-bg); }
+.mw-message-box-warning, .cdx-message--warning { --_c: var(--ak-warning); background: var(--ak-warning-bg); }
+.mw-message-box-error, .cdx-message--error { --_c: var(--ak-danger); background: var(--ak-danger-bg); }
+.mw-message-box-success, .cdx-message--success { --_c: var(--ak-success); background: var(--ak-success-bg); }
+.mw-parser-output .messagebox, .mw-parser-output .ambox { --_c: var(--ak-fg-muted); border: 1px solid var(--ak-border); border-left-width: var(--ak-bar-w); border-image: linear-gradient(to right, var(--_c) 4px, var(--ak-border) 4px) 1 1 1 4; background: var(--ak-bg-surface-2); margin: 0 0 var(--ak-space-3); font-size: var(--ak-fs-sm); }
 .ambox td, .messagebox td { padding: .5em .8em; }
-.ambox-notice { border-left-color: var(--ak-info); }
-.ambox-content { border-left-color: var(--ak-warning); }
-.ambox-delete, .ambox-serious { border-left-color: var(--ak-danger); }
-.ambox-style { border-left-color: var(--ak-yellow-600); }
+.ambox-notice { --_c: var(--ak-info); }
+.ambox-content { --_c: var(--ak-warning); }
+.ambox-delete, .ambox-serious { --_c: var(--ak-danger); }
+.ambox-style { --_c: var(--ak-yellow-600); }
 
 /* ─── Category links（页面底部分类栏）─────────────────────────────────────
  *  MW 输出：div.catlinks > div.mw-normal-catlinks( a[分类] + "：" 文本节点 + ul > li > a ) [+ div.mw-hidden-catlinks( "隐藏分类：" 文本 + ul )]
@@ -268,12 +272,11 @@ sup.reference a { padding: 0 .1em; }
 .catlinks .mw-normal-catlinks > a:hover { color: var(--ak-accent); text-decoration: none; }
 .catlinks .mw-hidden-catlinks { color: var(--ak-fg-muted); }
 .catlinks .mw-hidden-catlinks .ak-catlinks__label { color: var(--ak-fg-subtle); }
-/* 链接：与正文链接同色，默认无下划线，悬停才出（与全局 a 的行为一致：1px / offset 3px） */
+/* 链接：就用全局 a / a:hover / a:visited，这里不重写颜色——MW 核心 interface-category.less 只给 .catlinks / li
+ * 画框和竖线，不碰链接色，没什么要压的；重写一遍 `.catlinks li a { color }`（0,1,2）反而会盖掉 a:visited（0,1,1），分类链接永远不褪色 */
 .catlinks ul { display: contents; margin: 0; padding: 0; list-style: none; }
 .catlinks li, .catlinks li:first-child { display: inline; margin: 0; padding: 0; border: 0; line-height: inherit; }
 .catlinks li::before { display: none !important; }
-.catlinks li a { color: var(--ak-link); text-decoration: none; }
-.catlinks li a:hover { color: var(--ak-link-hover); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .catlinks li a.mw-redirect { font-style: italic; }
 .catlinks .mw-hidden-catlinks li a { color: var(--ak-fg-secondary); }
 .catlinks .mw-hidden-catlinks li a:hover { color: var(--ak-link-hover); }
@@ -334,11 +337,11 @@ sup.reference a { padding: 0 .1em; }
 /* 皮肤内变体：卡片式 */
 .tabber.ak-tabber-boxed .tabber__header { background: var(--ak-bg-surface-2); border: 1px solid var(--ak-border); border-bottom: 0; }
 .tabber.ak-tabber-boxed .tabber__section { border: 1px solid var(--ak-border); padding: var(--ak-space-4); background: var(--ak-bg-surface); }
-/* 游戏内“斜切标签页”变体 */
-.tabber.ak-tabber-skew .tabber__header { border-bottom: 2px solid var(--ak-fg); }
-.tabber.ak-tabber-skew .tabber__tab { background: var(--ak-bg-surface-2); color: var(--ak-fg-secondary); border: 0; margin: 0 -6px 0 0; padding: 6px 22px 6px 20px; clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
-.tabber.ak-tabber-skew .tabber__tab[aria-selected="true"] { background: var(--ak-fg); color: var(--ak-bg-canvas); border: 0; }
-.tabber.ak-tabber-skew .tabber__tab[aria-selected="true"]::before { display: none; }
+/* 游戏内黑白反转的块状标签页变体（原「斜切标签页」，去掉了平行四边形——系统里不再有斜边） */
+.tabber.ak-tabber-block .tabber__header { border-bottom: 2px solid var(--ak-fg); }
+.tabber.ak-tabber-block .tabber__tab { background: var(--ak-bg-surface-2); color: var(--ak-fg-secondary); border: 0; margin: 0 2px 0 0; padding: 6px 16px; }
+.tabber.ak-tabber-block .tabber__tab[aria-selected="true"] { background: var(--ak-fg); color: var(--ak-bg-canvas); border: 0; }
+.tabber.ak-tabber-block .tabber__tab[aria-selected="true"]::before { display: none; }
 
 /* ─── Forms · 裸控件（Widget / Gadget / 模板直接吐出、身上没有任何 class 的 <input> <select> <textarea>）
    规范见 docs/01-design-system.md §4。这里只管「裸」控件：.ak-input 等设计系统组件在 components.css；
@@ -371,8 +374,22 @@ sup.reference a { padding: 0 .1em; }
 :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"]), select, textarea):disabled { background: var(--ak-bg-surface-3); color: var(--ak-fg-disabled); -webkit-text-fill-color: var(--ak-fg-disabled); opacity: 1; border-color: var(--ak-border); cursor: not-allowed; }
 :where(input, textarea, select):where(:user-invalid, [aria-invalid="true"]) { border-color: var(--ak-danger); }
 :where(input, textarea, select):where(:user-invalid, [aria-invalid="true"]):focus { box-shadow: 0 0 0 3px var(--ak-danger-bg); }
-/* 勾选 / 单选 / 滑杆：保留原生控件，只上主色（Chrome / FF / Safari 都会自动挑对比色的勾），与行内文字中线对齐 */
-:where(input[type="checkbox"], input[type="radio"]) { accent-color: var(--ak-accent); width: 16px; height: 16px; vertical-align: middle; }
+/* 勾选 / 单选：自绘，裸控件与 .ak-check 同一张脸——18px 直角勾选框（选中 = 主色实底 + 对比色勾）、圆形单选（选中 = 主色实底 + 圆点）。
+   圆是「单选」的通用语义，是整套系统里唯一的圆（不做菱形、不做圆角方）；勾 / 点的尺寸按百分比写，改 width/height 就整体缩放（表头里的 16px 开关）。
+   accent-color 留着兜底：不认 appearance:none 的老 WebView 仍是主色的原生控件。与行内文字中线对齐（vertical-align: middle；在 .ak-check 的 flex 里由 align-items 对齐）。 */
+:where(input[type="checkbox"], input[type="radio"]) { appearance: none; -webkit-appearance: none; accent-color: var(--ak-accent); box-sizing: border-box; width: 18px; height: 18px; margin: 0; flex: none; display: inline-grid; place-items: center; vertical-align: middle;
+  border: 2px solid var(--ak-border-strong); background: var(--ak-bg-surface); cursor: pointer; transition: background var(--ak-dur-fast), border-color var(--ak-dur-fast); }
+:where(input[type="radio"]) { border-radius: 50%; }
+:where(input[type="checkbox"], input[type="radio"]):checked { background: var(--ak-accent); border-color: var(--ak-accent); }
+:where(input[type="checkbox"]):checked::before { content: ""; width: 56%; height: 32%; border: 0 solid var(--ak-accent-fg); border-width: 0 0 2px 2px; transform: translateY(-15%) rotate(-45deg); }
+:where(input[type="checkbox"]):indeterminate { background: var(--ak-accent); border-color: var(--ak-accent); }
+:where(input[type="checkbox"]):indeterminate::before { content: ""; width: 56%; height: 2px; background: var(--ak-accent-fg); }
+:where(input[type="radio"]):checked::before { content: ""; width: 44%; height: 44%; border-radius: 50%; background: var(--ak-accent-fg); }
+:where(input[type="checkbox"], input[type="radio"]):focus-visible { outline: 0; border-color: var(--ak-accent); box-shadow: var(--ak-shadow-accent); }
+:where(input[type="checkbox"], input[type="radio"]):disabled { background: var(--ak-bg-surface-3); border-color: var(--ak-border); cursor: not-allowed; }
+:where(input[type="checkbox"], input[type="radio"]):disabled:checked { background: var(--ak-fg-disabled); border-color: var(--ak-fg-disabled); }
+/* 下拉：去掉各浏览器长相不一的原生箭头，画同一枚 ▾（与 .ak-select / 下拉按钮的 ▾ 成套）；多选列表不画 */
+:where(select:not([multiple])) { appearance: none; -webkit-appearance: none; padding-right: 30px; background-image: var(--ak-select-arrow); background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
 :where(input[type="range"]) { accent-color: var(--ak-accent); vertical-align: middle; }
 label { cursor: pointer; }
 /* 注意：不要把 .oo-ui-buttonElement-button 加进来。该类同时出现在有框和无框的 OOUI 按钮上，
@@ -403,7 +420,8 @@ label { cursor: pointer; }
    text-align:center 的属性计算器里，输入的数字和下面的结果一样居中，td.num 右对齐的列里输入也右对齐。
    不强制满宽：一格里常有「输入框 + 按钮」，要满宽自己写 width:100%（已是 border-box，不必再 calc(100% - padding)）。 */
 :where(.mw-body-content :is(td, th) input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"], [type="button"], [type="submit"], [type="reset"], [type="image"], [type="hidden"])) { min-height: 30px; padding: 0 8px; font-size: inherit; text-align: inherit; }
-:where(.mw-body-content :is(td, th) select) { min-height: 30px; padding: 0 8px; font-size: inherit; }
+:where(.mw-body-content :is(td, th) select) { min-height: 30px; padding: 0 26px 0 8px; font-size: inherit; }
+:where(.mw-body-content :is(td, th) select[multiple]) { padding: 4px 0; }
 :where(.mw-body-content :is(td, th) :is(button, input[type="button"], input[type="submit"], input[type="reset"])) { padding: 4px 10px; font-size: inherit; }
 /* iPhone：iOS Safari 对字号 <16px 的文本类控件聚焦时会把整页放大且不缩回（搜索面板同一处理），手机断点下提到 16px；
    放在紧凑规则之后，表格里的 font-size: inherit 才不会把它压回去 */
@@ -471,9 +489,9 @@ table.diff td { padding: .3em .5em; }
 .mw-search-profile-tabs { background: var(--ak-bg-surface-2); border: 1px solid var(--ak-border); }
 .mw-search-profile-tabs .search-types ul li.current a { color: var(--ak-accent); border-bottom: 2px solid var(--ak-accent); }
 .mw-notification-area { z-index: var(--ak-z-toast); }
-.mw-notification { background: var(--ak-bg-surface); border: 1px solid var(--ak-border); border-left: var(--ak-bar-w) solid var(--ak-accent); box-shadow: var(--ak-shadow-lg); color: var(--ak-fg); border-radius: 0; }
-.mw-notification-type-error { border-left-color: var(--ak-danger); }
-.mw-notification-type-warn { border-left-color: var(--ak-warning); }
+.mw-notification { --_c: var(--ak-accent); background: var(--ak-bg-surface); border: 1px solid var(--ak-border); border-left-width: var(--ak-bar-w); border-image: linear-gradient(to right, var(--_c) 4px, var(--ak-border) 4px) 1 1 1 4; box-shadow: var(--ak-shadow-lg); color: var(--ak-fg); border-radius: 0; }
+.mw-notification-type-error { --_c: var(--ak-danger); }
+.mw-notification-type-warn { --_c: var(--ak-warning); }
 .mw-notification-type-success { border-left-color: var(--ak-success); }
 .usermessage { background: var(--ak-warning-bg); border: 1px solid var(--ak-warning); padding: var(--ak-space-3); }
 .mw-special-Specialpages .mw-specialpagegroup { border-bottom: 1px solid var(--ak-border); }
