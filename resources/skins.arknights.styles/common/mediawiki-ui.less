@@ -16,13 +16,21 @@
 .suggestions {
 	font-size: var( --ak-fs-sm );
 
-	.suggestions-results,
-	.suggestions-special {
+	.suggestions-results {
 		background: var( --ak-bg-surface );
-		border: 1px solid var( --ak-border );
-		border-top: 2px solid var( --ak-accent );
+		.ak-bar-top( 2px );
 		box-shadow: var( --ak-shadow-lg );
 		color: var( --ak-fg );
+	}
+
+	// The "search for …" row below the results: a plain frame, not a second accent bar
+	.suggestions-special {
+		margin-top: -1px;
+		background: var( --ak-bg-surface );
+		border: 1px solid var( --ak-border );
+		box-shadow: var( --ak-shadow-lg );
+		color: var( --ak-fg );
+		padding: 8px 12px;
 	}
 
 	.suggestions-result {
@@ -33,12 +41,6 @@
 	.suggestions-result-current {
 		background: var( --ak-accent-subtle );
 		color: var( --ak-accent );
-	}
-
-	.suggestions-special {
-		margin-top: -1px;
-		border-top: 1px solid var( --ak-border );
-		padding: 8px 12px;
 	}
 
 	.special-label {

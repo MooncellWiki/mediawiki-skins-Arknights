@@ -1,15 +1,25 @@
 /**
  * Search suggestions dropdown (attached to <body>)
  */
+@import '../../resources/skins.arknights.styles/mixins.less';
+
 .suggestions {
-	.suggestions-results,
-	.suggestions-special {
+	.suggestions-results {
 		background: var( --ak-bg-surface );
-		border: 1px solid var( --ak-border );
-		border-top: 2px solid var( --ak-accent );
+		.ak-bar-top( 2px );
 		box-shadow: var( --ak-shadow-lg );
 		color: var( --ak-fg );
 		border-radius: 0;
+	}
+
+	// The "search for …" row below the results: a plain frame, not a second accent bar
+	.suggestions-special {
+		background: var( --ak-bg-surface );
+		border: 1px solid var( --ak-border );
+		border-radius: 0;
+		box-shadow: var( --ak-shadow-lg );
+		color: var( --ak-fg );
+		padding: 8px 12px;
 	}
 
 	.suggestions-result {
@@ -21,11 +31,6 @@
 	.suggestions-result-current {
 		background: var( --ak-accent-subtle );
 		color: var( --ak-accent );
-	}
-
-	.suggestions-special {
-		border-top: 1px solid var( --ak-border );
-		padding: 8px 12px;
 	}
 
 	.suggestions-special.suggestions-result-current {
