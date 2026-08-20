@@ -109,8 +109,9 @@
 		mask-image: linear-gradient( 90deg, transparent 52%, #000 100% );
 	}
 
-	// Links in the bar do not take a visited colour: base.css's purple goes murky on black,
-	// and the user name / #p-personal / Echo entries are controls rather than prose links
+	// Links in the bar do not take a visited colour: the user name / #p-personal / Echo
+	// entries are controls rather than prose links, so "already read" says nothing about
+	// them (and the faded link colour reads as disabled against the black bar)
 	a:visited {
 		color: inherit;
 	}
