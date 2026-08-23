@@ -1,0 +1,167 @@
+/**
+ * Echo — the notification popup's OOUI widgets (ext.echo.ui)
+ *
+ * This is the module that actually paints the popup that drops out of the bell.
+ * `ext.echo.styles.notifications` — where this skin used to put its item overrides — is
+ * the *no-JS* list (Special:Notifications); it stays `registered` and is never loaded on
+ * an ordinary page view, so nothing written there ever reached the popup. Overrides for
+ * the popup have to ride on this module, where skinStyles are appended after Echo's own
+ * rules and therefore win the plenty of 0-1-0 ties below.
+ *
+ * A notification row is read here as a menu row, so it takes the design system's
+ * `.ak-menu a` language verbatim (components.css): hover paints `--ak-bg-hover` and
+ * lights a 2px `--ak-accent` bar down the left edge, and the text itself does not change
+ * colour. Cyan marks "clickable / current" — it is never used to repaint body copy.
+ */
+
+.mw-echo-ui-notificationItemWidget {
+	// The bar rides in the border box Echo already sizes with `box-sizing: border-box`,
+	// so lighting it up does not move the text by 2px.
+	border-left: 2px solid transparent;
+	color: var( --ak-fg );
+	transition: background-color var( --ak-dur-fast ), border-left-color var( --ak-dur-fast );
+
+	/**
+	 * Hover is painted as a background *image* rather than a background-color.
+	 *
+	 * Two reasons, both load-bearing:
+	 *   · it composites over the resting colour instead of replacing it, so an unread row
+	 *     keeps its cyan tint while hovered and simply steps one notch brighter;
+	 *   · `-initiallyUnseen` runs a keyframe animation on background-color with
+	 *     `animation-fill-mode: both`, and an animation's filled value beats any normal
+	 *     declaration — a background-color hover on a freshly arrived notification is
+	 *     silently dropped. A background-image is outside that fight and always lands.
+	 */
+	&:hover {
+		background-image: linear-gradient( var( --ak-bg-hover ), var( --ak-bg-hover ) );
+		border-left-color: var( --ak-accent );
+		text-decoration: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --ak-focus );
+		outline-offset: -2px;
+		box-shadow: none;
+	}
+
+	// Title carries the message; the excerpt below it is secondary. Echo paints both from
+	// `--color-emphasized`, and the override this skin used to carry put *both* at
+	// `--ak-fg-secondary`, which flattened the two into one grey.
+	&-content-message-header {
+		color: var( --ak-fg );
+		font-weight: 600;
+	}
+
+	&-content-message-body {
+		color: var( --ak-fg-muted );
+	}
+}
+
+/**
+ * Resting background per read state.
+ *
+ * Unread carries the design system's "highlighted row" tint — the same language as
+ * `tr.is-hl` / `:target` / `<mark>`. Echo has this inverted: its unread colour is
+ * `--background-color-base` while *read* rows get `--background-color-neutral`, which in
+ * the terminal theme left unread rows (#1a1b1c) *darker* than read ones (#232425).
+ *
+ * Scoped through the list widget purely for weight. Echo repaints the background again on
+ * hover — a hardcoded `#ececec`, plus per-theme copies at 0-3-0 — and those would drop an
+ * unread row back to grey the moment it is pointed at, throwing away the tint the hover
+ * wash is supposed to sit on top of. One extra ancestor clears the whole family.
+ */
+.mw-echo-ui-notificationsListWidget .mw-echo-ui-notificationItemWidget {
+	background-color: var( --ak-bg-surface );
+
+	&.mw-echo-ui-notificationItemWidget-unread {
+		background-color: var( --ak-accent-subtle );
+	}
+}
+
+/**
+ * Row text must not depend on whether some *sibling* row is hovered.
+ *
+ * Echo mutes every link in the list while the list itself is unhovered:
+ *
+ *   .mw-echo-ui-notificationsListWidget:not( :hover ) a { color: var( --color-subtle ); }
+ *
+ * The moment the pointer crosses into the popup that `:not( :hover )` stops matching for
+ * the *whole list at once*, so pointing at one row re-lit the text of every other row
+ * together — the reported "hovering any notification brightens all the timestamps".
+ * Pinning the row colour on both sides of that rule removes the flicker.
+ *
+ * The same declaration also holds off the skin's global `a:hover` (0-1-1), which was
+ * repainting the entire hovered row — title, excerpt and timestamp — in link cyan.
+ */
+.mw-echo-ui-notificationsListWidget a.mw-echo-ui-notificationItemWidget,
+.mw-echo-ui-notificationsListWidget a.mw-echo-ui-notificationItemWidget:hover,
+.mw-echo-ui-notificationsListWidget a.mw-echo-ui-notificationItemWidget:visited {
+	color: var( --ak-fg );
+}
+
+/**
+ * The timestamp is an OOUI label, and this skin's oojs-ui-core override
+ * (`.oo-ui-labelElement .oo-ui-labelElement-label { color: inherit }`, 0-2-0) outranks
+ * Echo's own 0-1-0 colour for it — so the timestamp inherited the row's link colour and
+ * rode along with every change above. It is a fixed, quiet piece of metadata: give it a
+ * colour of its own and drop Echo's 0.6 opacity, which would only mute it twice over.
+ */
+.mw-echo-ui-notificationItemWidget .mw-echo-ui-notificationItemWidget-content-actions-timestamp {
+	color: var( --ak-fg-muted );
+	opacity: 1;
+}
+
+/**
+ * The "just arrived" flash.
+ *
+ * Redefining the keyframes by name is enough — the last definition of a given name wins,
+ * so Echo's endpoints (which land on Codex greys and, with `fill-mode: both`, then *stay*
+ * there and override the resting colours set above) are replaced by ours. The flash keeps
+ * its purpose: a stronger cyan settling into whatever that row's resting colour is.
+ */
+@keyframes unseen-fadeout-to-unread {
+	from {
+		background-color: var( --ak-accent-muted );
+	}
+
+	to {
+		background-color: var( --ak-accent-subtle );
+	}
+}
+
+@keyframes unseen-fadeout-to-read {
+	from {
+		background-color: var( --ak-accent-muted );
+	}
+
+	to {
+		background-color: var( --ak-bg-surface );
+	}
+}
+
+/* The mark-as-read dot: Codex blue (#36c / #447ff5) and Vector greys, straight off-palette. */
+.mw-echo-ui-toggleReadCircleButtonWidget {
+	&-circle {
+		background-color: var( --ak-accent );
+		border: 0;
+
+		&-unread {
+			background-color: transparent;
+			border: 1px solid var( --ak-fg-muted );
+		}
+	}
+
+	&:hover .mw-echo-ui-toggleReadCircleButtonWidget-circle {
+		background-color: var( --ak-accent-hover );
+
+		&-unread {
+			background-color: var( --ak-bg-active );
+			border-color: var( --ak-fg );
+		}
+	}
+}
+
+// Hardcoded #eaecf0 — a light grey slab in the terminal theme.
+.mw-echo-ui-menuItemWidget .mw-echo-ui-actionMenuPopupWidget-menu:hover {
+	background-color: var( --ak-bg-hover );
+}

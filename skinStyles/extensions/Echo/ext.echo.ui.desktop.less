@@ -1,0 +1,58 @@
+/**
+ * Echo — the popup shell that drops out of the bell (ext.echo.ui.desktop)
+ *
+ * `mw.echo.ui.NotificationBadgeWidget.less`, and with it every
+ * `.mw-echo-ui-notificationBadgeButtonPopupWidget-popup` rule, lives in this module —
+ * not in `ext.echo.styles.notifications`, where these overrides used to sit unloaded.
+ * See ext.echo.ui.less for the full story.
+ *
+ * The rows inside are styled there; this file is only the frame around them.
+ */
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
+.mw-echo-ui-notificationBadgeButtonPopupWidget-popup {
+	.oo-ui-popupWidget-popup {
+		background: var( --ak-bg-surface );
+		.ak-bar-top( 2px );
+		box-shadow: var( --ak-shadow-lg );
+		color: var( --ak-fg );
+	}
+
+	// The little triangle pointing back up at the bell is drawn as two stacked borders:
+	// the outer one is the frame's line, the inner one has to match the surface exactly
+	// or the notch reads as a nick in the top bar.
+	.oo-ui-popupWidget-anchor::before,
+	.oo-ui-popupWidget-anchor::after {
+		border-bottom-color: var( --ak-border );
+	}
+
+	.oo-ui-popupWidget-anchor::after {
+		border-bottom-color: var( --ak-bg-surface );
+	}
+
+	// "常规通知" / "重要通知" header strip and the "所有通知" footer link.
+	.oo-ui-popupWidget-head {
+		background: var( --ak-bg-surface-2 );
+		border-color: var( --ak-border );
+		color: var( --ak-fg );
+
+		.oo-ui-labelElement-label {
+			color: var( --ak-fg );
+		}
+	}
+}
+
+.mw-echo-ui-notificationsWidget-loading,
+.mw-echo-ui-notificationBadgeButtonPopupWidget-footer {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+.mw-echo-ui-notificationBadgeButtonPopupWidget-footer .oo-ui-buttonElement-button {
+	color: var( --ak-fg-secondary );
+
+	&:hover {
+		color: var( --ak-accent );
+	}
+}
