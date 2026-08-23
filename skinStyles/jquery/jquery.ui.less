@@ -10,6 +10,22 @@
 	border-radius: 0;
 }
 
+/**
+ * jQuery UI's themeroller default is `font-size: 1.1em` on every widget, so 查找和替换 came
+ * out at 17.6px — a size larger than the page it is sitting on — and its form controls are
+ * pinned to Verdana by the same stylesheet. Put both back on the page's own typography.
+ */
+.ui-widget {
+	font-size: var( --ak-fs-body );
+}
+
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button {
+	font-family: inherit;
+}
+
 .ui-widget-header {
 	background: var( --ak-bg-surface-2 );
 	color: var( --ak-fg );
