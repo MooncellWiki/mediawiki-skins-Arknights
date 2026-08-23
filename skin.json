@@ -379,6 +379,7 @@
 			"+mediawiki.action.view.filepage": "skinStyles/mediawiki/action/mediawiki.action.view.filepage.less",
 			"+mediawiki.diff.styles": "skinStyles/mediawiki/mediawiki.diff.styles.less",
 			"+mediawiki.editfont.styles": "skinStyles/mediawiki/mediawiki.editfont.styles.less",
+			"+mediawiki.feedlink": "skinStyles/mediawiki/mediawiki.feedlink.less",
 			"+mediawiki.htmlform.ooui.styles": "skinStyles/mediawiki/mediawiki.htmlform.ooui.styles.less",
 			"+mediawiki.htmlform.styles": "skinStyles/mediawiki/mediawiki.htmlform.styles.less",
 			"+mediawiki.interface.helpers.styles": "skinStyles/mediawiki/mediawiki.interface.helpers.styles.less",

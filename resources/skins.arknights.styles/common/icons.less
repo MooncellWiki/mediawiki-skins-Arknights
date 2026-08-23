@@ -26,6 +26,22 @@
 	}
 }
 
+/**
+ * Feed (Atom / RSS).
+ *
+ * Not part of skins.arknights.icons: the OOUI WikimediaUI set has no feed glyph, so this one
+ * is drawn here — the standard RSS mark (dot + two arcs, centred on the bottom-left corner
+ * 2,18: dot r=3, inner band 6→9, outer band 13→16) as an inline mask, no external asset and
+ * therefore no dependency on $wgResourceBasePath. Sizing and colour come from `.ak-icon`
+ * above, so it behaves exactly like every other menu icon.
+ */
+.ak-icon--feed {
+	@feed: url( data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2020%2020%27%3E%3Ccircle%20cx=%275%27%20cy=%2715%27%20r=%273%27/%3E%3Cpath%20d=%27M2%2012A6%206%200%200%201%208%2018H11A9%209%200%200%200%202%209ZM2%205A13%2013%200%200%201%2015%2018H18A16%2016%200%200%200%202%202Z%27/%3E%3C/svg%3E );
+
+	-webkit-mask-image: @feed;
+	mask-image: @feed;
+}
+
 .ak-icon--sm {
 	width: 16px;
 	height: 16px;

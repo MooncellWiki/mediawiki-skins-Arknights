@@ -1,0 +1,17 @@
+/**
+ * Feed links (Atom / RSS)
+ *
+ * 核心 mediawiki.feedlink 把 RSS 橙标当 `background-image` 贴在链接上（12px 的彩色位图，
+ * 再用 `padding-left: 16px` 给它让位）。可这条链接在本皮肤里是页面工具菜单的一个条目，
+ * 同一个菜单里「刷新」「打印版本」都是 .ak-icon 的单色遮罩图标——橙标混在里面是唯一的彩色块，
+ * 尺寸与基线也对不上；而且菜单项自己的 `padding: 7px 14px` 比核心的 padding-left 更具体，
+ * 橙标干脆压在了文字起点后面。
+ *
+ * 图标本身改由 MenuItemDecorator 发一个正常的 `.ak-icon--feed`（见 common/icons.less），
+ * 于是尺寸、颜色、悬停变强调色都跟其它条目一致；这里只负责把核心的背景图撤掉。
+ * 选择器跟着核心写成 `a.feedlink`（0,1,1）才压得住。
+ */
+a.feedlink {
+	background-image: none;
+	padding-left: 0;
+}

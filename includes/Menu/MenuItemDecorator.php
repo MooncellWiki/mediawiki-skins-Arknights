@@ -29,6 +29,12 @@ final class MenuItemDecorator {
 	];
 
 	/**
+	 * Icons drawn by the skin itself (mask-image in skins.arknights.styles/common/icons.less)
+	 * because the OOUI WikimediaUI set has no glyph for them.
+	 */
+	public const SKIN_ICONS = [ 'feed' ];
+
+	/**
 	 * Add icon markup to every item of a menu that carries a known `icon`.
 	 *
 	 * @param array &$items menu items keyed by name (the shape accepted by Skin::makeListItem)
@@ -38,6 +44,21 @@ final class MenuItemDecorator {
 			if ( !is_array( $item ) ) {
 				continue;
 			}
+			// Feed links arrive nested: core builds the toolbox entry as
+			// [ 'id' => 'feedlinks', 'links' => [ 'atom' => …, 'rss' => … ] ] and renders one
+			// <a> per entry of `links`, so the icon belongs on those, not on the wrapper.
+			if ( isset( $item['links'] ) && is_array( $item['links'] ) ) {
+				$inherited = $item['icon'] ?? '';
+				foreach ( array_keys( $item['links'] ) as $subKey ) {
+					if ( is_array( $items[$key]['links'][$subKey] ) && $inherited !== ''
+						&& empty( $items[$key]['links'][$subKey]['icon'] )
+					) {
+						$items[$key]['links'][$subKey]['icon'] = $inherited;
+					}
+				}
+				self::addIconsToMenuItems( $items[$key]['links'] );
+				continue;
+			}
 			$icon = $item['icon'] ?? '';
 			if ( !is_string( $icon ) || $icon === '' || isset( $item['link-html'] ) ) {
 				continue;
@@ -45,7 +66,7 @@ final class MenuItemDecorator {
 			// Some extensions still name icons the way mw-ui-icon did, e.g. ULS asks for
 			// 'wikimedia-language' where OOUI (and skins.arknights.icons) calls it 'language'.
 			$icon = preg_replace( '/^wikimedia-/', '', $icon );
-			if ( in_array( $icon, self::ICONS, true ) ) {
+			if ( in_array( $icon, self::ICONS, true ) || in_array( $icon, self::SKIN_ICONS, true ) ) {
 				$items[$key]['link-html'] = self::getIconHtml( $icon );
 			}
 		}

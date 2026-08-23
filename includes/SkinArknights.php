@@ -268,6 +268,9 @@ class SkinArknights extends SkinMustache {
 		'info' => 'infoFilled',
 		'cargo-pagevalues' => 'table',
 		'citethispage' => 'quotes',
+		// Atom / RSS. `feeds` is core's nested wrapper (see makeToolbox); the icon is pushed
+		// down onto each feed link by MenuItemDecorator.
+		'feeds' => 'feed',
 	];
 
 	/**
