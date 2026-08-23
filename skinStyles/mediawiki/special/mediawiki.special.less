@@ -2,7 +2,10 @@
  * Special pages — common
  */
 .mw-special-Specialpages .mw-specialpagesgroup,
-.mw-specialpagesgroup {
+.mw-specialpagesgroup,
+/* Special:Version 的扩展分组标题：核心不发 <h3>，只发 <caption>，但目录里它们是独立条目——
+ * 也就是说那就是这一段的小节标题，跟特殊页面的分组标题是同一个东西，用同一套写法。 */
+.mw-special-Version .mw-installed-software > caption {
 	background: var( --ak-bg-surface-2 );
 	color: var( --ak-fg );
 	border-left: var( --ak-bar-w ) solid var( --ak-accent );
@@ -28,4 +31,84 @@
 
 .mw-special-Version address {
 	color: var( --ak-fg-muted );
+}
+
+/**
+ * Special:Version
+ *
+ * 这一页的四类表（软件 / 接入点 / 扩展·皮肤 / 库）都是核心 PHP 生成的**界面表**，
+ * 但核心给的 class 恰好是 .wikitable，于是套上了「内容表格」那套整张网格：每格四边 1px、
+ * 表头居中。设计系统对界面表另有一套语言 —— components.css 的 .ak-table：外框 + 行分隔线、
+ * 没有竖线、表头是 overline 小标签。这里把 Special:Version 的表按 .ak-table 重写；
+ * .wikitable 本身不动，条目正文里编者写的表格照旧是网格。
+ */
+.mw-special-Version .wikitable {
+	background: var( --ak-bg-surface );
+	border: 1px solid var( --ak-border );
+	font-size: var( --ak-fs-sm );
+}
+
+.mw-special-Version .wikitable > * > tr > th,
+.mw-special-Version .wikitable > * > tr > td {
+	border: 0;
+	border-bottom: 1px solid var( --ak-border );
+	padding: 8px 12px;
+	text-align: left;
+}
+
+.mw-special-Version .wikitable > thead > tr > th {
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg-secondary );
+	font-family: var( --ak-font-body );
+	font-size: var( --ak-fs-xs );
+	font-weight: 700;
+	line-height: 1.3;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	border-bottom: 2px solid var( --ak-border-strong );
+}
+
+/* 扩展 / 皮肤 / 库表：核心写了 `.mw-installed-software td { vertical-align: top }`——
+ * 描述与作者列动辄换三四行，名称必须顶格。但设计系统的 `.wikitable > * > tr > td`（0,1,2）
+ * 比它（0,1,1）更具体，把整表压成了 middle：名字、版本号浮在两三百像素高的格子正中。 */
+.mw-special-Version .mw-installed-software > * > tr > th,
+.mw-special-Version .mw-installed-software > * > tr > td {
+	vertical-align: top;
+}
+
+/* 许可协议列核心只留 6em，"GPL-2.0-or-later" 每一行都断成两截。给到 9em 并禁止链接内换行。 */
+.mw-special-Version .mw-installed-software th:nth-child( 3 ) {
+	width: 9em;
+}
+
+.mw-special-Version .mw-version-ext-license {
+	white-space: nowrap;
+}
+
+/* caption 是表格盒内的一行，外边距不生效（.mw-specialpagesgroup 的上下留白靠 margin）；
+ * 这里改用表格自身的上边距顶开，并盖掉 .wikitable caption 的灰小字。 */
+.mw-special-Version .mw-installed-software > caption {
+	text-align: left;
+	caption-side: top;
+}
+
+.mw-special-Version .mw-installed-software {
+	margin-top: var( --ak-space-6 );
+}
+
+/* 版本号旁的提交号与时间：核心把时间戳单独成行，字号不降下来会和版本号抢重量。 */
+.mw-special-Version .mw-version-ext-vcs-version,
+.mw-special-Version .mw-version-ext-vcs-timestamp {
+	color: var( --ak-fg-muted );
+	font-size: var( --ak-fs-xs );
+}
+
+.mw-special-Version .mw-version-ext-vcs-version {
+	font-family: var( --ak-font-mono );
+}
+
+/* 贡献者名单（Special:Version/Credits）分栏之间没有分隔，长名单会糊成一片。 */
+.mw-special-Version .mw-version-credits {
+	column-gap: var( --ak-space-6 );
+	column-rule: 1px solid var( --ak-border-subtle );
 }
