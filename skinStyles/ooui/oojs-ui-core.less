@@ -58,6 +58,19 @@
 	color: #fff;
 }
 
+// 选中 / 按下的分段按钮（ButtonSelectWidget：最近更改的「50 / 100 / 250 / 500」「1 / 3 / 7 / 14 / 30」、
+// …）。OOUI 写的是 `background-color: --background-color-progressive--active` +
+// `color: --color-inverted-fixed`，后者按定义是「固定不换肤的白」，所以它假设 --active 永远比正文底更深。
+// 桥里 --background-color-progressive--active 指向 --ak-accent-hover，暗色主题下那是 --ak-cyan-200
+// （#7ee5ff，比 --ak-accent 更亮），于是白字落在浅青底上，对比度 ~1.6:1，基本读不出来。
+// 这里不改桥（--hover 在别处是对的），直接把选中态按强调色 + 其配对前景色写死。
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-buttonElement-active > .oo-ui-buttonElement-button,
+.oo-ui-buttonSelectWidget .oo-ui-buttonOptionWidget.oo-ui-buttonElement-framed.oo-ui-optionWidget-selected > .oo-ui-buttonElement-button {
+	background: var( --ak-accent );
+	border-color: var( --ak-accent );
+	color: var( --ak-accent-fg );
+}
+
 .oo-ui-inputWidget-input,
 .oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input,
 .oo-ui-dropdownWidget.oo-ui-widget-enabled .oo-ui-dropdownWidget-handle,
