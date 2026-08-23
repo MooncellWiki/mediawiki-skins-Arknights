@@ -1,6 +1,43 @@
 /**
- * MsUpload — drop zone and file list
+ * MsUpload — toolbar button, drop zone and file list
  */
+
+/* MsUpload appends its button into the WikiEditor toolbar's `.group-insert`, which is a flex
+ * row of ~32px tool buttons. As a plain inline-block the container stretches to the row and
+ * leaves its 20px glyph pinned to the top, a few pixels above every neighbouring icon —
+ * centre it instead, and pad it out to roughly a tool button's footprint. */
+#msupload-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 8px;
+}
+
+/* The stock glyph is msu-upload-button.png, a #657d92 bitmap — a full stop dimmer than the
+ * OOUI line art it now sits between, and fixed at that colour in both themes. Swap it for the
+ * WikimediaUI `upload` icon, painted as a mask over currentColor so it inherits the toolbar's
+ * text colour and needs no dark-mode inversion. Drop a different SVG at images/upload.svg to
+ * change the picture — it is a mask, so only the shape matters, any fill is ignored.
+ * Sized with OOUI's icon metric so it matches the tools either side of it at any font size. */
+#msupload-select {
+	width: 1.42857em;
+	height: 1.42857em;
+	min-width: 20px;
+	min-height: 20px;
+	background: currentcolor;
+	opacity: var( --opacity-icon-base, 0.87 );
+	-webkit-mask: url( images/upload.svg ) center / contain no-repeat;
+	mask: url( images/upload.svg ) center / contain no-repeat;
+}
+
+/* Upstream paints the panel that holds the drop zone and the file list #f8f9fa, which in the
+ * dark theme shows up as a white frame around the drop zone (it sits inside with a 3px margin). */
+#msupload-div {
+	background: var( --ak-bg-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
 #msupload-dropzone {
 	background: var( --ak-bg-surface-2 );
 	border: 1px dashed var( --ak-border-strong );
@@ -8,22 +45,47 @@
 	border-radius: 0;
 }
 
+/* `.drop-over` is the class MsUpload.js toggles while a file is dragged over the zone. */
 #msupload-dropzone:hover,
-#msupload-dropzone.msupload-dragover {
+#msupload-dropzone.drop-over {
 	border-color: var( --ak-accent );
 	background: var( --ak-accent-subtle );
 }
 
+/* `.green` / `.yellow` / `.red` mark a row's upload state and score the same specificity as
+ * `#msupload-list .file`, so a plain background here would silently swallow all three. */
 #msupload-list .file {
-	background: var( --ak-bg-surface );
 	border-color: var( --ak-border );
 	color: var( --ak-fg );
 }
 
-.msupload-file-name {
+#msupload-list .file:not( .green ):not( .yellow ):not( .red ) {
+	background: var( --ak-bg-surface );
+}
+
+#msupload-list .file .file-name {
 	color: var( --ak-fg );
 }
 
+#msupload-list .file .file-name:hover {
+	background-color: var( --ak-bg-hover );
+}
+
+#msupload-list .file .file-name-input {
+	background: var( --ak-bg-inset );
+	color: var( --ak-fg );
+}
+
+#msupload-list .file .file-size {
+	color: var( --ak-fg-muted );
+}
+
 #msupload-bottom {
+	border-color: var( --ak-border );
 	color: var( --ak-fg-secondary );
+}
+
+#msupload-bottom .spacer {
+	border-color: var( --ak-border );
+	background-color: var( --ak-border );
 }
