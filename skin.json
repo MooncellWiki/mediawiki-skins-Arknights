@@ -133,7 +133,6 @@
 	"Hooks": {
 		"BeforePageDisplay": "SkinHooks",
 		"OutputPageAfterGetHeadLinksArray": "SkinHooks",
-		"SidebarBeforeOutput": "SkinHooks",
 		"SkinPageReadyConfig": "SkinHooks"
 	},
 	"ResourceFileModulePaths": {
@@ -196,6 +195,7 @@
 				"bright",
 				"close",
 				"collapse",
+				"database",
 				"die",
 				"edit",
 				"editLock",
@@ -219,6 +219,7 @@
 				"moon",
 				"move",
 				"printer",
+				"quotes",
 				"recentChanges",
 				"reload",
 				"search",

@@ -247,6 +247,94 @@ class SkinArknights extends SkinMustache {
 	}
 
 	/**
+	 * Icons for toolbox entries that arrive without one.
+	 *
+	 * Keyed by the *array key* the item is registered under, which is not always the `t-`
+	 * id you see in the HTML: CiteThisPage registers `citethispage` with `id => t-cite`,
+	 * Cargo registers `cargo-pagevalues` with `id => t-cargopagevalueslink`.
+	 *
+	 * Extensions that pick their own icon are left alone — SemanticMediaWiki asks for
+	 * `database` on its browse link, so that is what it gets (the name only has to be in
+	 * MenuItemDecorator::ICONS for the markup to be emitted).
+	 */
+	private const TOOLBOX_ICONS = [
+		'recentchangeslinked' => 'recentChanges',
+		'print' => 'printer',
+		'contributions' => 'userContributions',
+		'emailuser' => 'userTalk',
+		'upload' => 'upload',
+		'specialpages' => 'specialPages',
+		'permalink' => 'link',
+		'info' => 'infoFilled',
+		'cargo-pagevalues' => 'table',
+		'citethispage' => 'quotes',
+	];
+
+	/**
+	 * Decorate the sidebar *after* every SidebarBeforeOutput handler has run.
+	 *
+	 * This used to be a SidebarBeforeOutput handler of our own, which turned out to be a
+	 * race we lose: CiteThisPage and SemanticMediaWiki add their toolbox entries from that
+	 * very hook, and hook handlers run in load order, so with `wfLoadSkin( 'Arknights' )`
+	 * sitting above those extensions in LocalSettings.php their items simply did not exist
+	 * yet when we went looking for them — 引用此页 and 浏览属性 rendered without icons, and
+	 * whether they did was a property of the wiki's config file rather than of this skin.
+	 *
+	 * Core runs the hook inside buildSidebar() and returns straight after, so overriding it
+	 * here puts us last unconditionally. Both steps below are idempotent, which matters
+	 * because core memoises the pre-decoration array and hands us a fresh copy every call.
+	 *
+	 * @return array
+	 */
+	public function buildSidebar(): array {
+		$sidebar = parent::buildSidebar();
+
+		if ( isset( $sidebar['TOOLBOX'] ) && is_array( $sidebar['TOOLBOX'] ) ) {
+			MenuItemDecorator::mapIcons( $sidebar['TOOLBOX'], self::TOOLBOX_ICONS );
+			self::extractSiteTools( $sidebar );
+		}
+
+		foreach ( $sidebar as &$menu ) {
+			if ( is_array( $menu ) ) {
+				MenuItemDecorator::addIconsToMenuItems( $menu );
+			}
+		}
+		unset( $menu );
+
+		return $sidebar;
+	}
+
+	/**
+	 * Split the two site-level entries out of the toolbox into their own sidebar section.
+	 *
+	 * The toolbox as a whole travels to the title row's "more" card because everything in
+	 * it acts on the page you are looking at — except these two, which act on the wiki.
+	 * Citizen draws the same line with moveUploadToSiteTools() + addSiteTools().
+	 *
+	 * The section name becomes the portlet id: SkinTemplate maps TOOLBOX to `p-tb` by hand
+	 * and runs every other section through `p-$name`, so `site-tools` arrives as
+	 * `#p-site-tools`. It renders untitled (ArknightsComponentMainMenu drops the label) so
+	 * it reads as a continuation of the navigation above it rather than a heading of its own.
+	 *
+	 * `upload` is only present when the visitor may actually upload; taking it when it is
+	 * absent is not an error, the section just comes out one item shorter.
+	 *
+	 * @param array &$sidebar
+	 */
+	private static function extractSiteTools( array &$sidebar ): void {
+		$siteTools = [];
+		foreach ( [ 'specialpages', 'upload' ] as $key ) {
+			if ( isset( $sidebar['TOOLBOX'][$key] ) ) {
+				$siteTools[$key] = $sidebar['TOOLBOX'][$key];
+				unset( $sidebar['TOOLBOX'][$key] );
+			}
+		}
+		if ( $siteTools ) {
+			$sidebar['site-tools'] = $siteTools;
+		}
+	}
+
+	/**
 	 * Pull the toolbox portlet out of the sidebar data so it can be rendered in the title
 	 * row's "more" card instead — the same move as Citizen's
 	 * SkinCitizen::extractPageToolsFromSidebar(). ArknightsComponentMainMenu skips the

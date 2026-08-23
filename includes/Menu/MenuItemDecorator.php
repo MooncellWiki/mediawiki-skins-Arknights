@@ -19,11 +19,11 @@ final class MenuItemDecorator {
 	 */
 	public const ICONS = [
 		'appearance', 'arrowPrevious', 'articleRedirect', 'bell', 'bellOutline', 'block', 'bright',
-		'close', 'collapse', 'die', 'edit', 'editLock', 'ellipsis', 'expand', 'eye', 'halfBright',
-		'help', 'history', 'home', 'info', 'infoFilled', 'language', 'link', 'linkExternal',
-		'listBullet', 'lock', 'logIn', 'logOut', 'menu', 'moon', 'move', 'printer', 'recentChanges',
-		'reload', 'search', 'settings', 'share', 'specialPages', 'speechBubbleAdd', 'speechBubbles',
-		'star', 'table',
+		'close', 'collapse', 'database', 'die', 'edit', 'editLock', 'ellipsis', 'expand', 'eye',
+		'halfBright', 'help', 'history', 'home', 'info', 'infoFilled', 'language', 'link',
+		'linkExternal', 'listBullet', 'lock', 'logIn', 'logOut', 'menu', 'moon', 'move', 'printer',
+		'quotes', 'recentChanges', 'reload', 'search', 'settings', 'share', 'specialPages',
+		'speechBubbleAdd', 'speechBubbles', 'star', 'table',
 		'trash', 'unBlock', 'unLock', 'unStar', 'upload', 'userAdd', 'userAvatar',
 		'userAvatarOutline', 'userContributions', 'userGroup', 'userTalk', 'watchlist', 'wikiText',
 	];

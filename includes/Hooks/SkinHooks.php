@@ -5,15 +5,12 @@ declare( strict_types=1 );
 namespace MediaWiki\Skins\Arknights\Hooks;
 
 use MediaWiki\Config\Config;
-use MediaWiki\Hook\SidebarBeforeOutputHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\Hook\OutputPageAfterGetHeadLinksArrayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\ResourceLoader as RL;
-use MediaWiki\Skins\Arknights\Menu\MenuItemDecorator;
 use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
-use Skin;
 
 /**
  * Hooks relating to the skin
@@ -21,7 +18,6 @@ use Skin;
 class SkinHooks implements
 	BeforePageDisplayHook,
 	OutputPageAfterGetHeadLinksArrayHook,
-	SidebarBeforeOutputHook,
 	SkinPageReadyConfigHook
 {
 	public const SKIN_NAME = 'arknights';
@@ -87,81 +83,5 @@ class SkinHooks implements
 			'name' => 'viewport',
 			'content' => 'width=device-width,initial-scale=1,viewport-fit=cover',
 		] );
-	}
-
-	/**
-	 * Decorate the toolbox with icons (the sidebar hooks are the only place where
-	 * the toolbox items exist as an array).
-	 *
-	 * @param Skin $skin
-	 * @param array &$sidebar
-	 */
-	public function onSidebarBeforeOutput( $skin, &$sidebar ): void {
-		if ( $skin->getSkinName() !== self::SKIN_NAME ) {
-			return;
-		}
-
-		if ( isset( $sidebar['TOOLBOX'] ) && is_array( $sidebar['TOOLBOX'] ) ) {
-			MenuItemDecorator::mapIcons( $sidebar['TOOLBOX'], [
-				'recentchangeslinked' => 'recentChanges',
-				'print' => 'printer',
-				'contributions' => 'userContributions',
-				'emailuser' => 'userTalk',
-				'upload' => 'upload',
-				'specialpages' => 'specialPages',
-				'permalink' => 'link',
-				'info' => 'infoFilled',
-				'cargo-pagevalues' => 'table',
-				'cargopagevalueslink' => 'table',
-				'smwbrowselink' => 'table',
-				// Cite registers the item as `cite`; `citethispage` is the message name.
-				'cite' => 'wikiText',
-				'citethispage' => 'wikiText',
-			] );
-			MenuItemDecorator::addIconsToMenuItems( $sidebar['TOOLBOX'] );
-
-			self::extractSiteTools( $sidebar );
-		}
-
-		foreach ( $sidebar as $name => &$menu ) {
-			if ( $name === 'TOOLBOX' || !is_array( $menu ) ) {
-				continue;
-			}
-			MenuItemDecorator::addIconsToMenuItems( $menu );
-		}
-		unset( $menu );
-	}
-
-	/**
-	 * Split the two site-level entries out of the toolbox into their own sidebar section.
-	 *
-	 * The toolbox as a whole now travels to the title row's "more" card (see
-	 * ArknightsComponentPageTools) because everything in it acts on the page you are
-	 * looking at — except these two, which act on the wiki. Citizen draws the same line
-	 * with moveUploadToSiteTools() + addSiteTools(); this is the same split done in the
-	 * one place where the toolbox still exists as an array rather than rendered <li>s.
-	 *
-	 * The section name becomes the portlet id: SkinTemplate maps TOOLBOX to `p-tb` by
-	 * hand and runs every other section through `p-$name`, so `site-tools` arrives in the
-	 * sidebar as `#p-site-tools`. It renders untitled — ArknightsComponentMainMenu drops
-	 * the label, so it reads as a continuation of the navigation group above it rather
-	 * than a heading of its own.
-	 *
-	 * `upload` is only present when the visitor may actually upload; taking it when it is
-	 * absent is not an error, the section just comes out one item shorter.
-	 *
-	 * @param array &$sidebar
-	 */
-	private static function extractSiteTools( array &$sidebar ): void {
-		$siteTools = [];
-		foreach ( [ 'specialpages', 'upload' ] as $key ) {
-			if ( isset( $sidebar['TOOLBOX'][$key] ) ) {
-				$siteTools[$key] = $sidebar['TOOLBOX'][$key];
-				unset( $sidebar['TOOLBOX'][$key] );
-			}
-		}
-		if ( $siteTools ) {
-			$sidebar['site-tools'] = $siteTools;
-		}
 	}
 }

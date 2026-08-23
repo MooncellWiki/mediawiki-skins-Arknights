@@ -114,6 +114,22 @@
 				height: 18px;
 				color: var( --ak-fg-muted );
 			}
+
+			/**
+			 * Hold the icon column open for rows that have no icon.
+			 *
+			 * Not every item can be given one: gadgets and core modules add entries from
+			 * JavaScript with mw.util.addPortletLink long after the skin has rendered
+			 * (「全部展开」, id `t-collapsible-toggle-all`, is one), so there is no server-side
+			 * pass that could reach them. Without a placeholder their label slides left and
+			 * the card reads as broken; with it a missing icon is just a quiet gap and the
+			 * text stays on one edge.
+			 */
+			&:not( :has( > .ak-icon ) )::before {
+				content: '';
+				width: 18px;
+				flex: none;
+			}
 		}
 
 		li > a:hover {
