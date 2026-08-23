@@ -1,9 +1,19 @@
 /**
  * RecentChanges filters UI
  */
+
+/* 过滤器控件区是一摞互相嵌套的 OOUI 盒子，各自从 Codex 桥拿到不同的语义底色：
+ *   .mw-rcfilters-ui-filterTagMultiselectWidget  ← --background-color-neutral-subtle  = --ak-bg-canvas
+ *   .oo-ui-tagMultiselectWidget-handle           ← --background-color-interactive-subtle = --ak-bg-surface-2
+ *   …-wrapper（比 handle 内缩 0.6em）             ← 本文件原来写的 --ak-bg-surface
+ * 亮色下 canvas 与 surface-2 同色、看不出来；暗色下这三层是 #0f0f10 / #232425 / #1a1b1c，
+ * 于是面板左右两侧各露出一条 9.6px 的异色竖条（handle 的内边距），而「命名空间 / 标签」那截
+ * 因为容器透明又漏出画布色 —— 就是「控件看着不对劲」的来源。这里把整个控件簇收敛到一层面板底，
+ * 只留输入框自己是更深的 --ak-bg-surface（输入井）。
+ *
+ * 选择器要压过 OOUI 的 `.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-outlined`
+ * (0,3,0) 与核心的 `.mw-rcfilters-container .…-filterTagMultiselectWidget.oo-ui-widget-enabled .…-handle`。 */
 .mw-rcfilters-ui-filterWrapperWidget,
-.mw-rcfilters-ui-filterTagMultiselectWidget,
-.mw-rcfilters-ui-filterTagMultiselectWidget-wrapper,
 .mw-rcfilters-ui-changesLimitAndDateButtonWidget,
 .mw-rcfilters-ui-savedLinksListWidget,
 .mw-rcfilters-ui-viewSwitchWidget,
@@ -12,6 +22,21 @@
 	border-color: var( --ak-border );
 	color: var( --ak-fg );
 	border-radius: 0;
+}
+
+.mw-rcfilters-ui-filterTagMultiselectWidget.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled,
+.mw-rcfilters-container .mw-rcfilters-ui-filterTagMultiselectWidget.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle,
+.mw-rcfilters-ui-filterTagMultiselectWidget-views-select-widget.oo-ui-widget {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+	border-radius: 0;
+}
+
+/* handle 的内边距里那一层：透明即可，异色竖条随之消失。 */
+.mw-rcfilters-ui-filterTagMultiselectWidget-wrapper {
+	background: transparent;
+	color: var( --ak-fg );
 }
 
 .mw-rcfilters-ui-filterTagMultiselectWidget .oo-ui-tagMultiselectWidget-handle,
