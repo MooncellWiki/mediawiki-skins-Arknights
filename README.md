@@ -304,6 +304,23 @@ $wgArknightsSearchIndex = [
 2. **VMS 退役**：Vector 皮肤上线期间两者并存；全站切到 Arknights 后 VMS 可以卸载。若希望在 Vector 上也用这套渲染，可以把 `WikitextMenuParser` 抽成一个小扩展给两边共用。
 3. `#MSToolbox` id 未保留（工具箱现在就是 `#p-tb`）；若站点脚本/小工具依赖 `#MSToolbox`，需要改成 `#p-tb`。
 
+## 首页
+
+首页（`action=view`）的骨架由皮肤自己收敛，页面只写自己的区块——设计稿（prts-design `preview/home.html` 的「0. 页面级」段）里那几条**不必抄进 `MediaWiki:Common.css`**，皮肤已经做完：
+
+| 首页上皮肤「少做」的事 | 实现 |
+|---|---|
+| 不显示标题 | `.ak-layout--mainpage .ak-page-heading` 只留给读屏器（`.ak-sr-only()`）——h1 仍是大纲的根，不是 `display: none` |
+| 动作簇（讨论 / 历史 / 编辑 / ★ / 更多）保留并靠右 | `.ak-page-header__row { justify-content: flex-end }`——标题出流后它是这一行唯一的项，默认会滑到左边 |
+| 正文不包白纸 | `.ak-body--mainpage`：无底色、无边框、无内边距（首页区块各自带容器，外层再套一张纸就是纸上贴纸） |
+| 不把目录导轨让出去 | `.ak-layout--mainpage .ak-main` 保留 `--ak-content-max + --ak-toc-w + --ak-gutter` 的总宽，右缘与有目录的页面对齐；其它无目录页（`.ak-layout--no-toc`）仍收窄到阅读列 |
+| 不出目录 | `toc-enabled` 在首页恒为假：右侧粘性目录与二级栏的「本页目录」都不渲染，1120–1400 档二级栏整条收起、头图跟着少探一行 |
+| 命名空间小标 / 指示器 | `.ak-page-header__top:empty` 自动收起（首页在主名字空间；真放了 `<indicator>` 会照常显示，要藏就自己在 `MediaWiki:Common.css` 写一行） |
+
+`MediaWiki:Mainpage-title` 置空的老办法仍然有效，且此时核心给出的是**空的** h1（`is-title-blank`）——没有页面工具时整条页面头收起。
+
+页面自己那半边（生产环境）：结构 = `MediaWiki:首页` / `Template:首页` 的输出，**最外层标 `ak-not-prose`**（正文排版规则——标题色条、段距、列表符、链接色含 `:visited`——不进组件子树，见 prts-design 规范 §1.3）；区块样式 = `Template:首页/styles.css`（TemplateStyles）；轮播（Swiper）与时钟 / 周常倒计时 / 资源开放状态由 Gadget 按页加载。皮肤不依赖这些，`.ak-countdown` `.ak-panel` `.ak-op-card` 等组件样式已在设计系统层。
+
 ## 与设计系统的对应
 
 - 页眉 `.ak-header`、侧栏 `.ak-sidebar`、页面头 `.ak-page-header`、目录 `.ak-toc`、页脚 `.ak-footer` 等类名与 prts-design 的 `src/skin.css` 一致，但骨架样式由本皮肤的 LESS 维护（DOM 由模板定义）。
