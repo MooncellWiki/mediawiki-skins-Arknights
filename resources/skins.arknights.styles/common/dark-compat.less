@@ -5,6 +5,12 @@
  *   .notheme                              → keeps the light (archive) tokens (see notheme.generated.less)
  *   .mw-no-invert                          → excluded from icon inversion
  * The design system additionally offers `.ak-glyph` (white line-art icons, inverted in LIGHT mode).
+ *
+ * .skin-invert gets those light tokens too (notheme.generated.less covers both selectors):
+ * the filter below flips whatever the subtree paints, so the light palette is the input that
+ * comes out right. Extensions mark chrome with it to flip a dark glyph — WikiEditor does it to
+ * the toolbar's section tabs — and everything else in that element rides along, so the tokens
+ * have to be the ones that survive the flip.
  */
 html.skin-theme-clientpref-night .skin-invert-image img,
 html.skin-theme-clientpref-night .skin-invert {
