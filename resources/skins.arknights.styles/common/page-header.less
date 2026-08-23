@@ -43,11 +43,28 @@
 	}
 }
 
+/**
+ * Title row: the h1 and the page action cluster on one line.
+ *
+ * The heading takes the free space and the cluster sits hard right, aligned on the bottom
+ * so the buttons line up with the foot of the heading's accent bar. `flex-wrap` is what
+ * makes a long title safe: instead of squeezing the buttons, the whole cluster drops to
+ * the next line and stays left-aligned under the title.
+ */
+.ak-page-header__row {
+	display: flex;
+	align-items: flex-end;
+	flex-wrap: wrap;
+	gap: var( --ak-space-3 ) var( --ak-space-4 );
+	margin-bottom: var( --ak-space-3 );
+}
+
 .ak-page-heading {
 	position: relative;
 	padding-left: var( --ak-space-4 );
 	border-left: var( --ak-bar-w-lg ) solid var( --ak-accent );
-	margin-bottom: var( --ak-space-3 );
+	flex: 1 1 auto;
+	min-width: 0;
 
 	&--blank {
 		display: none;

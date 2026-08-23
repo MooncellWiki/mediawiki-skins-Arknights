@@ -7,13 +7,20 @@ namespace MediaWiki\Skins\Arknights\Components;
 use MediaWiki\Config\Config;
 
 /**
- * Sidebar menus: the MediaWiki:Sidebar portlets, the toolbox and the language
+ * Sidebar menus: the MediaWiki:Sidebar portlets, the site tools and the language
  * portlet, arranged around the optional wikitext MenuSidebar.
+ *
+ * The toolbox is no longer one of them — it is rendered in the title row's "more" card
+ * (ArknightsComponentPageTools). It is still dropped here so it does not fall through
+ * into the sidebar as an ordinary portlet.
  */
 class ArknightsComponentMainMenu implements ArknightsComponent {
 
 	/** Portlet id MediaWiki assigns to the TOOLBOX sidebar entry */
 	public const TOOLBOX_ID = 'p-tb';
+
+	/** Portlet id of the site-level entries SkinHooks splits out of the toolbox */
+	public const SITE_TOOLS_ID = 'p-site-tools';
 
 	public function __construct(
 		private readonly Config $config,
@@ -40,11 +47,17 @@ class ArknightsComponentMainMenu implements ArknightsComponent {
 		}
 
 		$menus = [];
-		$toolbox = null;
+		$siteTools = null;
 		foreach ( $portlets as $portlet ) {
 			$id = $portlet['id'] ?? '';
+			// The toolbox belongs to the page, not the site: it is rendered in the title
+			// row's "more" card. Skipped rather than collected — PageTools reads it
+			// straight from the portlet data.
 			if ( $id === self::TOOLBOX_ID ) {
-				$toolbox = $portlet;
+				continue;
+			}
+			if ( $id === self::SITE_TOOLS_ID ) {
+				$siteTools = $portlet;
 				continue;
 			}
 			if ( $hidePortlets ) {
@@ -56,12 +69,15 @@ class ArknightsComponentMainMenu implements ArknightsComponent {
 			}
 		}
 
-		$toolboxData = null;
-		if ( $toolbox !== null ) {
-			$toolboxData = ( new ArknightsComponentMenu( $toolbox ) )->getTemplateData();
-			$toolboxData['class'] = trim( ( $toolboxData['class'] ?? '' ) . ' ak-menu-portlet--toolbox' );
-			if ( $toolboxData['is-empty'] ) {
-				$toolboxData = null;
+		$siteToolsData = null;
+		if ( $siteTools !== null ) {
+			$siteToolsData = ( new ArknightsComponentMenu( $siteTools ) )->getTemplateData();
+			// Untitled: `site-tools` is not an interface message, and the group reads as a
+			// continuation of the navigation above it rather than a heading of its own.
+			$siteToolsData['label'] = null;
+			$siteToolsData['class'] = trim( ( $siteToolsData['class'] ?? '' ) . ' ak-menu-portlet--site-tools' );
+			if ( $siteToolsData['is-empty'] ) {
+				$siteToolsData = null;
 			}
 		}
 
@@ -75,7 +91,7 @@ class ArknightsComponentMainMenu implements ArknightsComponent {
 
 		return [
 			'array-portlets' => $menus,
-			'data-toolbox' => $toolboxData,
+			'data-site-tools' => $siteToolsData,
 			'data-languages' => $languages,
 			'has-menu-sidebar' => !empty( $this->menuSidebarData ),
 		];

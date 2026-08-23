@@ -1,144 +1,213 @@
 /**
- * Page tools — namespace tabs · views tabs · variants / more dropdowns
+ * Page action cluster — the row of ghost buttons beside the h1.
+ *
+ * 讨论 · 查看历史 · 编辑 / 查看源代码 · ★ · [变体] · 更多
+ *
+ * There is no underlined tab strip any more: nothing in the cluster is a "current" state
+ * to mark, because the tab for the page you are already on is not an action. The selected
+ * namespace tab and 「阅读」 are handed to screen readers instead of being drawn (see
+ * `li.selected` below), so what is left is a flat set of things you can do.
+ *
+ * DOM order is the order core builds the menus in; the visual order is set with `order`.
  */
 .ak-page-tools {
 	display: flex;
-	align-items: flex-end;
-	gap: var( --ak-space-2 );
-	border-bottom: 1px solid var( --ak-border );
-	flex-wrap: wrap;
-	margin-top: var( --ak-space-2 );
+	align-items: center;
+	gap: 4px;
+	flex: none;
+	max-width: 100%;
+	// Sits the cluster's optical baseline on the bottom of the heading's accent bar.
+	margin-bottom: 2px;
 }
 
-.ak-page-tools__spacer {
-	flex: 1 1 auto;
-	min-width: 0;
+.ak-page-tools__group {
+	display: flex;
 }
 
 .ak-page-tabs {
+	.ak-reset-list();
 	display: flex;
-	align-items: flex-end;
-
-	&__list {
-		.ak-reset-list();
-		display: flex;
-		gap: 2px;
-	}
+	gap: 4px;
 
 	li {
 		margin: 0;
 	}
-
-	li > a,
-	li > span,
-	li > .ak-link {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		height: 36px;
-		padding: 0 12px;
-		font-weight: 600;
-		font-size: var( --ak-fs-sm );
-		color: var( --ak-fg-muted );
-		text-decoration: none;
-		border-bottom: 3px solid transparent;
-		margin-bottom: -1px;
-		position: relative;
-		white-space: nowrap;
-
-		.ak-icon {
-			width: 16px;
-			height: 16px;
-		}
-	}
-
-	li > a:hover {
-		color: var( --ak-fg );
-		background: var( --ak-bg-hover );
-		text-decoration: none;
-	}
-
-	li.selected > a,
-	li > a.selected {
-		color: var( --ak-accent );
-		border-bottom-color: var( --ak-accent );
-
-		&::before {
-			content: '';
-			position: absolute;
-			left: 0;
-			top: 0;
-			border-style: solid;
-			border-width: 6px 6px 0 0;
-			border-color: var( --ak-accent ) transparent transparent;
-		}
-	}
-
-	li.new > a {
-		color: var( --ak-link-new );
-	}
-
-	// Watch / unwatch star: icon-only tab, accent-2 (yellow) when watched
-	li#ca-watch > a,
-	li#ca-unwatch > a {
-		padding: 0 10px;
-
-		> span:not( .ak-icon ) {
-			.ak-sr-only();
-		}
-
-		.ak-icon {
-			width: 20px;
-			height: 20px;
-			color: var( --ak-fg-muted );
-		}
-
-		&:hover .ak-icon {
-			color: var( --ak-fg );
-		}
-	}
-
-	li#ca-unwatch > a .ak-icon {
-		color: var( --ak-accent-2 );
-	}
-
-	li#ca-watch > a.loading .ak-icon,
-	li#ca-unwatch > a.loading .ak-icon {
-		opacity: 0.4;
-	}
 }
 
-.ak-page-tools__dropdown {
-	margin-bottom: 2px;
+/**
+ * The current state is announced, not drawn.
+ *
+ * `li.selected` is the namespace tab for the page you are on (「页面」) and 「阅读」 — both
+ * are a no-op where they appear. They stay in the DOM as sr-only rather than
+ * `display: none` so the accesskey still works and the tab list still reads completely.
+ * They become real actions when they are *not* the current state, and then they render
+ * normally: 「页面」 on a talk page, 「阅读」 on a history page.
+ */
+.ak-page-tabs li.selected {
+	// Written out rather than using .ak-sr-only(), whose `position: absolute !important`
+	// no amount of specificity can undo — and the diff rule below has to undo exactly that.
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect( 0 0 0 0 );
+	white-space: nowrap;
+	border: 0;
 }
 
+/**
+ * diff and permalink views are still `action-view`, so core marks 「阅读」 selected and the
+ * rule above would hide the one link that gets you back to the article. Citizen puts it
+ * back the same way.
+ */
+.action-view:has( .diff, .mw-revision ) .ak-page-tabs li#ca-view {
+	position: static;
+	width: auto;
+	height: auto;
+	margin: 0;
+	overflow: visible;
+	clip: auto;
+	clip-path: none;
+	white-space: nowrap;
+}
+
+// 32px ghost button. The solid / outlined variants below only swap colours.
+.ak-page-tabs li > a,
 .ak-page-tools__btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 	height: 32px;
 	padding: 0 10px;
-	font-size: var( --ak-fs-sm );
-	font-weight: 600;
-	color: var( --ak-fg-muted );
 	border: 1px solid transparent;
 	box-sizing: border-box;
+	font-weight: 600;
+	font-size: var( --ak-fs-sm );
+	line-height: 1;
+	color: var( --ak-fg-secondary );
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
 	transition: background var( --ak-dur-fast ), color var( --ak-dur-fast );
+
+	.ak-icon {
+		width: 18px;
+		height: 18px;
+		flex: none;
+		color: var( --ak-fg-muted );
+	}
 
 	&:hover {
 		color: var( --ak-fg );
 		background: var( --ak-bg-hover );
+		text-decoration: none;
+
+		.ak-icon {
+			color: var( --ak-fg );
+		}
 	}
 
 	&:focus-visible {
 		outline: 2px solid var( --ak-focus );
 		outline-offset: -2px;
 	}
+}
+
+.ak-page-tabs li.new > a {
+	color: var( --ak-link-new );
+}
+
+/**
+ * 「编辑」 is the one filled button in the cluster — the single thing the page is inviting
+ * you to do. Where you may not edit, that slot is 「查看源代码」 as a thin outline: it is
+ * still the primary way in, but it is not an invitation, so it does not take the accent.
+ */
+.ak-page-tabs li#ca-edit > a,
+.ak-page-tabs li#ca-ve-edit > a {
+	background: var( --ak-accent );
+	border-color: var( --ak-accent );
+	color: var( --ak-accent-fg );
 
 	.ak-icon {
-		width: 18px;
-		height: 18px;
+		color: inherit;
 	}
+
+	&:hover {
+		background: var( --ak-accent-hover );
+		border-color: var( --ak-accent-hover );
+		color: var( --ak-accent-fg );
+
+		.ak-icon {
+			color: inherit;
+		}
+	}
+}
+
+.ak-page-tabs li#ca-viewsource > a {
+	border-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+// ★ watch / unwatch: icon only, and yellow once the page is on the watchlist.
+.ak-page-tabs li#ca-watch > a,
+.ak-page-tabs li#ca-unwatch > a {
+	padding: 0 6px;
+
+	> span:not( .ak-icon ) {
+		.ak-sr-only();
+	}
+
+	.ak-icon {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+.ak-page-tabs li#ca-unwatch > a .ak-icon {
+	color: var( --ak-accent-2 );
+}
+
+.ak-page-tabs li#ca-watch > a.loading .ak-icon,
+.ak-page-tabs li#ca-unwatch > a.loading .ak-icon {
+	opacity: 0.4;
+}
+
+/* Cluster order — see the note at the top of the file */
+#p-associated-pages {
+	order: 1;
+}
+
+#p-views {
+	order: 2;
+}
+
+.ak-page-tools__variants {
+	order: 3;
+}
+
+.ak-page-tools__more {
+	order: 4;
+}
+
+.ak-page-tabs li#ca-history {
+	order: 1;
+}
+
+.ak-page-tabs li#ca-viewsource,
+.ak-page-tabs li#ca-edit,
+.ak-page-tabs li#ca-ve-edit {
+	order: 2;
+}
+
+.ak-page-tabs li#ca-watch,
+.ak-page-tabs li#ca-unwatch {
+	order: 3;
+}
+
+.ak-page-tools__btn {
+	padding: 0 10px 0 8px;
 }
 
 details[ open ] > .ak-page-tools__btn {
@@ -146,6 +215,11 @@ details[ open ] > .ak-page-tools__btn {
 	color: var( --ak-fg );
 }
 
-.ak-page-tools__dropdown .ak-dropdown__card {
-	min-width: 200px;
+/**
+ * The "more" card: 操作（#p-cactions）and 工具（#p-tb）as two labelled groups.
+ * `.ak-menu-card .ak-menu-portlet + .ak-menu-portlet` (dropdown.less) already draws the
+ * rule between them, so there is nothing to add here but the width.
+ */
+.ak-page-tools__card {
+	min-width: 240px;
 }

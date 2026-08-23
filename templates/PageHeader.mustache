@@ -10,11 +10,18 @@
 		{{#namespace-text}}<span class="ak-page-header__ns ak-en">{{.}}</span>{{/namespace-text}}
 		{{#has-indicators}}{{>Indicators}}{{/has-indicators}}
 	</div>
-	<div class="ak-page-heading{{#is-title-blank}} ak-page-heading--blank{{/is-title-blank}}">
-		{{{html-title-heading}}}
-		{{#html-tagline}}<div id="siteSub" class="ak-page-heading__tagline">{{{.}}}</div>{{/html-tagline}}
+	{{!
+		Title row: the h1 and the page action cluster share one line — the heading takes the
+		free space, the cluster sits hard right with its baseline on the heading's accent bar,
+		and a long title pushes the whole cluster onto the next line rather than squeezing it.
+	}}
+	<div class="ak-page-header__row">
+		<div class="ak-page-heading{{#is-title-blank}} ak-page-heading--blank{{/is-title-blank}}">
+			{{{html-title-heading}}}
+			{{#html-tagline}}<div id="siteSub" class="ak-page-heading__tagline">{{{.}}}</div>{{/html-tagline}}
+		</div>
+		{{#data-page-tools}}{{#has-tools}}{{>PageTools}}{{/has-tools}}{{/data-page-tools}}
 	</div>
 	{{/data-page-heading}}
 	<div id="contentSub"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
-	{{#data-page-tools}}{{#has-tools}}{{>PageTools}}{{/has-tools}}{{/data-page-tools}}
 </header>

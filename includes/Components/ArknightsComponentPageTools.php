@@ -12,8 +12,9 @@ use MediaWiki\User\User;
 use MessageLocalizer;
 
 /**
- * Page tools bar: namespace tabs (page / talk), views (read / edit / history / watch),
- * the "more" dropdown (actions) and the language-variant dropdown.
+ * The page action cluster that sits on the title row: namespace tabs (page / talk),
+ * views (read / edit / history / watch), the language-variant dropdown and the "more"
+ * card holding the actions and toolbox portlets.
  */
 class ArknightsComponentPageTools implements ArknightsComponent {
 
@@ -23,7 +24,8 @@ class ArknightsComponentPageTools implements ArknightsComponent {
 		private readonly Title $title,
 		private readonly User $user,
 		private readonly PermissionManager $permissionManager,
-		private readonly array $portlets
+		private readonly array $portlets,
+		private readonly array $toolbox = []
 	) {
 	}
 
@@ -64,13 +66,28 @@ class ArknightsComponentPageTools implements ArknightsComponent {
 		$actions = $this->menu( 'data-actions' );
 		$variants = $this->menu( 'data-variants' );
 
+		$toolbox = null;
+		if ( $this->toolbox ) {
+			$menu = ( new ArknightsComponentMenu( $this->toolbox ) )->getTemplateData();
+			$toolbox = $menu['is-empty'] ? null : $menu;
+		}
+
+		// $wgArknightsShowPageTools gates the tabs, not the card: the toolbox is how you
+		// reach "what links here" / "page information" at all now that it has left the
+		// sidebar, so hiding the tabs must not take it with them. Citizen keeps
+		// has-overflow independent of is-visible for the same reason.
+		$hasOverflow = (bool)( $actions || $toolbox );
+
 		return [
 			'is-visible' => $isVisible,
 			'data-associated-pages' => $associated,
 			'data-views' => $views,
 			'data-actions' => $actions,
+			'data-toolbox' => $toolbox,
 			'data-variants' => $variants,
-			'has-tools' => $isVisible && ( $associated || $views || $actions || $variants ),
+			'has-overflow' => $hasOverflow,
+			'has-tools' => $hasOverflow || ( $isVisible && ( $associated || $views || $variants ) ),
+			'is-tabs-visible' => $isVisible,
 			'msg-more' => $this->localizer->msg( 'arknights-page-tools-more' )->text(),
 			'msg-variants' => $this->localizer->msg( 'arknights-variants-toggle' )->text(),
 		];

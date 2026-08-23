@@ -504,32 +504,30 @@
 		margin: 0 calc( -1 * var( --ak-gutter ) );
 	}
 
-	// Page tools become one horizontally scrollable strip
-	.ak-page-tools {
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		overscroll-behavior-x: contain;
-		scrollbar-width: none;
-		margin-left: calc( -1 * var( --ak-gutter ) );
-		margin-right: calc( -1 * var( --ak-gutter ) );
-		padding: 0 var( --ak-gutter );
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
+	/**
+	 * The action cluster drops to icons only.
+	 *
+	 * The labels go to sr-only rather than `display: none`, so the buttons keep their
+	 * accessible names — `title` and accesskey are untouched either way. 「更多」 becomes a
+	 * bare ⋯. With the text gone the whole cluster fits next to (or under) the title
+	 * without scrolling, so the strip no longer needs to bleed into the gutters.
+	 */
+	.ak-page-header__row {
+		align-items: flex-start;
 	}
 
-	.ak-page-tools__spacer {
-		flex: 1 0 var( --ak-space-4 );
+	.ak-page-tabs li > a > span:not( .ak-icon ),
+	.ak-page-tools__btn > span:not( .ak-icon ) {
+		.ak-sr-only();
 	}
 
-	.ak-page-tabs {
-		flex: none;
+	.ak-page-tabs li > a,
+	.ak-page-tools__btn {
+		padding: 0 7px;
 	}
 
-	.ak-page-tabs li > a {
-		padding: 0 8px;
-		font-size: var( --ak-fs-xs );
+	.ak-page-tools__card {
+		max-width: calc( 100vw - 2 * var( --ak-gutter ) );
 	}
 
 	.ak-footer__inner {

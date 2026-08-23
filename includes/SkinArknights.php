@@ -105,6 +105,52 @@ class SkinArknights extends SkinMustache {
 			}
 		}
 
+		// Core sets no `icon` on views / associated-pages, so the action cluster maps its own.
+		if ( isset( $content_navigation['views'] ) && is_array( $content_navigation['views'] ) ) {
+			MenuItemDecorator::mapIcons( $content_navigation['views'], [
+				'view' => 'eye',
+				'edit' => 'edit',
+				've-edit' => 'edit',
+				'viewsource' => 'wikiText',
+				'history' => 'history',
+				'watch' => 'star',
+				'unwatch' => 'unStar',
+				'addsection' => 'speechBubbleAdd',
+			] );
+		}
+
+		// Core ices most of #p-cactions with an icon but leaves purge bare, which shows now
+		// that the actions sit in a card next to the fully-iconed toolbox.
+		if ( isset( $content_navigation['actions'] ) && is_array( $content_navigation['actions'] ) ) {
+			MenuItemDecorator::mapIcons( $content_navigation['actions'], [
+				'purge' => 'reload',
+			] );
+		}
+
+		if ( isset( $content_navigation['associated-pages'] )
+			&& is_array( $content_navigation['associated-pages'] )
+		) {
+			$associated = &$content_navigation['associated-pages'];
+			// Keys here are namespace names, so only the talk side has a fixed one — the
+			// subject tab is `main` in article space but `project`, `user`, `file`, … in
+			// every other. Whatever it is called, on a talk page it is a *return* to the
+			// page you came from rather than a new destination, so it takes arrowPrevious.
+			$navTitle = $skin->getTitle();
+			$onTalkPage = $navTitle !== null && $navTitle->isTalkPage();
+			foreach ( $associated as $key => $item ) {
+				if ( !is_array( $item ) || !empty( $item['icon'] ) ) {
+					continue;
+				}
+				$isTalkTab = $key === 'talk' || str_ends_with( (string)$key, '_talk' );
+				if ( $isTalkTab ) {
+					$associated[$key]['icon'] = 'speechBubbles';
+				} else {
+					$associated[$key]['icon'] = $onTalkPage ? 'arrowPrevious' : 'articleRedirect';
+				}
+			}
+			unset( $associated );
+		}
+
 		$menus = [
 			'user-interface-preferences', 'user-menu', 'user-page',
 			'views', 'actions', 'associated-pages', 'variants',
@@ -160,7 +206,8 @@ class SkinArknights extends SkinMustache {
 				$title,
 				$user,
 				$this->permissionManager,
-				$parentData['data-portlets'] ?? []
+				$parentData['data-portlets'] ?? [],
+				self::extractToolbox( $parentData['data-portlets-sidebar'] ?? [] )
 			),
 			'data-toc' => new ArknightsComponentTableOfContents(
 				$parentData['data-toc'] ?? [],
@@ -197,6 +244,31 @@ class SkinArknights extends SkinMustache {
 		}
 
 		return $parentData;
+	}
+
+	/**
+	 * Pull the toolbox portlet out of the sidebar data so it can be rendered in the title
+	 * row's "more" card instead — the same move as Citizen's
+	 * SkinCitizen::extractPageToolsFromSidebar(). ArknightsComponentMainMenu skips the
+	 * same id, so it is rendered once, in the card.
+	 *
+	 * @param array $sidebarData data-portlets-sidebar
+	 * @return array the `p-tb` portlet, or [] when the wiki has no toolbox
+	 */
+	private static function extractToolbox( array $sidebarData ): array {
+		$portlets = $sidebarData['array-portlets-rest'] ?? [];
+		$first = $sidebarData['data-portlets-first'] ?? null;
+		if ( is_array( $first ) ) {
+			array_unshift( $portlets, $first );
+		}
+		foreach ( $portlets as $portlet ) {
+			if ( is_array( $portlet )
+				&& ( $portlet['id'] ?? '' ) === ArknightsComponentMainMenu::TOOLBOX_ID
+			) {
+				return $portlet;
+			}
+		}
+		return [];
 	}
 
 	/**

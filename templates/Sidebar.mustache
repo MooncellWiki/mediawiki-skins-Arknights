@@ -1,6 +1,10 @@
 {{!
 	object data-menu-sidebar  { html-menu, html-after, label } — wikitext MediaWiki:MenuSidebar
-	object data-main-menu     { array-portlets, data-toolbox, data-languages }
+	object data-main-menu     { array-portlets, data-site-tools, data-languages }
+
+	The toolbox is not here any more: it lives in the title row's "more" card. What is left
+	is #p-site-tools (特殊页面 / 上传文件), rendered untitled straight after the navigation so
+	it reads as a continuation of the last group rather than a section of its own.
 }}
 <aside class="ak-sidebar" id="ak-sidebar" aria-label="{{msg-arknights-sidebar-label}}" tabindex="-1">
 	<div class="ak-sidebar__head">
@@ -13,7 +17,7 @@
 		{{/data-menu-sidebar}}
 		{{#data-main-menu}}
 		{{#array-portlets}}{{>Menu}}{{/array-portlets}}
-		{{#data-toolbox}}{{>Menu}}{{/data-toolbox}}
+		{{#data-site-tools}}{{>Menu}}{{/data-site-tools}}
 		{{#data-languages}}{{>Menu}}{{/data-languages}}
 		{{/data-main-menu}}
 		{{#data-menu-sidebar}}{{#html-after}}
