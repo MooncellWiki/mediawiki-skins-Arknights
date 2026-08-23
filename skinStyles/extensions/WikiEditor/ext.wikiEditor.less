@@ -1,19 +1,492 @@
 /**
- * WikiEditor — dialogs and the rest of the UI once initialised
+ * WikiEditor — `ext.wikiEditor`
+ *
+ * The toolbar, its dialogs and the real-time preview. This is the module that carries
+ * jquery.wikiEditor.toolbar.less and the `default` skinStyles (toolbar-wikimedia.less), so
+ * overrides for toolbar selectors have to live here to land after them — see the note in
+ * ext.wikiEditor.styles.less.
+ *
+ * The toolbar is themed as a console strip rather than left at WikiEditor's neutral chrome:
+ * an accent rule along the top, full-height hairlines between groups, overline captions for
+ * the labels that are *not* controls, and one shared hit box / hover / on-state for
+ * everything that is. Stock, the only thing separating a caption (「插入」) from a dropdown
+ * (「标题」) from a section handle (「高级」) is what happens when you hover them.
  */
-.wikiEditor-ui-toolbar .group .tool-button:hover {
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
+/* ── Shell ─────────────────────────────────────────────────────────────────────────────
+ * Floats out, flex in. Stock the toolbar is four floated blocks whose heights are set by
+ * whatever happens to be tallest inside them, which is why the section handles and the tool
+ * buttons never sat on the same optical line. As flex items they share one baseline, the
+ * group hairlines can run the full height of the bar, and 「预览」 goes right with `auto`
+ * margin instead of `float: right`. */
+.wikiEditor-ui {
+	border-color: var( --ak-border );
+	background: var( --ak-bg-surface );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	background: var( --ak-bg-surface-2 );
+	border-bottom: 1px solid var( --ak-border );
+	border-radius: 0;
+	/**
+	 * The accent rule along the top is an inset shadow rather than a border: the design
+	 * system's base.css pins `.wikiEditor-ui-toolbar { border-color: … !important }` as a
+	 * blunt fallback for wikis on AKDS without this skin, and nothing written here outranks
+	 * it. A shadow paints the same 2px line and stays out of that fight (it also keeps the
+	 * bar's height off the theme, which a border would not).
+	 */
+	box-shadow: inset 0 2px 0 var( --ak-theme-accent );
+
+	/**
+	 * The page palette, captured under local names.
+	 *
+	 * WikiEditor marks the section handles and the format dropdown's label `.skin-invert`,
+	 * and `.skin-invert` carries the archive (light) token set — that is the whole point of
+	 * it, because Vector renders those elements by flipping them (see notheme.generated.less
+	 * and dark-compat.less). This skin themes the toolbar itself and draws the chevrons from
+	 * borders, so there is nothing left for the flip to do and it is turned off below; what
+	 * cannot be turned off is the palette that came with the class, which would leave those
+	 * two controls painting archive colours on a terminal-dark bar.
+	 *
+	 * Custom properties resolve where they are declared, so aliasing them here — on the
+	 * toolbar, which is outside any `.skin-invert` — freezes the page's own values and
+	 * inheritance carries them down past the reset.
+	 */
+	--_tb-fg: var( --ak-fg );
+	--_tb-fg-secondary: var( --ak-fg-secondary );
+	--_tb-accent: var( --ak-accent );
+	--_tb-focus: var( --ak-focus );
+	--_tb-border: var( --ak-border );
+	--_tb-surface-2: var( --ak-bg-surface-2 );
+	--_tb-bg-hover: var( --ak-bg-hover );
+	--_tb-bg-active: var( --ak-bg-active );
+}
+
+.wikiEditor-ui-toolbar > .section-main {
+	order: 1;
+}
+
+.wikiEditor-ui-toolbar > .tabs {
+	order: 2;
+}
+
+// Pushed right; the hairline is on its left instead of between its groups.
+.wikiEditor-ui-toolbar > .section-secondary {
+	order: 3;
+	margin-left: auto;
+	border-left: 1px solid var( --ak-border );
+}
+
+// 「预览」 hides itself on a narrow window (RealtimePreview calls OOUI's `toggle( false )`,
+// which is `.oo-ui-element-hidden`), and its wrapper does not go with it — so the section is
+// left as an empty cell with a hairline hanging off the end of the row. Fold it away.
+//
+// Escaped rather than written out: less.php cannot parse a `:has()` holding a comma-separated
+// list of `:not()`s and fails the whole module with a ParseError. Same trick oojs-ui-core.less
+// uses for its icon selectors.
+@secondary-empty: ~'.wikiEditor-ui-toolbar > .section-secondary:not( :has( .oo-ui-buttonElement:not( .oo-ui-element-hidden ), .tool-button:not( .oo-ui-element-hidden ) ) )';
+
+@{secondary-empty} {
+	display: none;
+}
+
+.wikiEditor-ui-toolbar > .sections {
+	order: 4;
+	flex: 0 0 100%;
+}
+
+// WikiEditor closes the bar with a `<div style="clear: both">`. With the floats gone it is a
+// zero-width flex item that sorts ahead of everything else (no `order`); nothing to clear.
+.wikiEditor-ui-toolbar > div:not( [ class ] ) {
+	display: none;
+}
+
+.wikiEditor-ui-toolbar > .section-main,
+.wikiEditor-ui-toolbar > .section-secondary,
+.wikiEditor-ui-toolbar > .tabs {
+	display: flex;
+	align-items: stretch;
+	// Upstream gives these `height: 100%`, which resolves against nothing here and, not
+	// being `auto`, opts them out of `align-items: stretch` — the tab strip then sat at its
+	// own content height while the tool row set the bar's. `auto` puts them back in.
+	height: auto;
+	min-height: 36px;
+	margin: 0;
+}
+
+/* ── Groups ────────────────────────────────────────────────────────────────────────────
+ * One hairline between groups, running the full height of the bar — with the sections
+ * stretched it reads as a rule rather than the stub of a border it was.
+ *
+ * The rule is a `border-left`, never a `border-right`: the search group is pushed to the far
+ * edge with an auto margin, and a trailing right border on whatever precedes it would hang
+ * in the middle of the empty space with nothing on the other side of it. */
+.wikiEditor-ui-toolbar .group,
+.wikiEditor-ui-toolbar .section-secondary .group {
+	display: flex;
+	align-items: center;
+	gap: 1px;
+	min-height: 0;
+	margin: 0;
+	padding: 2px 5px;
+	border-right: 0;
+	border-left: 1px solid var( --ak-border );
+	background: transparent;
+}
+
+// The section handles are their own group as far as the eye is concerned.
+.wikiEditor-ui-toolbar > .tabs {
+	border-left: 1px solid var( --ak-border );
+}
+
+.wikiEditor-ui-toolbar .section-main > .group:first-child,
+.wikiEditor-ui-toolbar .sections .section > .group:first-child,
+.wikiEditor-ui-toolbar .section-secondary > .group {
+	border-left: 0;
+}
+
+// Search & replace ends the advanced section; park it on the far edge.
+.wikiEditor-ui-toolbar .sections .section .group-search {
+	margin-left: auto;
+}
+
+/* ── Group captions ────────────────────────────────────────────────────────────────────
+ * 「格式」/「插入」 name the group, they do not do anything. Overline treatment — the same
+ * one the sidebar and the table of contents use for their group titles — takes them out of
+ * the running as controls at a glance, which is most of what makes the stock bar hard to
+ * read: the caption and the 「标题」 dropdown next to it are the same words in the same
+ * colour at the same size. `> .label` on purpose: the dropdown's label is a `.label` too,
+ * but it is a grandchild. */
+.wikiEditor-ui-toolbar .group > .label {
+	.ak-overline();
+	flex: none;
+	height: auto;
+	margin: 0 6px 0 3px;
+	color: var( --ak-fg-subtle );
+	cursor: default;
+	user-select: none;
+}
+
+/* ── Tools ─────────────────────────────────────────────────────────────────────────────
+ * Every tool gets the same square hit box and the same hover, whether it is a legacy
+ * `.tool-button` sprite or an OOUI frameless button. Upstream hovers both with a hardcoded
+ * rgba( 0, 23, 70, 0.086 ), which on a dark bar is no feedback at all. */
+.wikiEditor-ui-toolbar .group .tool-button,
+.wikiEditor-ui-toolbar .group .tool.oo-ui-buttonElement > .oo-ui-buttonElement-button {
+	box-sizing: border-box;
+	border-radius: 0;
+	transition: background-color var( --ak-dur-fast ), color var( --ak-dur-fast );
+}
+
+.wikiEditor-ui-toolbar .group .tool-button:hover,
+.wikiEditor-ui-toolbar .group .tool.oo-ui-buttonElement > .oo-ui-buttonElement-button:hover {
 	background-color: var( --ak-bg-hover );
 }
 
+.wikiEditor-ui-toolbar .group .tool-button:active,
+.wikiEditor-ui-toolbar .group .tool.oo-ui-buttonElement > .oo-ui-buttonElement-button:active {
+	background-color: var( --ak-bg-active );
+}
+
+.wikiEditor-ui-toolbar .group .tool-button:focus-visible,
+.wikiEditor-ui-toolbar .group .tool.oo-ui-buttonElement > .oo-ui-buttonElement-button:focus-visible {
+	outline: 2px solid var( --ak-focus );
+	outline-offset: -2px;
+	box-shadow: none;
+}
+
+/**
+ * On-states (语法高亮, 预览) — a filled cell with an accent rule along its bottom edge, the
+ * same "this one is current" marker the table of contents and the sidebar use. The accent
+ * is on the box, not the glyph: OOUI serves the toggled icon as a `-progressive` variant
+ * with #36c baked into the SVG, and tinting the cell cyan underneath it only muddies both.
+ */
+.wikiEditor-ui-toolbar .group .tool-button.tool-active,
+.wikiEditor-ui-toolbar .group .tool.tool-active > .oo-ui-buttonElement-button,
+.wikiEditor-ui-toolbar .group .tool.oo-ui-toggleWidget-on > .oo-ui-buttonElement-button,
+.wikiEditor-ui-toolbar .group .tool.oo-ui-buttonElement-active > .oo-ui-buttonElement-button {
+	background-color: var( --ak-bg-active );
+	box-shadow: inset 0 -2px 0 var( --ak-accent );
+}
+
+.wikiEditor-ui-toolbar .group-search .tool-button {
+	background-color: transparent;
+}
+
+// Labelled tools (「预览」) — the label is part of the button, not body copy.
+.wikiEditor-ui-toolbar .group .tool .oo-ui-labelElement-label {
+	font-size: var( --ak-fs-sm );
+	font-weight: 600;
+}
+
+// Legacy .tool-button tools (gadget toolbars, CharInsert) are dark bitmaps with no
+// .skin-invert of their own — invert them in the dark theme.
+html.skin-theme-clientpref-night .wikiEditor-ui-toolbar .group .tool-button {
+	filter: invert( 1 ) hue-rotate( 180deg );
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .wikiEditor-ui-toolbar .group .tool-button {
+		filter: invert( 1 ) hue-rotate( 180deg );
+	}
+}
+
+/* ── Section handles (高级 / 特殊字符 / 帮助) ───────────────────────────────────────────
+ * These open the drawer below the bar, so they are given the skin's ghost button and the
+ * open one is marked the way an open thing is marked here: accent text over a filled cell
+ * with an accent rule on the edge the panel hangs off.
+ *
+ * WikiEditor tags them `.skin-invert` so a dark theme can flip their arrow bitmap; the
+ * chevron is drawn from borders below, so the flip has nothing left to do and is turned off
+ * — that also puts the handles back on the real palette (terminal cyan rather than the
+ * archive blue that survives an inversion). */
+.wikiEditor-ui-toolbar .tabs {
+	gap: 2px;
+	padding: 0 6px;
+	list-style: none;
+}
+
+// Full height on purpose: the open handle's accent rule then sits on the bar's bottom edge,
+// touching the panel it opened, the way a tab joins its page.
+.wikiEditor-ui-toolbar .tabs span.tab {
+	display: flex;
+	align-items: stretch;
+	float: none;
+	line-height: 1;
+}
+
+.wikiEditor-ui-toolbar .tabs span.tab a,
+.wikiEditor-ui-toolbar .tabs span.tab a.current,
+.wikiEditor-ui-toolbar .tabs span.tab a:visited {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	height: auto;
+	padding: 0 10px;
+	filter: none;
+	color: var( --_tb-fg-secondary );
+	font-size: var( --ak-fs-sm );
+	font-weight: 600;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background-color var( --ak-dur-fast ), color var( --ak-dur-fast );
+}
+
+.wikiEditor-ui-toolbar .tabs span.tab a:hover {
+	background: var( --_tb-bg-hover );
+	color: var( --_tb-fg );
+	text-decoration: none;
+}
+
+.wikiEditor-ui-toolbar .tabs span.tab a:focus-visible {
+	outline: 2px solid var( --_tb-focus );
+	outline-offset: -2px;
+}
+
+.wikiEditor-ui-toolbar .tabs span.tab a.current,
+.wikiEditor-ui-toolbar .tabs span.tab a.current:visited {
+	background: var( --_tb-bg-active );
+	color: var( --_tb-accent );
+	box-shadow: inset 0 -2px 0 var( --_tb-accent );
+}
+
+// The chevron: borders, not a bitmap, so it takes the handle's colour through every state.
+.wikiEditor-ui-toolbar .tabs span.tab a::before {
+	.ak-chevron( 6px, 1.5px );
+	position: static;
+	display: block;
+	flex: none;
+	height: 6px;
+	background: none;
+	transition: transform var( --ak-dur-fast ) var( --ak-ease );
+}
+
+/**
+ * Upstream rotates that arrow from `body.ltr` / `body.rtl` scopes, which outrank anything
+ * written without them — the open and closed angles have to be re-stated at the same reach.
+ */
+body.ltr .wikiEditor-ui-toolbar .tabs span.tab a::before,
+body.rtl .wikiEditor-ui-toolbar .tabs span.tab a::before {
+	transform: translate( -1px, 0 ) rotate( -45deg );
+}
+
+body.ltr .wikiEditor-ui-toolbar .tabs span.tab a.current::before,
+body.rtl .wikiEditor-ui-toolbar .tabs span.tab a.current::before {
+	transform: translate( 0, -1px ) rotate( 45deg );
+}
+
+/* ── The drawer ────────────────────────────────────────────────────────────────────────
+ * A second surface under the bar, so an open section reads as a panel the handle pulled
+ * down rather than a second row of the same strip. */
+.wikiEditor-ui-toolbar .sections .section {
+	background: var( --ak-bg-surface );
+	border-top: 1px solid var( --ak-border );
+}
+
+// `:not( .section-hidden )` is load-bearing: `.sections .section-hidden { display: none }` is
+// upstream's and scores lower than this would without it, so a plain `display: flex` here
+// leaves every closed section on screen.
+.wikiEditor-ui-toolbar .sections .section.toolbar:not( .section-hidden ) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	min-height: 36px;
+}
+
+/* ── The format dropdown (「标题」) ─────────────────────────────────────────────────────
+ * Boxed, because it is the one thing in the bar that opens a menu and the stock treatment
+ * makes it look exactly like the caption sitting next to it. `.skin-invert` off for the
+ * same reason as the handles above. */
+.wikiEditor-ui-toolbar .group .tool-select {
+	height: auto;
+	margin: 0;
+	border: 0;
+	background: transparent;
+}
+
+.wikiEditor-ui-toolbar .group .tool-select .label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 28px;
+	padding: 0 10px;
+	filter: none;
+	border: 1px solid var( --_tb-border );
+	// Lifts off the drawer, which is --ak-bg-surface; this control only ever appears there.
+	background: var( --_tb-surface-2 );
+	color: var( --_tb-fg );
+	font-size: var( --ak-fs-sm );
+	font-weight: 600;
+	line-height: 1;
+	transition: border-color var( --ak-dur-fast ), color var( --ak-dur-fast );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select:hover .label,
+.wikiEditor-ui-toolbar .group .tool-select.options-shown .label {
+	border-color: var( --_tb-accent );
+	color: var( --_tb-accent );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select .label::after {
+	.ak-chevron( 5px, 1.5px );
+	position: static;
+	display: block;
+	flex: none;
+	width: 5px;
+	height: 5px;
+	background: none;
+	transform: translate( 0, -2px ) rotate( 45deg );
+	transition: transform var( --ak-dur-fast ) var( --ak-ease );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select.options-shown .label::after {
+	transform: translate( 0, 1px ) rotate( -135deg );
+}
+
+// The menu is the skin's menu card: accent rule on top, accent bar on the hovered row.
+.wikiEditor-ui-toolbar .group .tool-select .options,
+.wikiEditor-ui-toolbar .group .tool-select .menu .options {
+	.ak-bar-top( 2px );
+	min-width: 100%;
+	padding: 4px 0;
+	background: var( --ak-bg-surface );
+	box-shadow: var( --ak-shadow-lg );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select .options .option {
+	padding: 7px 14px;
+	border-left: 2px solid transparent;
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar .group .tool-select .options .option:hover,
+.wikiEditor-ui-toolbar .group .tool-select .menu .options .option:hover {
+	background: var( --ak-bg-hover );
+	border-left-color: var( --ak-accent );
+	color: var( --ak-fg );
+}
+
+/* ── Booklets (特殊字符 / 帮助) ─────────────────────────────────────────────────────── */
+.wikiEditor-ui-toolbar .booklet .index,
+.wikiEditor-ui-toolbar .booklet .pages {
+	background: transparent;
+	border-color: var( --ak-border );
+}
+
+.wikiEditor-ui-toolbar .booklet > .index {
+	border-right: 1px solid var( --ak-border );
+}
+
+.wikiEditor-ui-toolbar .booklet > .index > div {
+	border-left: 2px solid transparent;
+	padding-left: 8px;
+	color: var( --ak-fg-secondary );
+	transition: background-color var( --ak-dur-fast ), color var( --ak-dur-fast );
+}
+
+.wikiEditor-ui-toolbar .booklet > .index > :hover {
+	background-color: var( --ak-bg-hover );
+	color: var( --ak-fg );
+}
+
+.wikiEditor-ui-toolbar .booklet > .index > .current {
+	background-color: var( --ak-bg-active );
+	border-left-color: var( --ak-accent );
+	color: var( --ak-accent );
+	font-weight: bold;
+}
+
+// Character chips — a grid of things you can click, so they answer to hover like one.
+.wikiEditor-ui-toolbar .page-characters div span {
+	border-color: var( --ak-border );
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg );
+	transition: background-color var( --ak-dur-fast ), border-color var( --ak-dur-fast ), color var( --ak-dur-fast );
+}
+
+.wikiEditor-ui-toolbar .page-characters div span:hover {
+	background-color: var( --ak-bg-hover );
+	border-color: var( --ak-accent );
+	color: var( --ak-accent );
+	text-decoration: none;
+}
+
+.wikiEditor-ui-toolbar .page-characters div .wikiEditor-character-highlighted,
+.wikiEditor-ui-toolbar .booklet > .index .wikiEditor-character-highlighted {
+	background-color: var( --ak-accent-subtle );
+	border-color: var( --ak-accent );
+	color: var( --ak-fg );
+}
+
+/* ── Help tables ───────────────────────────────────────────────────────────────────── */
+.wikiEditor-ui-toolbar .page-table th {
+	.ak-overline();
+	color: var( --ak-fg-subtle );
+}
+
+.wikiEditor-ui-toolbar .page-table td {
+	color: var( --ak-fg-secondary );
+	border-top-color: var( --ak-border-subtle );
+}
+
+.wikiEditor-ui-toolbar .page-table td.syntax,
+.wikiEditor-ui-toolbar .section-help .page-table .cell-syntax {
+	font-family: var( --ak-font-mono );
+	color: var( --ak-fg-muted );
+}
+
+/* ── Dialogs and real-time preview ─────────────────────────────────────────────────── */
 .wikiEditor-toolbar-dialog .ui-widget-content,
 .wikiEditor-toolbar-dialog.ui-dialog {
 	background: var( --ak-bg-surface );
 	color: var( --ak-fg );
 	border-color: var( --ak-border );
-}
-
-.wikiEditor-ui-toolbar .group-search .tool-button {
-	background-color: transparent;
 }
 
 .wikiEditor-realtimepreview-preview,
