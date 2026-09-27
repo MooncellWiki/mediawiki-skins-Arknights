@@ -1,0 +1,31 @@
+/**
+ * 过渡期兼容：MobileFrontend 时代按设备分叉的类，改为按视口生效。
+ *
+ * 旧站靠三层机制让 .nomobile / .nodesktop 二选一：Varnish 按 UA 跳 m. 域名、
+ * MobileFrontend 在服务端删掉 .nomobile 节点、各皮肤 CSS 再各自隐藏一套。
+ * 本皮肤是单一响应式皮肤，这两个类没有任何规则接住，双份内容会同时显示。
+ *
+ * 这里把它们接到皮肤的 640px 断点上（与 .ak-hide-mobile / .ak-only-mobile 同义），
+ * 让全站 400 多个还在用旧类名的页面第 0 天就表现正确。Vector 2022 的兼容层
+ * （MediaWiki:Common.css，719px）证明过这个做法可行。
+ *
+ * .nodesktop.cbox2-mobile 那条 Common.css 特例不必照搬：< 640 时 .nodesktop 本来就显示。
+ *
+ * 内容里的 nomobile / nodesktop 清零后删除本文件，
+ * 见 prts-skin-migration/docs/nomobile-nodesktop响应式迁移方案.md。
+ */
+// !important 不可省：内容里的移动版表格普遍带内联 style="display:table"
+// （模板:技能、潜能提升、登场敌人…），Vector 2022 的兼容层同样是 !important。
+@media ( max-width: @ak-bp-mobile-max ) {
+	.skin-arknights .nomobile {
+		/* stylelint-disable-next-line declaration-no-important */
+		display: none !important;
+	}
+}
+
+@media ( min-width: @ak-bp-tablet ) {
+	.skin-arknights .nodesktop {
+		/* stylelint-disable-next-line declaration-no-important */
+		display: none !important;
+	}
+}
