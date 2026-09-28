@@ -42,7 +42,8 @@
 					"tempUserBanner": true,
 					"clientPrefEnabled": false,
 					"bodyClasses": [
-						"skin-arknights"
+						"skin-arknights",
+						"skin-akds"
 					],
 					"link": {
 						"text-wrapper": {
@@ -66,9 +67,12 @@
 						"skins.arknights.scripts"
 					],
 					"styles": [
+						"skins.arknights.base",
+						"skins.arknights.components",
 						"skins.arknights.fonts",
-						"skins.arknights.styles",
-						"skins.arknights.icons"
+						"skins.arknights.icons",
+						"skins.arknights.shell",
+						"skins.arknights.styles"
 					],
 					"messages": [
 						"arknights-jumptocontent",
@@ -92,6 +96,7 @@
 						"arknights-appearance",
 						"arknights-nav-screen",
 						"arknights-footer-powered",
+						"arknights-footer-about",
 						"navigation-heading",
 						"search",
 						"sitetitle",
@@ -140,12 +145,7 @@
 		"remoteSkinPath": "Arknights"
 	},
 	"ResourceModules": {
-		"skins.arknights.fonts": {
-			"styles": [
-				"resources/design-system/fonts.css"
-			]
-		},
-		"skins.arknights.styles": {
+		"skins.arknights.base": {
 			"class": "MediaWiki\\ResourceLoader\\SkinModule",
 			"features": {
 				"normalize": true,
@@ -170,11 +170,139 @@
 				"logo": false
 			},
 			"styles": [
+				"resources/design-system/bridge-codex.css",
+				"resources/design-system/base/skin-assets.css",
+				"resources/design-system/base/root.css",
+				"resources/design-system/base/typography.css",
+				"resources/design-system/base/tables.css",
+				"resources/design-system/base/media.css",
+				"resources/design-system/base/toc.css",
+				"resources/design-system/base/collapsible.css",
+				"resources/design-system/base/references.css",
+				"resources/design-system/base/notices.css",
+				"resources/design-system/base/catlinks.css",
+				"resources/design-system/base/tabber.css",
+				"resources/design-system/base/forms.css",
+				"resources/design-system/base/special-pages.css",
+				"resources/design-system/base/print.css"
+			]
+		},
+		"skins.arknights.components": {
+			"styles": [
 				"resources/design-system/tokens.css",
-				"resources/design-system/base.css",
-				"resources/design-system/components.css",
-				"resources/design-system/arknights.css",
+				"resources/design-system/scope.css",
+				"resources/design-system/components/button.css",
+				"resources/design-system/components/tag.css",
+				"resources/design-system/components/chip.css",
+				"resources/design-system/components/badge.css",
+				"resources/design-system/components/card.css",
+				"resources/design-system/components/panel.css",
+				"resources/design-system/components/heading.css",
+				"resources/design-system/components/tabs.css",
+				"resources/design-system/components/message.css",
+				"resources/design-system/components/cbox.css",
+				"resources/design-system/components/tooltip.css",
+				"resources/design-system/components/dropdown.css",
+				"resources/design-system/components/dialog.css",
+				"resources/design-system/components/toast.css",
+				"resources/design-system/components/progress.css",
+				"resources/design-system/components/stat.css",
+				"resources/design-system/components/skeleton.css",
+				"resources/design-system/components/spinner.css",
+				"resources/design-system/components/empty.css",
+				"resources/design-system/components/avatar.css",
+				"resources/design-system/components/breadcrumb.css",
+				"resources/design-system/components/pagination.css",
+				"resources/design-system/components/timeline.css",
+				"resources/design-system/components/stepper.css",
+				"resources/design-system/components/form.css",
+				"resources/design-system/components/table.css",
+				"resources/design-system/components/accordion.css",
+				"resources/design-system/components/divider.css",
+				"resources/design-system/components/fab.css",
+				"resources/design-system/components/title-reset.css",
+				"resources/design-system/components/keyframes.css",
+				"resources/design-system/decor/stripes.css",
+				"resources/design-system/decor/halftone.css",
+				"resources/design-system/decor/patterns.css",
+				"resources/design-system/decor/corner.css",
+				"resources/design-system/decor/brackets.css",
+				"resources/design-system/decor/type.css",
+				"resources/design-system/decor/glyph.css",
+				"resources/design-system/decor/inverse.css",
+				"resources/design-system/decor/bilingual.css",
+				"resources/design-system/decor/chevrons.css",
+				"resources/design-system/arknights/rarity.css",
+				"resources/design-system/arknights/profession.css",
+				"resources/design-system/arknights/elite.css",
+				"resources/design-system/arknights/potential.css",
+				"resources/design-system/arknights/level.css",
+				"resources/design-system/arknights/phase-tabs.css",
+				"resources/design-system/arknights/trust.css",
+				"resources/design-system/arknights/pot-list.css",
+				"resources/design-system/arknights/op-card.css",
+				"resources/design-system/arknights/op-row.css",
+				"resources/design-system/arknights/item.css",
+				"resources/design-system/arknights/materials.css",
+				"resources/design-system/arknights/skill.css",
+				"resources/design-system/arknights/sp.css",
+				"resources/design-system/arknights/skill-levels.css",
+				"resources/design-system/arknights/skill-sheet.css",
+				"resources/design-system/arknights/skill-matrix.css",
+				"resources/design-system/arknights/talent-table.css",
+				"resources/design-system/arknights/talent.css",
+				"resources/design-system/arknights/rich-text.css",
+				"resources/design-system/arknights/attrs.css",
+				"resources/design-system/arknights/kv.css",
+				"resources/design-system/arknights/range.css",
+				"resources/design-system/arknights/module.css",
+				"resources/design-system/arknights/voice.css",
+				"resources/design-system/arknights/dossier.css",
+				"resources/design-system/arknights/archive.css",
+				"resources/design-system/arknights/dialogue.css",
+				"resources/design-system/arknights/stage.css",
+				"resources/design-system/arknights/camp.css",
+				"resources/design-system/arknights/enemy.css",
+				"resources/design-system/arknights/event.css",
+				"resources/design-system/arknights/news.css",
+				"resources/design-system/arknights/hero.css",
+				"resources/design-system/arknights/table-numerals.css",
 				"resources/design-system/utilities.css",
+				"resources/design-system/forced-colors.css"
+			]
+		},
+		"skins.arknights.fonts": {
+			"styles": [
+				"resources/design-system/fonts.css"
+			]
+		},
+		"skins.arknights.tokens": {
+			"styles": [
+				"resources/design-system/tokens.css",
+				"resources/design-system/scope.css"
+			]
+		},
+		"skins.arknights.shell": {
+			"styles": [
+				"resources/design-system/chrome/shell.css",
+				"resources/design-system/chrome/header.css",
+				"resources/design-system/chrome/local-nav.css",
+				"resources/design-system/chrome/keyart.css",
+				"resources/design-system/chrome/layout.css",
+				"resources/design-system/chrome/sidebar.css",
+				"resources/design-system/chrome/sidebar-tree.css",
+				"resources/design-system/chrome/page-header.css",
+				"resources/design-system/chrome/body.css",
+				"resources/design-system/chrome/toc.css",
+				"resources/design-system/chrome/footer.css",
+				"resources/design-system/chrome/theme-toggle.css",
+				"resources/design-system/chrome/search-palette.css",
+				"resources/design-system/chrome/special-pages.css",
+				"resources/design-system/chrome/responsive.css"
+			]
+		},
+		"skins.arknights.styles": {
+			"styles": [
 				"resources/skins.arknights.styles/skin.less"
 			]
 		},

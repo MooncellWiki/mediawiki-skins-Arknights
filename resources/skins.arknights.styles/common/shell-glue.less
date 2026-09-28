@@ -1,0 +1,244 @@
+/**
+ * Shell glue — what this skin's MediaWiki DOM needs on top of the design system's chrome/
+ * layer (skins.arknights.shell, see ADOPTED_CHROME in scripts/sync-design-system.sh).
+ *
+ * Only rules that make sense for MediaWiki alone belong here: core-generated ids and
+ * classes, extension hooks, this skin's extra partials. Anything a visitor would call
+ * "how the skin looks" goes upstream into prts-design packages/css/src/chrome/ and comes
+ * back with the next sync.
+ */
+
+/* ═══ Header: the real search form (chrome/header.css only knows the trigger button) ═══
+ *
+ * With JS, search-palette.js replaces the form with button.ak-search-trigger under the
+ * cursor, so the two have to land on the same pixels and colours: the field below mirrors
+ * .ak-search-trigger, the icon well mirrors .ak-search-trigger__icon. Core renders
+ * <input id="searchInput" type="search"> plus two submit inputs (.searchButton); this skin
+ * wraps the icon in <label for="searchInput"> (.ak-search__icon-wrap).
+ */
+.ak-header__search {
+	position: relative;
+	margin: 0;
+
+	// padding-left clears the 32px icon well plus the 10px gap the trigger puts after it
+	#searchInput,
+	input[ type='search' ] {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 34px;
+		margin: 0;
+		padding: 0 34px 0 42px;
+		font: inherit;
+		font-size: var( --ak-fs-sm );
+		color: var( --ak-fg );
+		background: var( --ak-bg-surface-2 );
+		border: 1px solid var( --ak-chrome-line );
+		border-radius: 0;
+		transition: border-color var( --ak-dur-fast ), background var( --ak-dur-fast ), box-shadow var( --ak-dur-fast );
+		appearance: none;
+		-webkit-appearance: none;
+
+		&::-webkit-search-decoration,
+		&::-webkit-search-cancel-button {
+			-webkit-appearance: none;
+		}
+
+		// --ak-fg-muted, not -subtle: this text is re-read as the trigger button's label
+		&::placeholder {
+			color: var( --ak-fg-muted );
+		}
+
+		&:hover::placeholder {
+			color: var( --ak-fg-secondary );
+		}
+
+		&:hover {
+			border-color: var( --ak-border-strong );
+		}
+
+		// After :hover, so a hovered *and* focused field still reads as focused
+		&:focus {
+			outline: 0;
+			background: rgba( 0, 0, 0, 0.35 );
+			border-color: var( --ak-accent );
+			box-shadow: none;
+		}
+	}
+
+	// The icon well: a darker square at the left end carrying the magnifier in the event
+	// colour (the icon slot on the game's HUD panels). Inset by a pixel on each side because
+	// these offsets resolve against the form, which has no border, while the field does.
+	// components/form.css positions .ak-search__icon itself; here the label is the box and
+	// the icon sits in its grid.
+	.ak-search__icon-wrap {
+		position: absolute;
+		left: 1px;
+		top: 1px;
+		bottom: 1px;
+		width: 32px;
+		display: grid;
+		place-items: center;
+		background: rgba( 0, 0, 0, 0.35 );
+		color: var( --ak-theme-accent );
+		pointer-events: none;
+	}
+
+	.ak-search__icon {
+		position: static;
+		transform: none;
+		width: 16px;
+		height: 16px;
+		color: var( --ak-theme-accent );
+	}
+
+	// right: 9px — the trigger's 8px padding plus one border's worth, since this offset
+	// resolves against the borderless form
+	.ak-search__kbd {
+		position: absolute;
+		right: 9px;
+		top: 50%;
+		transform: translateY( -50% );
+		pointer-events: none;
+	}
+
+	&:focus-within .ak-search__kbd {
+		display: none;
+	}
+
+	// The go / fulltext submit buttons: keep them in the DOM (Enter = go) but out of sight
+	#searchButton,
+	.mw-fallbackSearchButton {
+		.ak-sr-only();
+	}
+}
+
+// $wgArknightsSearchPalette = false: search.js reveals the real form in place instead of a
+// palette. Inert while the palette is on (nothing ever sets `is-open` then).
+@media ( max-width: @ak-bp-toc-max ) {
+	// The revealed search overlays the local nav instead of being pushed aside by it
+	.ak-header__search.is-open {
+		top: var( --ak-header-h );
+		z-index: 1;
+	}
+}
+
+@media ( max-width: @ak-bp-mobile-max ) {
+	.ak-header__search.is-open {
+		display: block;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: var( --ak-header-h );
+		max-width: none;
+		margin: 0;
+		padding: 8px var( --ak-gutter );
+		background: var( --ak-bg-surface );
+		border-bottom: 1px solid var( --ak-border );
+		box-shadow: var( --ak-shadow-md );
+
+		// The form now carries 8px of vertical padding and a gutter of horizontal padding,
+		// and the well's offsets resolve against the form rather than the field inside it
+		.ak-search__icon-wrap {
+			left: calc( var( --ak-gutter ) + 1px );
+			top: 9px;
+			bottom: 9px;
+		}
+
+		.ak-search__kbd {
+			display: none;
+		}
+	}
+}
+
+/* ═══ Menu cards (components/dropdown.css + chrome/header.css / page-header.css) ═══ */
+.ak-menu__group {
+	li {
+		position: relative;
+		margin: 0;
+	}
+
+	li > a {
+		.ak-icon {
+			width: 18px;
+			height: 18px;
+			flex: none;
+			color: var( --ak-fg-muted );
+		}
+
+		/**
+		 * Hold the icon column open for rows that have no icon: gadgets and core modules add
+		 * entries from JavaScript with mw.util.addPortletLink long after the skin has rendered
+		 * (「全部展开」, id `t-collapsible-toggle-all`, is one), so no server-side pass can reach
+		 * them. Without a placeholder their label slides left and the card reads as broken.
+		 */
+		&:not( :has( > .ak-icon ) )::before {
+			content: '';
+			width: 18px;
+			flex: none;
+		}
+
+		&:hover .ak-icon {
+			color: var( --ak-fg );
+		}
+	}
+
+	// MediaWiki marks the current page / variant with li.selected, red links with li.new
+	li.selected > a,
+	li > a.selected {
+		color: var( --ak-accent );
+		border-left-color: var( --ak-accent );
+		font-weight: bold;
+	}
+
+	li.new > a {
+		color: var( --ak-link-new );
+	}
+}
+
+/* ═══ Page header: core's subtitle containers (chrome/page-header.css styles .ak-page-header__sub) ═══ */
+// Core hides #siteSub by default; this skin uses it for the tagline under the title
+.skin-arknights #siteSub {
+	display: block;
+}
+
+#contentSub {
+	margin: 0 0 var( --ak-space-3 );
+
+	.subpages {
+		display: block;
+		margin-bottom: 4px;
+	}
+
+	// 「←首页」and friends (core's backlinksubtitle) take the link colour: the line is muted
+	// already, a muted link in it would be invisible as a link. Subpage paths (.subpages)
+	// stay muted (base/typography.css keeps them low).
+	a {
+		color: var( --ak-link );
+
+		&:hover {
+			color: var( --ak-link-hover );
+			text-decoration: underline;
+		}
+	}
+}
+
+#contentSub2 {
+	margin: var( --ak-space-2 ) 0 var( --ak-space-3 );
+}
+
+/* ═══ Footer: MediaWiki:Arknights-footer-desc is parsed wikitext (may bring its own <p>) ═══ */
+.ak-footer__desc {
+	font-size: var( --ak-fs-xs );
+	opacity: 0.6;
+	max-width: 40ch;
+	margin: 12px 0 0;
+	line-height: 1.7;
+
+	> p {
+		font-size: inherit;
+		opacity: 1;
+		max-width: none;
+		margin: 0;
+		line-height: inherit;
+	}
+}

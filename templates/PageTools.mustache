@@ -2,9 +2,14 @@
 	The page action cluster that sits to the right of the h1 (Citizen-style):
 	讨论 · 查看历史 · 编辑 / 查看源代码 · ★ · [变体] · 更多
 
+	DOM contract of chrome/page-header.css:
+	  .ak-page-tools > ul.ak-page-tabs#p-associated-pages + ul.ak-page-tabs#p-views
+	                 + [.ak-dropdown.ak-page-tools__variants] + .ak-dropdown.ak-page-tools__more > details
+	                     > summary.ak-page-tools__btn + .ak-menu.ak-menu--right.ak-page-tools__card > nav.ak-menu__group …
 	DOM order stays the MediaWiki menu order (associated-pages → views → variants → more);
-	the displayed order is set with CSS `order` on the ids below, so screen readers and
-	keyboard users get the menus in the order core built them.
+	the displayed order is set with CSS `order` on the ids, so screen readers and keyboard
+	users get the menus in the order core built them. The portlet ids sit on the <ul> so
+	mw.util.addPortletLink() keeps working.
 
 	object data-associated-pages  namespace tabs (page / talk)
 	object data-views             read / edit / history / watch
@@ -18,31 +23,27 @@
 <div class="ak-page-tools" id="ak-page-tools">
 	{{#is-tabs-visible}}
 	{{#data-associated-pages}}
-	<nav id="{{id}}" class="ak-page-tools__group{{#class}} {{.}}{{/class}}" aria-label="{{label}}"{{{html-tooltip}}}>
-		<ul class="ak-page-tabs">{{{html-items}}}</ul>
-	</nav>
+	<ul id="{{id}}" class="ak-page-tabs{{#class}} {{.}}{{/class}}" aria-label="{{label}}"{{{html-tooltip}}}>{{{html-items}}}</ul>
 	{{/data-associated-pages}}
 	{{#data-views}}
-	<nav id="{{id}}" class="ak-page-tools__group{{#class}} {{.}}{{/class}}" aria-label="{{label}}"{{{html-tooltip}}}>
-		<ul class="ak-page-tabs">{{{html-items}}}</ul>
-	</nav>
+	<ul id="{{id}}" class="ak-page-tabs{{#class}} {{.}}{{/class}}" aria-label="{{label}}"{{{html-tooltip}}}>{{{html-items}}}</ul>
 	{{/data-views}}
 	{{#data-variants}}
 	<div class="ak-dropdown ak-page-tools__variants">
-		<details class="ak-dropdown__details">
-			<summary class="ak-page-tools__btn" title="{{msg-variants}}"><span class="ak-icon ak-icon--language"></span><span class="ak-page-tools__btn-label">{{msg-variants}}</span></summary>
-			<div class="ak-dropdown__card ak-menu-card ak-menu-card--right">{{>Menu}}</div>
+		<details>
+			<summary class="ak-page-tools__btn" title="{{msg-variants}}"><span class="ak-icon ak-icon--language"></span><span>{{msg-variants}}</span></summary>
+			<div class="ak-menu ak-menu--right ak-page-tools__card">{{>MenuGroup}}</div>
 		</details>
 	</div>
 	{{/data-variants}}
 	{{/is-tabs-visible}}
 	{{#has-overflow}}
 	<div class="ak-dropdown ak-page-tools__more">
-		<details class="ak-dropdown__details">
-			<summary class="ak-page-tools__btn" title="{{msg-more}}"><span class="ak-icon ak-icon--ellipsis"></span><span class="ak-page-tools__btn-label">{{msg-more}}</span></summary>
-			<div class="ak-dropdown__card ak-menu-card ak-menu-card--right ak-page-tools__card">
-				{{#data-actions}}{{>Menu}}{{/data-actions}}
-				{{#data-toolbox}}{{>Menu}}{{/data-toolbox}}
+		<details>
+			<summary class="ak-page-tools__btn" title="{{msg-more}}"><span class="ak-icon ak-icon--ellipsis"></span><span>{{msg-more}}</span></summary>
+			<div class="ak-menu ak-menu--right ak-page-tools__card">
+				{{#data-actions}}{{>MenuGroup}}{{/data-actions}}
+				{{#data-toolbox}}{{>MenuGroup}}{{/data-toolbox}}
 			</div>
 		</details>
 	</div>

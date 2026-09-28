@@ -85,7 +85,7 @@ $wgArknightsMenuSidebar = true;
 html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/kv-night.jpg); }   /* 头图 / 画布图要分昼夜就这样写；页眉本身两套主题同色，角饰与站标只需一套 */
 ```
 
-完整变量表见 prts-design 的 `docs/01-design-system.md §2.10`，可运行示例见 `preview/demo-theme.css`。四点注意：
+完整变量表见 prts-design 文档站的「皮肤骨架 · 头图与主题接口」（/chrome/theming）与「色彩 · 页眉 / 头图 / 画布的主题接口」，可运行示例见上游 `packages/css/src/chrome/demo-theme.css`。四点注意：
 
 - **页眉是压在头图上的一块均匀黑玻璃**：头图从页面顶端铺起（CSS 负外边距，DOM 顺序不变），页眉之下露出 `--ak-keyart-h` 那一段，`--ak-keyart-position` / `-size` 按「页眉 + 露出段」整块取景。可读性由 `--ak-chrome-bg` 的 alpha 保证，与底下是什么画无关——所以头图不必自己压暗顶部，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
@@ -135,30 +135,48 @@ includes/
   Api/ApiArknightsSearchIndex.php 搜索面板的本地索引（Cargo → JSON，含服务端拼音）
 templates/*.mustache              skin · Header · Header__logo · Search · ThemeToggle · UserMenu · Menu ·
                                   Sidebar · PageHeader · PageTools · Indicators · TableOfContents(+__list/__line) ·
-                                  PageFooter · Footer · SectionLinks · Link
+                                  PageFooter · Footer · SectionLinks · Link · IconSprite（生成物：设计系统的 SVG 图标 sprite）
 resources/
   badge/                          页脚徽章的白描版（MediaWiki / SMW / CC BY-NC-SA，见下文「页脚徽章」）
-  design-system/                  ← 从 prts-design/src 原样同步（tokens/base/components/arknights/utilities.css +
-                                  sidebar-tree.js + search-palette.js），勿改
+  design-system/                  ← 从 prts-design/packages/css/src 原样同步，勿改：tokens.css · bridge-codex.css ·
+                                  scope.css · base/ · components/ · decor/ · arknights/ · utilities.css · forced-colors.css ·
+                                  chrome/（骨架层）· img/ · sidebar-tree.js · search-palette.js
   design-system/fonts.css         ← 同上：121 条 @font-face（自托管 web 字体，见下文「字体」）
   design-system/fonts/            ← 同上：woff2 与各族授权全文（Noto Sans SC 101 片 + 5 族，≈5MB）
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
-  skins.arknights.styles/         皮肤骨架 LESS（header / sidebar / menu-sidebar / page-header / page-tools / toc / footer / responsive / print …）
+  skins.arknights.styles/         MediaWiki 胶水 LESS：shell-glue（无 JS 真搜索表单 / 菜单卡片里的 MW 项 / 副标题 / 页脚描述）· base（站点通知等）·
+                                  icons · menu-sidebar · mainpage · mediawiki-ui · message-box · dark-compat · notheme.generated · legacy-device-classes · print
   skins.arknights.scripts/        常驻：theme · dropdown · drawer · header · toc · backToTop · interactive ·
                                   scrollLock(抽屉/浮层共用的页面滚动锁) · sidebarTree ·
                                   searchLoader(搜索面板的懒加载存根) · search(面板关闭时的回退) · inline(<head>)
                                   懒加载 skins.arknights.search：searchPalette(数据源) · searchIndex(Cargo 索引)
 skinStyles/                       核心 / OOUI / jQuery / 扩展 的皮肤覆盖
 i18n/                             en · qqq · zh-hans · zh-hant · ja
-scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重置
+scripts/sync-design-system.sh     同步设计系统：拷贝 packages/css/src → 按 index.css 的顺序重写 skin.json 的逐文件列表 →
+                                  抽取图标 sprite → 生成 .notheme 令牌重置
 ```
 
-分层：`fonts.css`（@font-face）→ `tokens.css`（令牌+主题+Codex 桥接）→ `base.css`（wikitext 产物）→ `components.css` / `arknights.css`（组件与方舟装饰）→ `utilities.css` → `skin.less`（皮肤骨架）。前六个文件（连同 `fonts/`）是设计系统的产物，
-**只在 prts-design 里改**，然后运行 `scripts/sync-design-system.sh [path/to/prts-design]`。
+### ResourceLoader 模块与层序
+
+设计系统的加载顺序只有一个来源：prts-design `packages/css/src/index.css`（及各层 `index.css`）的 `@import` 顺序。ResourceLoader 不跟 `@import`，所以 `skin.json` 里逐文件列出，由同步脚本展开写入；**MediaWiki 把皮肤 `styles` 里的模块按模块名字母序输出**，模块名就是层序：
+
+| 模块 | 内容 | 谁加载 |
+|---|---|---|
+| `skins.arknights.base` | `SkinModule`（核心 normalize / content-body / interface-core … 特性）+ `bridge-codex.css`（Codex 令牌桥接）+ `base/skin-assets.css`（道具底框接口）+ `base/`（wikitext 产物与核心 UI 的排版） | 只有本皮肤 |
+| `skins.arknights.components` | `tokens.css` + `scope.css`（作用域根）→ `components/` → `decor/` → `arknights/` → `utilities.css` → `forced-colors.css`，逐文件列出、**不带 `dependencies`**（带了就不是 style-only，进不了皮肤的 `styles`） | 本皮肤；**别的皮肤上 widget / 模板的入口**：`mw.loader.using( 'skins.arknights.components' )`，一个模块就齐（本皮肤上是空操作），根节点包 `class="ak-scope"` |
+| `skins.arknights.fonts` | `fonts.css` | 本皮肤；别的皮肤要官网字体时另加 |
+| `skins.arknights.icons` | OOUI 图标包（`.ak-icon--{name}`） | 本皮肤 |
+| `skins.arknights.shell` | `chrome/`：皮肤骨架（页眉 / 二级栏 / 头图 / 布局 / 侧栏 / 页面头 / 白纸 / 目录 / 页脚 / 外观开关 / 搜索面板 / 特殊页 / 响应式 + 打印），逐文件列出；哪些文件接进来由同步脚本里的 `ADOPTED_CHROME` 定（现在是全部 15 个） | 只有本皮肤 |
+| `skins.arknights.styles` | `skin.less`：MediaWiki 胶水，压在骨架之上、排在最后——核心 / 扩展 UI、`.notheme` 生成物、无 JS 的真搜索表单、菜单卡片里 MW 特有的项（`li.selected` / `li.new` / 无图标占位）、`#contentSub`、首页 | 只有本皮肤 |
+| `skins.arknights.tokens` | `tokens.css` + `scope.css`，**不进皮肤的 `styles`** | 别的皮肤上只要令牌（Gadget / 自写样式）时加载 |
+
+对应 prts-design 骨架皮肤的 `skins.akds.base / components / fonts / shell / tokens`，只是前缀换成 `skins.arknights.`。`<body>` 同时带 `skin-arknights` 与 `skin-akds` 两个类：设计系统的 `scope.css` / `base/print.css` / `keyart` 都按 `skin-akds` 区分「在 AKDS 皮肤里」与「别的宿主」，不加这个类，作用域在本皮肤内部也会去 revert 宿主规则。
+
+设计系统的文件 **只在 prts-design 里改**，然后运行 `scripts/sync-design-system.sh [path/to/prts-design]`。
 
 ## 字体：自托管
 
-`skins.arknights.fonts`（`resources/design-system/fonts.css` + `fonts/`）在所有页面加载，是 `styles` 的第一项。设计系统的字体链在 `tokens.css` 的 Typography 段，前两段都自托管，因此访客装没装字体看到的都是同一套：
+`skins.arknights.fonts`（`resources/design-system/fonts.css` + `fonts/`）在所有页面加载，是皮肤 `styles` 里独立的一项（只有 `@font-face`，排在哪都一样）。设计系统的字体链在 `tokens.css` 的 Typography 段，前两段都自托管，因此访客装没装字体看到的都是同一套：
 
 | 角色 | 字族 | 来源 |
 |---|---|---|
@@ -174,7 +192,7 @@ scripts/sync-design-system.sh     同步设计系统 + 生成 .notheme 令牌重
 
 ## 表单控件
 
-Widget / 小工具 / 模板里直接写裸 `<input>` `<select>` `<textarea>` `<button>` 即可，皮肤按设计系统 `docs/01-design-system.md §4` 兜底：36px 定高、正文（`.mw-body-content`，即解析产物）的表格单元格内自动收到 30px 且**文字对齐跟随单元格**（`text-align: center` 的属性计算器里输入框也居中，`td.num` 右对齐的列里输入也右对齐）、主题化的焦点 / 只读 / 禁用 / 校验失败四态、iOS 上 <640px 提到 16px 防聚焦缩放。规则整组包在 `:where()` 里（零特指度），任何带 class 的控件——`.ak-input`、Codex 的 `.cdx-text-input__input`、OOUI 的 `.oo-ui-inputWidget-input`、模板自己的 class——都稳稳压在它上面。
+Widget / 小工具 / 模板里直接写裸 `<input>` `<select>` `<textarea>` `<button>` 即可，皮肤按设计系统的表单控件规范（文档站 /content/forms，实现在 `design-system/base/forms.css`）兜底：36px 定高、正文（`.mw-body-content`，即解析产物）的表格单元格内自动收到 30px 且**文字对齐跟随单元格**（`text-align: center` 的属性计算器里输入框也居中，`td.num` 右对齐的列里输入也右对齐）、主题化的焦点 / 只读 / 禁用 / 校验失败四态、iOS 上 <640px 提到 16px 防聚焦缩放。规则整组包在 `:where()` 里（零特指度），任何带 class 的控件——`.ak-input`、Codex 的 `.cdx-text-input__input`、OOUI 的 `.oo-ui-inputWidget-input`、模板自己的 class——都稳稳压在它上面。
 
 因此 Widget 里针对旧皮肤的补丁（`.skin-minerva #calc input { border… }`、`width: calc(100% - .8em)` 之类）可以删掉，只保留 `width: 100%` 这类布局意图（控件已是 `border-box`）。要标签 / 帮助 / 错误文案、前后缀拼接、常显 − / + 步进、方舟风勾选开关，再用 `.ak-field` / `.ak-input-group` / `.ak-number` / `.ak-check` / `.ak-switch`。
 
@@ -291,7 +309,7 @@ $wgArknightsSearchIndex = [
 | 解析 | `wfMessage()->parse()`，标题上下文靠 `$wgTitle` | `Parser::parse( $wikitext, $currentTitle, ParserOptions(interface) )`，显式以当前页为上下文，`{{FULLPAGENAME}}` `{{PAGEID}}` `{{NAMESPACENUMBER}}` `{{#tsl:}}` 全部可用 |
 | 输出位置 | 页尾隐藏 div + 内联 JS 搬运 | 服务端直接渲染进 `aside.ak-sidebar > #mw-panel > nav#MenuSidebar`，无 JS 依赖、无闪动、无内联脚本（CSP 友好） |
 | 工具箱 | 复制 `#p-tb ul` 到 `#MSToolbox` 后删除门户 | 工具箱作为标准门户 `#p-tb` 保留在侧栏中（`mw.util.addPortletLink('p-tb', …)` 继续可用），并带图标 |
-| 样式 | `MediaWiki:MenuSidebar.css` 内联 `<style>` | 皮肤 LESS（`common/sidebar.less` `common/menu-sidebar.less`）；站点定制放 `MediaWiki:Arknights.css` |
+| 样式 | `MediaWiki:MenuSidebar.css` 内联 `<style>` | 设计系统 `chrome/sidebar.css` + `chrome/sidebar-tree.css`（解析产物的 `p` / `ul` / `li > b` 结构上游本来就支持），皮肤只补 `common/menu-sidebar.less`；站点定制放 `MediaWiki:Arknights.css` |
 | 交互 | CSS `:hover` 飞出 | `design-system/sidebar-tree.js`：任意深度展开/收起 + `localStorage` 记忆 + 当前页路径自动展开 + 键盘 + 桌面悬停飞出 |
 | 输出结构 | `p` / `ul` / `li > b` / `li > a` | 完全相同（HTML 由同一段 wikitext 解析得到），`#MenuSidebar` id 也保留 |
 | 模板里的 TemplateStyles / 模块 | 丢失 | `ParserOutput` 的 modules / moduleStyles / jsConfigVars 转发到 OutputPage |
@@ -319,17 +337,17 @@ $wgArknightsSearchIndex = [
 
 `MediaWiki:Mainpage-title` 置空的老办法仍然有效，且此时核心给出的是**空的** h1（`is-title-blank`）——没有页面工具时整条页面头收起。
 
-页面自己那半边（生产环境）：结构 = `MediaWiki:首页` / `Template:首页` 的输出，**最外层标 `ak-not-prose`**（正文排版规则——标题色条、段距、列表符、链接色含 `:visited`——不进组件子树，见 prts-design 规范 §1.3）；区块样式 = `Template:首页/styles.css`（TemplateStyles）；轮播（Swiper）与时钟 / 周常倒计时 / 资源开放状态由 Gadget 按页加载。皮肤不依赖这些，`.ak-countdown` `.ak-panel` `.ak-op-card` 等组件样式已在设计系统层。
+页面自己那半边（生产环境）：结构 = `MediaWiki:首页` / `Template:首页` 的输出，**最外层标 `ak-not-prose`**（正文排版规则——标题色条、段距、列表符、链接色含 `:visited`——不进组件子树，见文档站 /foundations/principles#prose-not-prose）；区块样式 = `Template:首页/styles.css`（TemplateStyles）；轮播（Swiper）与时钟 / 周常倒计时 / 资源开放状态由 Gadget 按页加载。皮肤不依赖这些，`.ak-countdown` `.ak-panel` `.ak-op-card` 等组件样式已在设计系统层。
 
 ## 与设计系统的对应
 
-- 页眉 `.ak-header`、侧栏 `.ak-sidebar`、页面头 `.ak-page-header`、目录 `.ak-toc`、页脚 `.ak-footer` 等类名与 prts-design 的 `src/skin.css` 一致，但骨架样式由本皮肤的 LESS 维护（DOM 由模板定义）。
+- 骨架样式就是 prts-design 的 `packages/css/src/chrome/`（文档站「皮肤骨架」），经 `skins.arknights.shell` 逐文件加载；`templates/*.mustache` 按它的 DOM 契约输出（文档站 /guide/skin-template）。**在 wiki 上发现的视觉问题先看规则属于哪边**：能用类名和令牌描述的改上游 `chrome/` 再同步；只对 MediaWiki 的 DOM 或某个扩展才成立的，进 `common/shell-glue.less`。MW 皮肤比预览骨架多出来的几样（`.ak-page-heading` 包装 + tagline、`.mw-indicators`、diff 页放回「阅读」、目录折叠钮、抽屉抬头 `.ak-sidebar__head`、Echo 徽标 `.ak-header__notifications`、页脚列数由内容定）已经写进上游。
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
-- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`header.less` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。活动主题的接口见上文「活动主题」。
+- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`chrome/header.css` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。活动主题的接口见上文「活动主题」。
 - **<1120 页眉**回到 flex，只留 品牌 / 搜索（<640 收成图标）/ ≡。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ≡ 拉下、贴主行右下沿的 320px 卡片。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录浮层的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起，以及卡片开着时不收页眉。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
 - **<1400 的目录**是二级吸顶栏「本页目录」拉下的浮层，360px 定宽、高不超过吸顶栏下沿到视口底（`100dvh`，不用 `100vh`——手机地址栏收放时那是「最大视口」，浮层底会被工具栏盖住却又不出内滚），内部由 `.ak-toc__inner` 滚。开合仍是纯 CSS 的 `input.ak-toc-cb` + `label.ak-local-nav__toc`，但显示的主路径是 `toc.js` 把 checkbox 状态镜像到 `html.ak-toc-open`：不依赖 `:has()`，旧内核的手机浏览器也是真浮层；`body:has()` 只作无 JS 时的桥接，既无 JS 又无 `:has()`（`.client-nojs`）才退回正文流内的静态卡片。
 - **抽屉 / 浮层开着时锁页面滚动**（`scrollLock.js`，两者共用一把按持有者计数的锁）：`html.ak-scroll-lock` 是 `overflow: hidden`，不改滚动位置；有实体滚动条时同时写 `scrollbar-gutter: stable`，页面不会左右抖一下；两者都没有的老桌面浏览器退回拦 `wheel` / `touchmove` / 翻页键（浮层内真正可滚的元素放行），iOS 另外拦 `touchmove`。
-- 图标：`skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `.ak-icon.ak-icon--{name}`；可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）。
+- 图标有两套，共用 `.ak-icon`：皮肤骨架用 `skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `<span class="ak-icon ak-icon--{name}">`，可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）；模板 / Widget 按设计系统文档写的 `<svg class="ak-icon"><use href="#i-{name}"/></svg>` 取自页面顶部内联的 sprite（`templates/IconSprite.mustache`，同步脚本从上游抽取），图标名见文档站 /foundations/icons。
 - 模板/TemplateStyles 中直接使用 `.ak-*` 组件与 `var(--ak-*)` 令牌，与预览页一致；`data-bind`/`.ak-tabs`/`.ak-phase-tabs` 等交互约定由 `interactive.js` 提供。
 - 小工具可用的钩子：`mw.hook('skin.arknights.clientPrefs')`（主题变化）、`mw.hook('skin.arknights.toast').fire(msg, type, title)`、`mw.hook('skin.arknights.sidebar').fire()`（侧栏内容变化后重新增强树）、`mw.hook('skin.arknights.search').fire(fn)`（注入搜索面板的本地即时索引）。
 
@@ -339,7 +357,15 @@ $wgArknightsSearchIndex = [
 scripts/sync-design-system.sh [path/to/prts-design]   # 同步设计系统；不给路径时在皮肤/MediaWiki 的相邻目录里找 prts-design
 ```
 
-本地验证：把仓库放到 MediaWiki 的 `skins/Arknights`，`wfLoadSkin( 'Arknights' )`，打开 `?debug=2` 查看未压缩的 LESS 输出。
+同步脚本做四件事：整目录替换 `resources/design-system/`（上游 `packages/css/src/`，含 `chrome/`，不含示例活动主题 `demo-theme.css`）；按上游 `index.css` 展开的顺序重写 `skin.json` 里 `skins.arknights.base / components / fonts / shell / tokens` 的文件列表（模块定义与 `SkinModule` 特性仍手写；`shell` 只装脚本里 `ADOPTED_CHROME` 列出的 `chrome/` 文件）；从上游 `skin/templates/skin.mustache` 抽出 SVG sprite 写成 `templates/IconSprite.mustache`；由 `tokens.css` §2b 与 `bridge-codex.css` 生成 `common/notheme.generated.less`。上游增删文件后只要重跑即可。
+
+本地验证：把仓库放到 MediaWiki 的 `skins/Arknights`，`wfLoadSkin( 'Arknights' )`，打开 `?debug=2` 查看未压缩的 LESS 输出。改骨架前后可以拍计算样式快照比对（沙盒 prts-sandbox 直接挂载本仓库，Playwright 从旁边的 prts-design 里借）：
+
+```bash
+node scripts/style-snapshot.cjs capture /tmp/snap/before          # 改之前：22 个场景（首页 / 干员页 × 亮暗 × 1440 / 1280 / 1024 / 390，搜索面板 / 用户菜单 / 更多 / 目录浮层 / 抽屉 / 工具卡片 / 侧栏飞出）
+node scripts/style-snapshot.cjs capture /tmp/snap/after           # 改之后
+node scripts/style-snapshot.cjs diff /tmp/snap/before /tmp/snap/after --no-geometry   # 逐元素列出计算样式的差异；每个场景另有截图
+```
 LESS 注意：less.php 会尝试求值 CSS 的 `min()/max()`，需要写成 `~"min( 92vw, 360px )"`。
 Mustache 注意：MediaWiki 的 LightnCandy 只把 `null` / `false` / 空数组当假值，`''` 在 `{{#x}}` 里为真 —— PHP 侧可选字符串请返回 `null`。
 

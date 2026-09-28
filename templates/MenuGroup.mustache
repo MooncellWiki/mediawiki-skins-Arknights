@@ -1,0 +1,15 @@
+{{!
+	A MediaWiki portlet (Skin::getPortletData()) rendered as one group inside a .ak-menu card
+	(the user menu, the page tools' "more" card, the variants menu):
+	  nav.ak-menu__group#id > .ak-menu__label + ul > li > a
+	See components/dropdown.css. Sidebar portlets use Portlet.mustache instead.
+
+	string id / class / label / label-class / html-tooltip
+	string html-before-portal / html-items / html-after-portal
+}}
+<nav id="{{id}}" class="ak-menu__group{{#class}} {{.}}{{/class}}"{{#label}} aria-label="{{.}}"{{/label}}{{{html-tooltip}}}{{{html-user-language-attributes}}}>
+	{{#label}}<div class="ak-menu__label{{#label-class}} {{.}}{{/label-class}}">{{.}}</div>{{/label}}
+	{{{html-before-portal}}}
+	<ul>{{{html-items}}}</ul>
+	{{{html-after-portal}}}
+</nav>

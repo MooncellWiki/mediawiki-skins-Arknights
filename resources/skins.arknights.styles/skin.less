@@ -1,10 +1,13 @@
 /**
  * Arknights — skin chrome entry point
  *
- * The design-system layers (tokens / base / components / arknights / utilities)
- * are loaded before this file by skin.json. Everything here is skin chrome
- * (header, sidebar, page header, TOC, footer, responsive, print) written against
- * the DOM produced by templates/*.mustache.
+ * The design-system layers load before this file: skins.arknights.base (Codex bridge +
+ * base/, MediaWiki content), skins.arknights.components (tokens + scope + components + decor +
+ * arknights + utilities + forced-colors) and skins.arknights.shell (prts-design's chrome/
+ * layer: header, sidebar, page header, TOC, footer, search palette, responsive) — MediaWiki
+ * outputs a skin's style modules in alphabetical order, and "styles" sorts last. What is left
+ * here is MediaWiki glue: core / extension UI, dark-mode conventions, this skin's own partials
+ * (shell-glue.less) — nothing a visitor would call "how the skin looks".
  */
 @import './variables.less';
 @import './mixins.less';
@@ -12,25 +15,14 @@
 @media screen {
 	@import './common/base.less';
 	@import './common/icons.less';
-	@import './common/dropdown.less';
-	@import './common/header.less';
-	@import './common/search-palette.less';
-	@import './common/theme-toggle.less';
-	@import './common/layout.less';
-	@import './common/sidebar.less';
 	@import './common/menu-sidebar.less';
-	@import './common/page-header.less';
-	@import './common/page-tools.less';
-	@import './common/content.less';
-	@import './common/toc.less';
-	@import './common/footer.less';
 	@import './common/mainpage.less';
 	@import './common/mediawiki-ui.less';
 	@import './common/message-box.less';
 	@import './common/dark-compat.less';
 	@import './common/notheme.generated.less';
-	@import './common/responsive.less';
 	@import './common/legacy-device-classes.less';
+	@import './common/shell-glue.less';
 }
 
 @media print {

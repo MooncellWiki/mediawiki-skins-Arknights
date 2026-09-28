@@ -1,7 +1,7 @@
 /**
  * Echo — notification badges in the header (no-JS + pre-init state)
  */
-.ak-header__notifications-list {
+.ak-header__notifications ul {
 	li {
 		margin: 0;
 	}
@@ -125,7 +125,7 @@
  * and #C82A36 into #AD3E4A. It was never doing any work either: hue-rotate leaves greys
  * untouched (its matrix rows each sum to 1), and the glyphs it exists for are black.
  */
-.ak-header__notifications-list .mw-echo-notifications-badge {
+.ak-header__notifications ul .mw-echo-notifications-badge {
 	filter: invert( 1 );
 
 	&::after {
@@ -136,7 +136,7 @@
 // Only silence the browser's own ring where the rule above can actually replace it —
 // without :has() support the badge would otherwise focus with no visible indicator at all.
 @supports selector( :has( * ) ) {
-	.ak-header__notifications-list .mw-echo-notifications-badge:focus-visible {
+	.ak-header__notifications ul .mw-echo-notifications-badge:focus-visible {
 		outline: 0;
 	}
 }

@@ -28,6 +28,7 @@
 	"arknights-nav-screen": "Accessible label of the header burger that pulls down the tools card (theme toggle, notifications, user menu) below 1120px.",
 	"arknights-header-tagline": "Short Latin tagline shown under the site name in the header and footer (e.g. \"ARKNIGHTS WIKI\"). Empty by default; wikis set it on-wiki via MediaWiki:Arknights-header-tagline.\n{{optional}}",
 	"arknights-footer-powered": "Small print in the site footer.\n{{optional}}",
+	"arknights-footer-about": "Heading of the footer links column (privacy / about / disclaimers).",
 	"arknights-footer-desc": "Optional description paragraph in the site footer, parsed as wikitext in the content language. Disabled by default; wikis define MediaWiki:Arknights-footer-desc.\n{{ignored}}",
 	"arknights-footer-tagline": "Optional tagline in the bottom bar of the site footer, parsed as wikitext in the content language. Disabled by default.\n{{ignored}}",
 	"arknights-config-themedefault": "Description of the configuration option $wgArknightsThemeDefault.",

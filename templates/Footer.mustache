@@ -2,34 +2,37 @@
 	object data-places { id, className, array-items[ {id, html} ] }
 	object data-icons  { id, className, array-items[ {id, html} ] }
 	string html-footer-desc / html-footer-tagline (MediaWiki:Arknights-footer-desc / -tagline)
-	string msg-sitetitle / msg-arknights-footer-powered
+	string msg-sitetitle / msg-arknights-footer-powered / msg-arknights-footer-about
 	string|null html-header-tagline
+
+	DOM contract of chrome/footer.css:
+	  .ak-footer__inner > .ak-footer__brand (span.ak-header__wordmark + p) + .ak-footer__col (h4 + ul#footer-places)
+	  .ak-footer__bottom > .ak-footer__bottom-text + ul.ak-footer__icons#footer-icons
+	  span.ak-watermark
+	Core strips data-footer.* down to array-items[{id, html}], so the lists are written out
+	item by item (see the docs site, /guide/skin-template#页脚数据).
 }}
 <footer class="ak-footer mw-footer" id="footer"{{{html-user-language-attributes}}}>
 	<div class="ak-footer__inner">
 		<div class="ak-footer__brand">
-			<span class="ak-footer__sitename mw-wiki-title">{{msg-sitetitle}}</span>
-			{{#html-header-tagline}}<small class="ak-footer__tagline">{{.}}</small>{{/html-header-tagline}}
-			{{#html-footer-desc}}<p class="ak-footer__desc" id="footer-desc">{{{.}}}</p>{{/html-footer-desc}}
+			<span class="ak-header__wordmark mw-wiki-title">{{msg-sitetitle}}{{#html-header-tagline}}<small>{{.}}</small>{{/html-header-tagline}}</span>
+			{{#html-footer-desc}}<div class="ak-footer__desc" id="footer-desc">{{{.}}}</div>{{/html-footer-desc}}
 		</div>
 		{{#data-places}}
-		<nav class="ak-footer__col ak-footer__places" id="{{id}}"{{#className}} class="{{.}}"{{/className}}>
-			<ul>{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>
+		<nav class="ak-footer__col{{#className}} {{.}}{{/className}}" aria-label="{{msg-arknights-footer-about}}">
+			<h4>{{msg-arknights-footer-about}}</h4>
+			<ul id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>
 		</nav>
 		{{/data-places}}
 	</div>
 	<div class="ak-footer__bottom">
-		<div class="ak-footer__bottom-inner">
-			<div class="ak-footer__legal">
-				{{#html-footer-tagline}}<span id="footer-tagline">{{{.}}}</span>{{/html-footer-tagline}}
-				<span class="ak-footer__powered ak-en">{{msg-arknights-footer-powered}}</span>
-			</div>
-			{{#data-icons}}
-			<div class="ak-footer__icons{{#className}} {{.}}{{/className}}" id="{{id}}">
-				<ul>{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>
-			</div>
-			{{/data-icons}}
+		<div class="ak-footer__bottom-text">
+			{{#html-footer-tagline}}<span id="footer-tagline">{{{.}}}</span>{{/html-footer-tagline}}
+			<span class="ak-en">{{msg-arknights-footer-powered}}</span>
 		</div>
+		{{#data-icons}}
+		<ul class="ak-footer__icons{{#className}} {{.}}{{/className}}" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>
+		{{/data-icons}}
 	</div>
-	<span class="ak-footer__watermark ak-watermark" aria-hidden="true">{{msg-sitetitle}}</span>
+	<span class="ak-watermark" aria-hidden="true">{{msg-sitetitle}}</span>
 </footer>

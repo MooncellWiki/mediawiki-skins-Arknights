@@ -1,5 +1,5 @@
 /**
- * Main page — let MediaWiki:首页 own its layout: no card, no page header chrome, full width.
+ * Main page — let MediaWiki:首页 own its layout: no card (.ak-body--flat, chrome/body.css), no page header chrome, full width.
  *
  * The design system's home mock-up (prts-design preview/home.html §0) states what the skin
  * has to *stop* doing on this one page: no visible title, no reading-column narrowing, no
@@ -33,12 +33,6 @@
 		max-width: calc( var( --ak-content-max ) + var( --ak-toc-w ) + var( --ak-gutter ) );
 		padding-right: 0;
 	}
-}
-
-.ak-body--mainpage {
-	background: transparent;
-	border: 0;
-	padding: 0;
 }
 
 // When the title is blanked (MediaWiki:Mainpage-title = -), collapse the header entirely

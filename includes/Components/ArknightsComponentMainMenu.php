@@ -75,7 +75,7 @@ class ArknightsComponentMainMenu implements ArknightsComponent {
 			// Untitled: `site-tools` is not an interface message, and the group reads as a
 			// continuation of the navigation above it rather than a heading of its own.
 			$siteToolsData['label'] = null;
-			$siteToolsData['class'] = trim( ( $siteToolsData['class'] ?? '' ) . ' ak-menu-portlet--site-tools' );
+			$siteToolsData['class'] = trim( ( $siteToolsData['class'] ?? '' ) . ' ak-portlet--site-tools' );
 			if ( $siteToolsData['is-empty'] ) {
 				$siteToolsData = null;
 			}

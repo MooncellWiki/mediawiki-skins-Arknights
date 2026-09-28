@@ -1,0 +1,15 @@
+{{!
+	A MediaWiki portlet (Skin::getPortletData()) in the sidebar:
+	  nav.ak-portlet#id > h3.ak-portlet__title + ul > li > a
+	See chrome/sidebar.css (sidebar-tree.js turns nested lists into a tree). Portlets inside a
+	menu card use MenuGroup.mustache instead.
+
+	string id / class / label / label-class / html-tooltip
+	string html-before-portal / html-items / html-after-portal
+}}
+<nav id="{{id}}" class="ak-portlet{{#class}} {{.}}{{/class}}"{{#label}} aria-label="{{.}}"{{/label}}{{{html-tooltip}}}{{{html-user-language-attributes}}}>
+	{{#label}}<h3 class="ak-portlet__title{{#label-class}} {{.}}{{/label-class}}">{{.}}</h3>{{/label}}
+	{{{html-before-portal}}}
+	<ul>{{{html-items}}}</ul>
+	{{{html-after-portal}}}
+</nav>

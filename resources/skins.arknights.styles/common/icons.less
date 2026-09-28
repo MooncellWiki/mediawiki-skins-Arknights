@@ -1,9 +1,14 @@
 /**
- * Icons — mask-image glyphs from skins.arknights.icons (OOUI WikimediaUI icons).
- * The module emits `.ak-icon--{name} { mask-image: url(…) }`; this file gives
- * the box its size and colour (currentColor via background-color).
+ * Icons — two kinds share the .ak-icon class:
+ *   · the skin chrome's mask-image glyphs from skins.arknights.icons (OOUI WikimediaUI icons):
+ *     the module emits `.ak-icon--{name} { mask-image: url(…) }`, this file gives the box its
+ *     size and colour (currentColor via background-color);
+ *   · the design-system sprite icons that templates / widgets output as
+ *     `<svg class="ak-icon"><use href="#i-…"/></svg>` (templates/IconSprite.mustache).
+ * The mask box must not land on the <svg> — background-color: currentColor would paint a
+ * solid square — hence the :where(:not(svg)) guard (zero extra specificity).
  */
-.ak-icon {
+.ak-icon:where( :not( svg ) ) {
 	display: inline-block;
 	flex: none;
 	width: 20px;
@@ -24,6 +29,16 @@
 	button > & {
 		vertical-align: -0.28em;
 	}
+}
+
+// Sprite icons: the symbols draw with currentColor themselves; this only sizes the box.
+svg.ak-icon {
+	display: inline-block;
+	flex: none;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+	pointer-events: none;
 }
 
 /**

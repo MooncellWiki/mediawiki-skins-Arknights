@@ -1,12 +1,8 @@
 {{!
-	string html-categories
-	object data-page-footer { id, array-items[ {id, name, html} ] }
+	object data-page-footer { id, array-items[ {id, name, html} ] } — core's #footer-info (last modified · copyright)
+	Rendered at the foot of the article paper: ul.ak-body-foot#footer-info > li#footer-info-lastmod … (chrome/body.css).
+	The category bar (html-categories) is emitted by skin.mustache after the paper.
 }}
-<footer class="ak-page-footer">
-	{{{html-categories}}}
-	{{#data-page-footer}}
-	<div class="ak-page-info" id="{{id}}">
-		{{#array-items}}<div id="{{id}}" class="ak-page-info__item ak-page-info__item--{{name}}">{{{html}}}</div>{{/array-items}}
-	</div>
-	{{/data-page-footer}}
-</footer>
+{{#data-page-footer}}
+<ul class="ak-body-foot" id="{{id}}">{{#array-items}}<li id="{{id}}" class="ak-body-foot__{{name}}">{{{html}}}</li>{{/array-items}}</ul>
+{{/data-page-footer}}

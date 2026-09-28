@@ -7,7 +7,8 @@
  * 于是那条兜底规则漏了出来：菜单行是 flex 布局、高度约 32px，`contain` 会把「文A」放大到整行高
  * 压在文字底下。图标改由 MenuItemDecorator 以 .ak-icon 渲染，这里把背景图整体去掉即可。
  */
-.ak-menu-portlet .uls-trigger,
+.ak-portlet .uls-trigger,
+.ak-menu__group .uls-trigger,
 .ak-dropdown .uls-trigger,
 #pt-uls .uls-trigger {
 	background: none;

@@ -1,8 +1,8 @@
 /**
- * Dropdowns — <details class="ak-dropdown__details"> enhancements:
+ * Dropdowns — .ak-dropdown > details enhancements:
  * only one open at a time, close on outside click / Escape / link activation.
  */
-const SELECTOR = 'details.ak-dropdown__details';
+const SELECTOR = '.ak-dropdown > details';
 
 /**
  * @param {HTMLDetailsElement|null} except
@@ -37,7 +37,7 @@ function init() {
 			return;
 		}
 		// Following a link inside a card closes it
-		if ( target.closest( '.ak-dropdown__card a[href]' ) ) {
+		if ( target.closest( '.ak-menu a[href]' ) ) {
 			closeAll( null );
 		}
 	} );
