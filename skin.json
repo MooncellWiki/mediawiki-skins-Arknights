@@ -42,8 +42,7 @@
 					"tempUserBanner": true,
 					"clientPrefEnabled": false,
 					"bodyClasses": [
-						"skin-arknights",
-						"skin-akds"
+						"skin-arknights"
 					],
 					"link": {
 						"text-wrapper": {

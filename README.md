@@ -170,7 +170,7 @@ scripts/sync-design-system.sh     同步设计系统：拷贝 packages/css/src �
 | `skins.arknights.styles` | `skin.less`：MediaWiki 胶水，压在骨架之上、排在最后——核心 / 扩展 UI、`.notheme` 生成物、无 JS 的真搜索表单、菜单卡片里 MW 特有的项（`li.selected` / `li.new` / 无图标占位）、`#contentSub`、首页 | 只有本皮肤 |
 | `skins.arknights.tokens` | `tokens.css` + `scope.css`，**不进皮肤的 `styles`** | 别的皮肤上只要令牌（Gadget / 自写样式）时加载 |
 
-对应 prts-design 骨架皮肤的 `skins.akds.base / components / fonts / shell / tokens`，只是前缀换成 `skins.arknights.`。`<body>` 同时带 `skin-arknights` 与 `skin-akds` 两个类：设计系统的 `scope.css` / `base/print.css` / `keyart` 都按 `skin-akds` 区分「在 AKDS 皮肤里」与「别的宿主」，不加这个类，作用域在本皮肤内部也会去 revert 宿主规则。
+对应 prts-design 骨架皮肤的 `skins.akds.base / components / fonts / shell / tokens`，只是前缀换成 `skins.arknights.`。设计系统里「在皮肤里」的标记就是 `body.skin-arknights`（MediaWiki 按皮肤名自动加的那个类）：`scope.css` 用 `:not(.skin-arknights *)` 区分别的宿主，`chrome/` 与 `base/print.css` 也按它写。
 
 设计系统的文件 **只在 prts-design 里改**，然后运行 `scripts/sync-design-system.sh [path/to/prts-design]`。
 
