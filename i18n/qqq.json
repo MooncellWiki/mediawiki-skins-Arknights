@@ -31,6 +31,7 @@
 	"arknights-footer-about": "Heading of the footer links column (privacy / about / disclaimers).",
 	"arknights-footer-desc": "Optional description paragraph in the site footer, parsed as wikitext in the content language. Disabled by default; wikis define MediaWiki:Arknights-footer-desc.\n{{ignored}}",
 	"arknights-footer-tagline": "Optional tagline in the bottom bar of the site footer, parsed as wikitext in the content language. Disabled by default.\n{{ignored}}",
+	"arknights-footer-links": "Optional link columns in the site footer, in MediaWiki:Sidebar syntax (<code>* heading</code> / <code>** target|label</code>), rendered before the about column. Disabled by default; wikis define MediaWiki:Arknights-footer-links.\n{{ignored}}",
 	"arknights-config-themedefault": "Description of the configuration option $wgArknightsThemeDefault.",
 	"arknights-config-themecolor": "Description of the configuration option $wgArknightsThemeColor.",
 	"arknights-config-menusidebar": "Description of the configuration option $wgArknightsMenuSidebar.",

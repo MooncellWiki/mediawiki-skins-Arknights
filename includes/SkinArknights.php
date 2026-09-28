@@ -14,6 +14,7 @@ use MediaWiki\Skins\Arknights\Components\ArknightsComponentPageHeading;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentPageTools;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentTableOfContents;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentUserMenu;
+use MediaWiki\Skins\Arknights\Menu\FooterLinksParser;
 use MediaWiki\Skins\Arknights\Menu\MenuItemDecorator;
 use MediaWiki\Skins\Arknights\Menu\WikitextMenuParser;
 use SkinMustache;
@@ -218,7 +219,8 @@ class SkinArknights extends SkinMustache {
 			),
 			'data-footer' => new ArknightsComponentFooter(
 				$localizer,
-				$parentData['data-footer'] ?? []
+				$parentData['data-footer'] ?? [],
+				FooterLinksParser::parse( $this )
 			),
 		];
 

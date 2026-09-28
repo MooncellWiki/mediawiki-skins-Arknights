@@ -31,6 +31,7 @@
 	"arknights-footer-about": "About",
 	"arknights-footer-desc": "-",
 	"arknights-footer-tagline": "-",
+	"arknights-footer-links": "-",
 	"arknights-config-themedefault": "Default colour theme: 'os' (follow system), 'day' (archive / light) or 'night' (terminal / dark).",
 	"arknights-config-themecolor": "Value of the theme-color meta tag.",
 	"arknights-config-menusidebar": "Render MediaWiki:MenuSidebar (wikitext, parsed with the current page as context) as the sidebar navigation.",

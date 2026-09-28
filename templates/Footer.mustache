@@ -1,4 +1,5 @@
 {{!
+	array array-link-columns[ {label, array-items[ {html} ]} ] (MediaWiki:Arknights-footer-links, FooterLinksParser)
 	object data-places { id, className, array-items[ {id, html} ] }
 	object data-icons  { id, className, array-items[ {id, html} ] }
 	string html-footer-desc / html-footer-tagline (MediaWiki:Arknights-footer-desc / -tagline)
@@ -6,7 +7,8 @@
 	string|null html-header-tagline
 
 	DOM contract of chrome/footer.css:
-	  .ak-footer__inner > .ak-footer__brand (span.ak-header__wordmark + p) + .ak-footer__col (h4 + ul#footer-places)
+	  .ak-footer__inner > .ak-footer__brand (span.ak-header__wordmark + p) + .ak-footer__col* (h4 + ul) + .ak-footer__col (h4 + ul#footer-places)
+	  (the brand takes the explicit 1.4fr column, every .ak-footer__col an implicit 1fr one — column count follows content)
 	  .ak-footer__bottom > .ak-footer__bottom-text + ul.ak-footer__icons#footer-icons
 	  span.ak-watermark
 	Core strips data-footer.* down to array-items[{id, html}], so the lists are written out
@@ -18,6 +20,12 @@
 			<span class="ak-header__wordmark mw-wiki-title">{{msg-sitetitle}}{{#html-header-tagline}}<small>{{.}}</small>{{/html-header-tagline}}</span>
 			{{#html-footer-desc}}<div class="ak-footer__desc" id="footer-desc">{{{.}}}</div>{{/html-footer-desc}}
 		</div>
+		{{#array-link-columns}}
+		<nav class="ak-footer__col" aria-label="{{label}}">
+			<h4>{{label}}</h4>
+			<ul>{{#array-items}}<li>{{{html}}}</li>{{/array-items}}</ul>
+		</nav>
+		{{/array-link-columns}}
 		{{#data-places}}
 		<nav class="ak-footer__col{{#className}} {{.}}{{/className}}" aria-label="{{msg-arknights-footer-about}}">
 			<h4>{{msg-arknights-footer-about}}</h4>

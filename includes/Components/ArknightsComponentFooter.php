@@ -7,14 +7,21 @@ namespace MediaWiki\Skins\Arknights\Components;
 use MessageLocalizer;
 
 /**
- * Site footer: places (about / privacy / disclaimer + hook additions), icons and
- * the optional on-wiki description / tagline messages.
+ * Site footer: the link columns from MediaWiki:Arknights-footer-links, places (about /
+ * privacy / disclaimer + hook additions), icons and the optional on-wiki description /
+ * tagline messages.
  */
 class ArknightsComponentFooter implements ArknightsComponent {
 
+	/**
+	 * @param MessageLocalizer $localizer
+	 * @param array $footerData core's data-footer
+	 * @param array[] $linkColumns FooterLinksParser::parse() output
+	 */
 	public function __construct(
 		private readonly MessageLocalizer $localizer,
-		private readonly array $footerData
+		private readonly array $footerData,
+		private readonly array $linkColumns = []
 	) {
 	}
 
@@ -31,6 +38,7 @@ class ArknightsComponentFooter implements ArknightsComponent {
 		$places = $this->footerData['data-places'] ?? [];
 		$icons = $this->footerData['data-icons'] ?? [];
 		return [
+			'array-link-columns' => $this->linkColumns,
 			'data-places' => !empty( $places['array-items'] ) ? $places : null,
 			'data-icons' => !empty( $icons['array-items'] ) ? $icons : null,
 			'html-footer-desc' => $this->parseMessage( 'arknights-footer-desc' ),

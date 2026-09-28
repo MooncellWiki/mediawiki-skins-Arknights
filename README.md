@@ -65,6 +65,7 @@ $wgArknightsMenuSidebar = true;
 | `MediaWiki:Arknights-search-shortcuts` | 搜索面板空态的快捷入口（同 `MediaWiki:Sidebar` 的条目语法，见下） |
 | `MediaWiki:Arknights-header-tagline` | 页眉/页脚站名下方的拉丁小字（如 `ARKNIGHTS WIKI`） |
 | `MediaWiki:Arknights-footer-desc` / `-footer-tagline` | 页脚描述段 / 底栏一句话（wikitext，默认关闭） |
+| `MediaWiki:Arknights-footer-links` | 页脚「关于」列之前的链接列（同 `MediaWiki:Sidebar` 语法，含分组标题，默认关闭，见下文「页脚链接列」） |
 | `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间覆盖标题下方的 tagline |
 | `MediaWiki:Arknights.css` / `MediaWiki:Arknights.js` | 皮肤专属站点样式/脚本（MediaWiki 自动加载） |
 
@@ -91,6 +92,30 @@ html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
 - 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
+
+### 页脚链接列（`MediaWiki:Arknights-footer-links`）
+
+设计稿的页脚是品牌 + 三列链接（浏览 / 参与 / 关于）。「关于」列固定吃核心的 `#footer-places`（隐私政策 / 关于 / 免责声明，
+加上 `SkinAddFooterLinks` 钩子追加的 ICP 备案号、手机版视图等），前面的列由这条消息决定，语法就是 `MediaWiki:Sidebar`
+的（`Skin::addToSidebarPlain` 解析，所以那边能写的这边都能写）：
+
+```wikitext
+* 浏览
+** 干员一览|干员
+** 敌人一览|敌人
+** 关卡一览|关卡
+** 道具一览|道具
+* 参与
+** Help:编辑指南|编辑指南
+** 模板文档|模板文档
+** Special:RecentChanges|recentchanges
+** portal-url|portal
+```
+
+分组标题与条目的两半都是「存在同名消息就当消息键、否则按字面」；目标是页面名或 URL，解析成 `-` 的条目跳过，
+没有可用条目的分组整列不出。列数由内容定（`chrome/footer.css` 给品牌显式的 1.4fr、每个 `.ak-footer__col` 一条隐式 1fr），
+≤639px 时链接列两两并排。整条消息写 `-`（i18n 默认）就只剩「关于」一列。与搜索快捷入口一样这里不是 wikitext，
+没有模板与解析器函数；条目不带 `n-*` id，不会和侧栏里的同一链接撞 id。
 
 ### 页脚徽章（`$wgFooterIcons`）
 
@@ -130,6 +155,7 @@ includes/
   Menu/WikitextMenuParser.php     以当前页为上下文解析 MediaWiki 名字空间 wikitext，并把 RL 模块转发给 OutputPage
   Menu/MenuItemDecorator.php      把核心的 icon 键变成 <span class="ak-icon ak-icon--x">
   Menu/SearchShortcutsParser.php  MediaWiki:Arknights-search-shortcuts → 搜索面板空态的快捷入口
+  Menu/FooterLinksParser.php      MediaWiki:Arknights-footer-links → 页脚「关于」列之前的链接列
   Hooks/SkinHooks.php             BeforePageDisplay（内联主题脚本）/ viewport / 工具箱图标
   Hooks/ResourceLoaderHooks.php   config.json / searchConfig.json
   Api/ApiArknightsSearchIndex.php 搜索面板的本地索引（Cargo → JSON，含服务端拼音）
