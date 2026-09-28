@@ -18,6 +18,18 @@ table.mw-enhanced-rc {
 	.mw-enhancedchanges-arrow-space {
 		filter: none;
 	}
+
+	/* 分组行是一张 auto 布局的表，宽度由单元格的最小内容宽度决定；.mw-body-content 的 overflow-wrap: break-word
+	 * 只在最终排版时断长串，不改最小内容宽度，所以救不了表格。
+	 * 「用户创建日志」这类分组把几十个用户名用全角「；」串在一起，每个名字又套着 a（unicode-bidi: embed）+ bdi（isolate），
+	 * Chrome 在「拉丁名；拉丁名」之间找不到换行点，整段连成一千多像素的不可断内容，表格就被撑出白纸。
+	 * 用户名改成 inline-block：名字本身成为原子项，只在「；」处换行、不再从名字中间切开；
+	 * anywhere 作兜底：极长用户名 / 摘要里的长串仍能压回容器内，表格的最小内容宽度不再超过可用宽度。 */
+	overflow-wrap: anywhere;
+
+	.changedby a {
+		display: inline-block;
+	}
 }
 
 .mw-enhanced-rc .mw-enhanced-rc-collapsed .mw-collapsible-toggle .mw-collapsible-text {
