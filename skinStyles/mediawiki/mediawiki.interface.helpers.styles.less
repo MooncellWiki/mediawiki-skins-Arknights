@@ -18,16 +18,17 @@
 	color: var( --ak-fg-muted );
 }
 
-.mw-tag-markers,
-.mw-tag-marker {
+// 核心输出两层：.mw-tag-markers 包整段「（标签：…）」，.mw-tag-marker 包每个标签名。
+// 只给内层画框，外层若也带框会套成两层、看起来像被竖线切开。
+.mw-tag-markers {
 	color: var( --ak-fg-muted );
 	font-size: var( --ak-fs-xs );
-	background: var( --ak-bg-surface-2 );
-	border-color: var( --ak-border );
-	border-radius: 0;
 }
 
 .mw-tag-marker {
+	background: var( --ak-bg-surface-2 );
+	border-color: var( --ak-border );
+	border-radius: 0;
 	padding: 0 4px;
 	margin: 0 2px;
 }
