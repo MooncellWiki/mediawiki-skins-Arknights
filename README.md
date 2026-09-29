@@ -1,6 +1,6 @@
 # Skin:Arknights — PRTS.wiki 明日方舟皮肤
 
-基于 [AKDS 设计系统](https://github.com/MooncellWiki/prts-design)（prts-design）实现的 MediaWiki 1.43+ 皮肤，
+基于 [PRTS Design 设计系统](https://github.com/MooncellWiki/prts-design)（prts-design）实现的 MediaWiki 1.43+ 皮肤，
 结构参考 [Citizen](https://github.com/StarCitizenTools/mediawiki-skins-Citizen)：`SkinMustache` + PHP 组件 + Mustache 模板 + LESS + ResourceLoader 包模块。
 
 - 终端（暗）/ 档案（亮）/ 跟随系统 三态主题，`<html class="skin-theme-clientpref-*">`，与 Vector 2022 / Minerva 同一套类名（`.skin-invert` `.notheme` `.mw-no-invert` 约定同样支持）

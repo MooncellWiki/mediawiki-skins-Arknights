@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sync the AKDS design system from prts-design into this skin.
+# Sync the PRTS Design design system from prts-design into this skin.
 #
 #   scripts/sync-design-system.sh [path/to/prts-design]
 #   AKDS_SRC=/path/to/prts-design scripts/sync-design-system.sh
@@ -72,7 +72,7 @@ if git -C "$SRC" rev-parse --short HEAD >/dev/null 2>&1; then
 	fi
 fi
 {
-	echo "# AKDS design system — synced copy"
+	echo "# PRTS Design — synced copy"
 	echo ""
 	echo "Source: prts-design/packages/css/src @ $REV"
 	echo "Synced: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
