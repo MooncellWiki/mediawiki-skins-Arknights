@@ -34,3 +34,13 @@
 	background: var( --ak-bg-surface-2 );
 	border-color: var( --ak-border );
 }
+
+// 话题标题是 .mw-body-content 里的 <h2>，会吃到正文标题的左色条和 ::after 短横条
+// （design-system/base/typography.css）。padding / margin / border-bottom Flow 自己已重置。
+.flow-topic-title {
+	border: 0;
+
+	&::after {
+		display: none;
+	}
+}
