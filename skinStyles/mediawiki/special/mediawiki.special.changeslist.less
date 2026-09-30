@@ -68,3 +68,25 @@
 		color: var( --ak-fg );
 	}
 }
+
+/**
+ * Byte counts outside a `.mw-changeslist`.
+ *
+ * This module repeats the helpers' `.mw-plusminus-*` colours from Codex tokens the bridge
+ * does not carry (`--color-content-added` → #006400 fallback), and it loads after
+ * mediawiki.interface.helpers.styles, so the skin's own colours there lose the tie. Inside
+ * a changes list the design system's scoped rule (base/special-pages.css) wins anyway;
+ * lists that load this module without that wrapper — Flow's topic / board history — got
+ * dark green on the terminal theme.
+ */
+.mw-plusminus-pos {
+	color: var( --ak-success );
+}
+
+.mw-plusminus-neg {
+	color: var( --ak-danger );
+}
+
+.mw-plusminus-null {
+	color: var( --ak-fg-muted );
+}
