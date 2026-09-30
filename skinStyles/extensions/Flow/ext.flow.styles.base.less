@@ -1,6 +1,30 @@
 /**
- * StructuredDiscussions (Flow) — base surfaces
+ * StructuredDiscussions (Flow) — the server-rendered board (ext.flow.styles.base)
+ *
+ * Flow mostly compiles against the Codex LESS variables, which this skin already bridges to
+ * `--ak-*` (mediawiki.skin.variables.less). What is left over, and handled here:
+ *   · hardcoded Wikimedia greys (#eaecf0 slabs, #72777d text, `#000` hovers);
+ *   · its glyphs — `.mw-ui-icon-{name}::before` background images drawn in black;
+ *   · Flow's own "dark mode fix" (common.less, T357600), which assumes the side rail stays
+ *     light grey and therefore paints everything in it black.
  */
+
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
+// The terminal theme is two selectors (explicit night / follow-OS); `.flow-night( { … } )`
+// writes a rule set under both, the same shape as Flow's own `.flow-dark-mode-fix()`.
+.flow-night( @rules ) {
+	html.skin-theme-clientpref-night {
+		@rules();
+	}
+
+	@media ( prefers-color-scheme: dark ) {
+		html.skin-theme-clientpref-os {
+			@rules();
+		}
+	}
+}
+
 .flow-component,
 .flow-board,
 .flow-topic,
@@ -8,39 +32,292 @@
 	color: var( --ak-fg );
 }
 
-.flow-board-header,
-.flow-topic-titlebar,
 .flow-topic .flow-post-content,
-.flow-board-navigation .flow-board-navigator-first,
 .flow-newtopic-form,
 .flow-ui-editorWidget {
-	background: var( --ak-bg-surface );
 	border-color: var( --ak-border );
 	color: var( --ak-fg );
 }
 
-.flow-topic-titlebar {
-	background: var( --ak-bg-surface-2 );
-}
-
 .flow-topic-meta,
 .flow-post-meta,
-.flow-board-navigation .flow-board-navigator-first,
+.flow-post-meta-actions a::after,
+.flow-no-more,
+.flow-undo,
 .flow-post-content-title {
 	color: var( --ak-fg-muted );
 }
 
-.flow-topic-summary-container {
+/**
+ * Topic title bar — the head of each topic, in the design system's panel-head language
+ * (components/panel.css): `--ak-bg-surface-2` fill, 1px frame, accent bar down the left.
+ * Without a fill a topic is only a bold line on the page surface, and nothing marks where
+ * one thread ends and the next begins.
+ *
+ * Flow's dark-mode fix forces `transparent` here at 0-2-1 (common.less, T357600), hence
+ * the theme-class selectors: they are only there to outweigh it, the value is the same in
+ * both themes.
+ */
+.flow-topic-titlebar,
+html.skin-theme-clientpref-night .flow-topic-titlebar,
+html.skin-theme-clientpref-os .flow-topic-titlebar {
+	.ak-bar-left( 3px );
 	background: var( --ak-bg-surface-2 );
-	border-color: var( --ak-border );
+	color: var( --ak-fg );
 }
 
-// 话题标题是 .mw-body-content 里的 <h2>，会吃到正文标题的左色条和 ::after 短横条
+// Resolved ("locked") topics: upstream swaps the fill for a lighter grey; here the fill
+// stays and the bar goes neutral.
+.flow-topic-moderatestate-lock .flow-topic-titlebar {
+	.ak-bar-left( 3px, var( --ak-border-strong ) );
+}
+
+/**
+ * The summary lives inside the title bar, under a hairline. It used to carry a fill of its
+ * own, which began at that hairline and ran to the summary's last line — 8px of padding
+ * above the text, none below, and then the title bar's own bottom padding outside the
+ * fill. Sharing the bar's fill puts that bottom padding back inside the block.
+ */
+.flow-topic-summary-container {
+	.flow-topic-summary,
+	.flow-ui-editTopicSummaryWidget {
+		border-top-color: var( --ak-border );
+	}
+}
+
+// 话题标题与侧栏标题都是 .mw-body-content 里的 <h2>，会吃到正文标题的左色条和 ::after 短横条
 // （design-system/base/typography.css）。padding / margin / border-bottom Flow 自己已重置。
-.flow-topic-title {
+// 侧栏标题本身就是 .mw-ui-icon-before：::before 是图标，::after 只可能是那条短横。
+.flow-topic-title,
+.flow-board-header-title {
 	border: 0;
 
 	&::after {
 		display: none;
 	}
+}
+
+/**
+ * Side rail (board description).
+ *
+ * Flow draws the rail's fill on a full-height `::before` at `z-index: -1`, which relies on
+ * nothing between it and the page painting a background. Here `.ak-body` does, so the fill
+ * went *under* the content card and the rail had no surface at all. `isolation` gives the
+ * board its own stacking context, which keeps the pseudo-element above the card.
+ */
+.flow-component.flow-board-page {
+	isolation: isolate;
+}
+
+.flow-component.flow-board-page .flow-board-header,
+.flow-component.flow-board-page.flow-full-height-side-rail .flow-board-header::before {
+	background-color: var( --ak-bg-surface-2 );
+	box-shadow: -1px 0 0 0 var( --ak-border );
+}
+
+// …and the full-height variant keeps the header itself clear, as upstream does.
+.flow-component.flow-board-page.flow-full-height-side-rail .flow-board-header {
+	background: transparent;
+	box-shadow: none;
+}
+
+/**
+ * Undo Flow's dark-mode fix for the rail.
+ *
+ *   html.skin-theme-clientpref-night .flow-board-header * { color: #000; }
+ *
+ * That is right for a rail that stays #eaecf0 and wrong for one that follows the theme:
+ * black on `--ak-bg-surface-2`. There is no value that "un-declares" a colour, so the
+ * wildcard is answered with `inherit` (same selector, later in the cascade) and the link
+ * colours it flattened along the way are put back one notch above it.
+ */
+.flow-night( {
+	.flow-board-header * {
+		color: inherit;
+	}
+
+	.flow-board-header a {
+		color: var( --ak-link );
+
+		&:visited {
+			color: var( --ak-link-visited );
+		}
+
+		&:hover {
+			color: var( --ak-link-hover );
+		}
+
+		&.new,
+		&.new:visited {
+			color: var( --ak-link-new );
+		}
+
+		&.external {
+			color: var( --ak-link-external );
+		}
+
+		&.mw-selflink {
+			color: inherit;
+		}
+	}
+
+	.flow-board-header .flow-board-header-restricted,
+	.flow-board-header .flow-board-header-footer {
+		color: var( --ak-fg-muted );
+	}
+} );
+
+/**
+ * Glyphs.
+ *
+ * `.mw-ui-icon-{name}::before` is a background image from the OOUI image modules, drawn
+ * in black; the flagged variants (`-progressive`, `-destructive`, `-invert`) carry their
+ * own colour and are left alone. Same treatment as `.oo-ui-iconElement-icon`
+ * (skinStyles/ooui/oojs-ui-core.less). The variant is matched as a whole class-name
+ * ending, not a substring: Flow also puts `mw-ui-icon-star-progressive-hover` on the
+ * plain (black) star. The exclusions sit in `:where()` so they add no weight and the
+ * rule stays easy to override (ext.flow.less does, for glyphs on a coloured tooltip).
+ */
+@flow-icon-plain: ~".mw-ui-icon:where( :not( [class$='-progressive'], [class*='-progressive '], [class$='-destructive'], [class*='-destructive '], [class$='-invert'], [class*='-invert '] ) )::before";
+
+.flow-night( {
+	.flow-component @{flow-icon-plain},
+	.flow-ui-tooltip @{flow-icon-plain} {
+		filter: invert( 1 );
+	}
+} );
+
+// "Load more" is a progressive button carrying the white `-invert` glyph; the terminal
+// theme's accent takes dark text (`--ak-accent-fg`), so there the glyph flips to match.
+.flow-night( {
+	.flow-component .mw-ui-progressive .mw-ui-icon[ class*='-invert' ]::before {
+		filter: invert( 1 );
+	}
+} );
+
+/**
+ * Watched star: Codex blue (#36c) baked into the image. Redrawn as a mask so it can take
+ * the same `--ak-accent-2` as the page header's own star (chrome/page-header.css).
+ */
+.flow-component .flow-unwatch.mw-ui-icon::before {
+	@star: url( data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2020%2020%27%3E%3Cpath%20d=%27M20%207h-7L10%20.5%207%207H0l5.46%205.47-1.64%207%206.18-3.7%206.18%203.73-1.63-7z%27/%3E%3C/svg%3E );
+	background-image: none;
+	background-color: var( --ak-accent-2 );
+	-webkit-mask: @star center / contain no-repeat;
+	mask: @star center / contain no-repeat;
+}
+
+// The edit pencil in the rail's nav fades in from 0.33; on a dark surface that is too faint.
+.flow-board-header-icon {
+	opacity: 0.6;
+}
+
+/**
+ * Navigation bar ("browse topics" / sort) and the legacy menus.
+ */
+.flow-board-navigation {
+	a:hover,
+	a:focus,
+	a.flow-board-navigator-link-highlight {
+		color: var( --ak-fg );
+	}
+
+	// Sticks to the viewport once scrolled past — below the skin's own sticky header.
+	&.flow-board-navigation-affixed {
+		top: var( --ak-header-h );
+		background: var( --ak-bg-surface );
+	}
+}
+
+.flow-component .flow-list {
+	li:hover,
+	a:focus {
+		background: var( --ak-bg-hover );
+	}
+}
+
+div > .flow-menu {
+	ul {
+		background: var( --ak-bg-surface );
+		border-color: var( --ak-border );
+		box-shadow: var( --ak-shadow-md );
+	}
+
+	&.flow-menu-hoverable:hover,
+	&.focus {
+		.flow-menu-js-drop a {
+			background: var( --ak-bg-hover );
+
+			.caret {
+				border-top-color: var( --ak-fg );
+			}
+		}
+	}
+}
+
+/**
+ * Text links Flow colours itself (mediawiki.ui/anchors.less): #36c / #d73333 and their
+ * lighten() / darken() steps, hardcoded upstream to work around T357740.
+ */
+.mw-ui-anchor {
+	&.mw-ui-progressive,
+	&.mw-ui-progressive.mw-ui-quiet:hover {
+		color: var( --ak-link );
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: var( --ak-link-hover );
+		}
+	}
+
+	&.mw-ui-destructive,
+	&.mw-ui-destructive.mw-ui-quiet:hover {
+		color: var( --ak-danger );
+	}
+
+	&.mw-ui-progressive.mw-ui-quiet,
+	&.mw-ui-destructive.mw-ui-quiet {
+		color: var( --ak-fg );
+	}
+}
+
+// Timestamps read as metadata until hovered; the hover colours are copied from the legacy
+// skinning module (#0645ad / #0b0080 / #faa700).
+a.flow-timestamp-anchor:hover,
+a.flow-timestamp-anchor:hover:visited,
+a.flow-timestamp-anchor:hover:active {
+	color: var( --ak-link-hover );
+}
+
+/**
+ * Posts.
+ */
+.flow-post {
+	// Permalink target, and "everything newer than this post".
+	.mw-content-ltr &.flow-post-highlighted > .flow-post-main {
+		border-left-color: var( --ak-accent );
+	}
+
+	.mw-content-rtl &.flow-post-highlighted > .flow-post-main {
+		border-right-color: var( --ak-accent );
+	}
+
+	.mw-content-ltr &.flow-post-highlight-newer .flow-post-content {
+		border-left-color: var( --ak-accent-muted );
+	}
+
+	.mw-content-rtl &.flow-post-highlight-newer .flow-post-content {
+		border-right-color: var( --ak-accent-muted );
+	}
+}
+
+.flow-reply-count {
+	color: var( --ak-fg-subtle );
+}
+
+// Single-revision / history views
+.flow-revision-content {
+	background-color: var( --ak-bg-surface-2 );
+	color: var( --ak-fg-secondary );
 }

@@ -493,6 +493,8 @@
 			"+ext.RevisionSlider.lazyCss": "skinStyles/extensions/RevisionSlider/ext.RevisionSlider.lazyCss.less",
 			"+ext.discussionTools.init.styles": "skinStyles/extensions/DiscussionTools/ext.discussionTools.init.styles.less",
 			"+ext.flow.styles.base": "skinStyles/extensions/Flow/ext.flow.styles.base.less",
+			"+ext.flow.ui": "skinStyles/extensions/Flow/ext.flow.ui.less",
+			"+ext.flow": "skinStyles/extensions/Flow/ext.flow.less",
 			"+ext.datamaps.core.styles": "skinStyles/extensions/DataMaps/ext.datamaps.core.styles.less",
 			"+ext.templateData": "skinStyles/extensions/TemplateData/ext.templateData.less",
 			"+ext.pygments": "skinStyles/extensions/SyntaxHighlight_GeSHi/ext.pygments.less",

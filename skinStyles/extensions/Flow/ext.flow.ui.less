@@ -1,0 +1,131 @@
+/**
+ * StructuredDiscussions (Flow) — the OOUI widgets that take over once JS is up (ext.flow.ui)
+ */
+
+/**
+ * Navigation bar, once scrolled past.
+ *
+ * Flow pins it to `top: 0`, which is where this skin's own sticky header already sits — the
+ * bar and the top of its topic list ended up underneath the header.
+ */
+.flow-ui-navigationWidget-affixed {
+	top: var( --ak-header-h );
+	background: var( --ak-bg-surface );
+}
+
+// Topic list dropdown: the always-visible WebKit scrollbar is painted white on white.
+.flow-ui-topicMenuSelectWidget {
+	border-color: var( --ak-border );
+
+	&-locked,
+	&-locked:hover {
+		color: var( --ak-fg-muted );
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border-color: var( --ak-bg-surface );
+		background-color: var( --ak-border-strong );
+	}
+
+	&::-webkit-scrollbar-track {
+		background-color: var( --ak-bg-surface );
+	}
+}
+
+/**
+ * Editor.
+ *
+ * Flow strips the textarea's own frame and draws one around the whole editor (textarea +
+ * toolbar) instead, so the pair reads as a single field. This skin's OOUI input rules
+ * (skinStyles/ooui/oojs-ui-core.less) outweigh that reset and put the frame, the fill and
+ * the focus ring back on the textarea — a field inside a field, two rings when focused.
+ * The reset is restated here above them, and the outer frame takes the input look.
+ *
+ * The theme-class selectors are there for weight only: the well is `#fff` upstream and
+ * `transparent` under Flow's dark-mode fix (0-3-1); both themes get the same surface.
+ */
+.flow-ui-editorWidget-editor > .oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input {
+	&,
+	&:focus {
+		background: transparent;
+		border: 0;
+		box-shadow: none;
+		outline: 0;
+	}
+}
+
+.flow-ui-editorWidget > .flow-ui-editorWidget-editor,
+html.skin-theme-clientpref-night .flow-ui-editorWidget > .flow-ui-editorWidget-editor,
+html.skin-theme-clientpref-os .flow-ui-editorWidget > .flow-ui-editorWidget-editor {
+	background-color: var( --ak-bg-surface );
+}
+
+.flow-ui-editorWidget-editor {
+	border-color: var( --ak-border-strong );
+}
+
+.flow-ui-editorWidget-focused .flow-ui-editorWidget-editor,
+.flow-component .ve-init-target.flow-ui-focused {
+	border-color: var( --ak-accent );
+	box-shadow: var( --ak-shadow-accent );
+}
+
+/**
+ * New topic: the title input and the editor are stacked with a 1px overlap so they share
+ * one border line. The editor comes later in the DOM and paints on top, so a focused title
+ * lost its bottom edge to the editor's grey one. Whichever half has focus goes on top
+ * (Flow already lifts the editor when *it* is focused).
+ */
+.flow-ui-newTopicWidget-title:focus-within {
+	position: relative;
+	z-index: 1;
+}
+
+.flow-ui-editorWidget-wikitextHelpLabel,
+.flow-ui-editorControlsWidget-termsLabel {
+	color: var( --ak-fg-muted );
+}
+
+/**
+ * Notices above the editor: a Codex-blue slab (#36c) and an amber one (#ffb50d) whose text
+ * colour is a theme token — light text on amber in the terminal theme. Both become the
+ * design system's tinted message rows (components/message.css): status wash, status bar on
+ * the left, body text in the normal foreground.
+ */
+.flow-ui-anonWarningWidget-active,
+.flow-ui-canNotEditWidget-active {
+	border-left: 3px solid var( --ak-info );
+	background: var( --ak-info-bg );
+	color: var( --ak-fg );
+}
+
+.flow-ui-canNotEditWidget-active {
+	border-left-color: var( --ak-warning );
+	background: var( --ak-warning-bg );
+}
+
+.flow-ui-anonWarningWidget-active {
+	a {
+		color: var( --ak-link );
+
+		&:hover {
+			color: var( --ak-link-hover );
+		}
+	}
+
+	// The icon is the white `-invert` variant, made for the blue slab: on a tinted wash it
+	// has to be dark in the archive theme and stay white in the terminal one.
+	> .oo-ui-iconWidget.oo-ui-image-invert {
+		filter: invert( 1 );
+	}
+
+	html.skin-theme-clientpref-night & > .oo-ui-iconWidget.oo-ui-image-invert {
+		filter: none;
+	}
+
+	@media ( prefers-color-scheme: dark ) {
+		html.skin-theme-clientpref-os & > .oo-ui-iconWidget.oo-ui-image-invert {
+			filter: none;
+		}
+	}
+}

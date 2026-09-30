@@ -1,0 +1,88 @@
+/**
+ * StructuredDiscussions (Flow) — modal and tooltips (ext.flow)
+ *
+ * Both are Flow's own copies of long-gone mediawiki.ui components, with the Wikimedia
+ * palette written in as literals.
+ */
+
+.flow-ui-modal {
+	background: var( --ak-bg-overlay );
+}
+
+.flow-ui-modal-layout {
+	background: var( --ak-bg-surface );
+	box-shadow: 0 0 0 1px var( --ak-border ), var( --ak-shadow-lg );
+	color: var( --ak-fg );
+}
+
+.flow-ui-modal-heading {
+	border-bottom-color: var( --ak-border );
+	color: var( --ak-fg );
+}
+
+/**
+ * Tooltips.
+ *
+ * The arrow is a rotated square behind a clipping box, and its outline is a box-shadow in
+ * a fixed grey; the coloured variants repeat the trick with a darkened shade of the fill.
+ * Each of those is matched here selector for selector, so the arrow keeps following the
+ * body whichever side it is on.
+ */
+.flow-ui-tooltip {
+	background-color: var( --ak-bg-surface-3 );
+	box-shadow: 0 0 0 1px var( --ak-border ), var( --ak-shadow-md );
+	color: var( --ak-fg );
+
+	.flow-ui-tooltip-triangle::after,
+	&.flow-ui-tooltip-up .flow-ui-tooltip-triangle::after,
+	&.flow-ui-tooltip-down .flow-ui-tooltip-triangle::after,
+	&.flow-ui-tooltip-left .flow-ui-tooltip-triangle::after,
+	&.flow-ui-tooltip-right .flow-ui-tooltip-triangle::after {
+		background: var( --ak-bg-surface-3 );
+		box-shadow: 0 0 0 1px var( --ak-border );
+	}
+
+	.flow-ui-tooltip-color( @bg, @fg ) {
+		background: @bg;
+		box-shadow: var( --ak-shadow-md );
+		color: @fg;
+
+		// `#fff !important` upstream, written for the blue slab.
+		a {
+			color: @fg !important; /* stylelint-disable-line declaration-no-important */
+		}
+
+		.flow-ui-tooltip-triangle::after,
+		&.flow-ui-tooltip-up .flow-ui-tooltip-triangle::after,
+		&.flow-ui-tooltip-down .flow-ui-tooltip-triangle::after,
+		&.flow-ui-tooltip-left .flow-ui-tooltip-triangle::after,
+		&.flow-ui-tooltip-right .flow-ui-tooltip-triangle::after {
+			background: @bg;
+			box-shadow: none;
+		}
+	}
+
+	&[ class ].mw-ui-progressive {
+		.flow-ui-tooltip-color( var( --ak-accent ), var( --ak-accent-fg ) );
+	}
+
+	&[ class ].mw-ui-destructive {
+		.flow-ui-tooltip-color( var( --ak-red-800 ), #fff );
+	}
+}
+
+// Glyphs on the accent fill follow its text colour: black in the terminal theme (the
+// plain-glyph inversion in ext.flow.styles.base would turn them white), white in the archive.
+.flow-ui-tooltip.mw-ui-progressive .mw-ui-icon::before {
+	filter: invert( 1 );
+}
+
+html.skin-theme-clientpref-night .flow-ui-tooltip.mw-ui-progressive .mw-ui-icon::before {
+	filter: none;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os .flow-ui-tooltip.mw-ui-progressive .mw-ui-icon::before {
+		filter: none;
+	}
+}
