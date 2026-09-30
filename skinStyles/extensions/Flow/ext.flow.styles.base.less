@@ -321,3 +321,15 @@ a.flow-timestamp-anchor:hover:active {
 	background-color: var( --ak-bg-surface-2 );
 	color: var( --ak-fg-secondary );
 }
+
+/**
+ * Form actions (moderation dialogs, no-JS forms): "submit" is a <button>, "cancel" an <a>,
+ * floated side by side at the same 32px. A button centres its label in its box; an anchor
+ * lays it out on a line box from the top, which put the two labels 1px apart. The anchor is
+ * made to centre the same way.
+ */
+.flow-form-actions a.mw-ui-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
