@@ -52,4 +52,62 @@
 			color: var( --ak-fg );
 		}
 	}
+
+	// Quiet + flagged: text in the flag's colour, a tinted wash on hover.
+	//
+	// Core gives `.mw-ui-destructive.mw-ui-quiet:hover` (0-4-0) the *solid* destructive
+	// fill together with destructive-coloured text, which through the bridge is red on
+	// red — the button turns into a blank slab the moment it is pointed at (Flow's
+	// "cancel" in the moderation dialogs). The rules above stop at 0-3-0 and never
+	// reached it.
+	&.mw-ui-quiet.mw-ui-progressive {
+		background: transparent;
+		border-color: transparent;
+		color: var( --ak-link );
+
+		&:hover,
+		&:active {
+			background: var( --ak-accent-subtle );
+			border-color: transparent;
+			color: var( --ak-link-hover );
+		}
+	}
+
+	&.mw-ui-quiet.mw-ui-destructive {
+		background: transparent;
+		border-color: transparent;
+		color: var( --ak-danger );
+
+		&:hover,
+		&:active {
+			background: var( --ak-danger-bg );
+			border-color: transparent;
+			color: var( --ak-danger );
+		}
+	}
+
+	&.mw-ui-quiet:focus-visible {
+		border-color: var( --ak-accent );
+		box-shadow: var( --ak-shadow-accent );
+	}
+
+	// Disabled wins over every hover, here and in the design system's base/forms.css
+	// (loaded later, 0-3-0). Those are written without `:not( :disabled )`, so a disabled
+	// progressive button lit up in the full accent colour when pointed at, and at rest
+	// kept the accent's text colour on the disabled fill. The class is doubled for weight.
+	&.mw-ui-button:disabled,
+	&.mw-ui-button:disabled:hover,
+	&.mw-ui-button:disabled:active {
+		background: var( --ak-bg-surface-3 );
+		border-color: var( --ak-border );
+		color: var( --ak-fg-disabled );
+		cursor: not-allowed;
+	}
+
+	&.mw-ui-button.mw-ui-quiet:disabled,
+	&.mw-ui-button.mw-ui-quiet:disabled:hover,
+	&.mw-ui-button.mw-ui-quiet:disabled:active {
+		background: transparent;
+		border-color: transparent;
+	}
 }
