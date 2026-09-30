@@ -199,8 +199,10 @@ function init() {
 			}
 		}
 
+		// Demo-only toggle for template-rendered rows; Vue-managed rows (prts-widgets VoiceTable)
+		// mark the button data-no-toggle and drive is-playing from the real playback state.
 		const play = target.closest( '.ak-voice__play' );
-		if ( play ) {
+		if ( play && !play.closest( '[data-no-toggle]' ) ) {
 			play.classList.toggle( 'is-playing' );
 		}
 	} );
