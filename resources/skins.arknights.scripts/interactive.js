@@ -5,6 +5,9 @@
  * .ak-voice__play · input[data-toggle-class] · .ak-skill-matrix column highlight ·
  * [data-ak-tip] accessibility. Mirrors prts-design skin/resources/skin.js (and preview.js) so
  * templates behave the same on-wiki as in the design-system preview / docs.
+ *
+ * Every state-changing delegation skips elements inside [data-no-toggle]: the Vue components
+ * (prts-widgets) own their state and mark themselves, otherwise both sides would toggle once.
  */
 
 /**
@@ -24,7 +27,8 @@ function all( selector, root ) {
  * @param {Element} tb
  */
 function bindSkillMatrix( tb ) {
-	if ( tb.hasAttribute( 'data-ak-matrix-bound' ) ) {
+	// Vue-managed matrices (AkSkillMatrix) highlight and swap .ak-var themselves.
+	if ( tb.hasAttribute( 'data-ak-matrix-bound' ) || tb.closest( '[data-no-toggle]' ) ) {
 		return;
 	}
 	tb.setAttribute( 'data-ak-matrix-bound', '' );
@@ -163,7 +167,7 @@ function init() {
 		}
 
 		const panelHead = target.closest( '.ak-panel--collapsible > .ak-panel__head' );
-		if ( panelHead ) {
+		if ( panelHead && !panelHead.closest( '[data-no-toggle]' ) ) {
 			panelHead.parentElement.classList.toggle( 'is-collapsed' );
 			return;
 		}
@@ -175,7 +179,7 @@ function init() {
 		}
 
 		const grp = target.closest( '.ak-btn-group > .ak-btn, .ak-phase-tabs > button, .ak-skill-levels > button' );
-		if ( grp ) {
+		if ( grp && !grp.closest( '[data-no-toggle]' ) ) {
 			const parent = grp.parentElement;
 			all( ':scope > *', parent ).forEach( ( b ) => b.classList.toggle( 'is-active', b === grp ) );
 			parent.dispatchEvent( new CustomEvent( 'akds:select', {
