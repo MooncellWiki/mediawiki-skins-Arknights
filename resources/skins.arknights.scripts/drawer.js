@@ -88,11 +88,6 @@ function init() {
 		if ( sidebarToggle && sidebar ) {
 			e.preventDefault();
 			toggle( sidebar, sidebarToggle );
-			return;
-		}
-		if ( target.closest( '.ak-sidebar__close' ) ) {
-			e.preventDefault();
-			close();
 		}
 	} );
 

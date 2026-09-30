@@ -8,7 +8,6 @@
 	"arknights-skin-desc": "{{desc|what=skin|name=Arknights|url=https://github.com/MooncellWiki/mediawiki-skins-Arknights}}",
 	"arknights-jumptocontent": "Label of the skip link that jumps to the page content.",
 	"arknights-drawer-toggle": "Label of the button that opens the navigation drawer on small screens.",
-	"arknights-drawer-close": "Label of the button that closes the navigation drawer / table of contents drawer.",
 	"arknights-search-toggle": "Label of the button that reveals the search box on small screens.",
 	"arknights-search-shortcut": "Keyboard shortcut hint displayed inside the search box. Usually should not be translated.\n{{optional}}",
 	"arknights-theme-toggle-label": "Accessible label of the colour theme switch group.",
