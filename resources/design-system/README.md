@@ -1,7 +1,7 @@
 # PRTS Design — synced copy
 
-Source: prts-design/packages/css/src @ 80f7bbc
-Synced: 2026-09-30T02:39:21Z
+Source: prts-design/packages/css/src @ 4d11131
+Synced: 2026-09-30T03:28:23Z
 
 Do not edit files in this directory. Edit them in prts-design/packages/css/src and run
 `scripts/sync-design-system.sh`. chrome/ (the skin shell) is adopted file by file — see
