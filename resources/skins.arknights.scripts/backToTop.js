@@ -1,6 +1,6 @@
 /**
- * Back to top — the floating button, plus the first row of the TOC flyout that replaces
- * it below 1400px (where a floating button would eat into an already small viewport).
+ * Back to top — the floating button, plus the first row of the TOC flyout (< 1400px) that
+ * replaces it below 1120px (where a floating button would eat into an already small viewport).
  */
 function scrollToTop() {
 	const reduce = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;

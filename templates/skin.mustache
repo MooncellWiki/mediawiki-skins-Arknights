@@ -22,8 +22,9 @@
 {{!
 	Key art — always emitted; an event theme (a gadget, or MediaWiki:Common.css) sets
 	--ak-keyart-image and a height to show it. It sits behind the header glass and the layout
-	and takes no space by default (--ak-keyart-reveal: 0), so the sidebar / heading / TOC
-	still start right below the header. See design-system/tokens.css §2d and the README.
+	and only keeps a thin strip above the layout (--ak-keyart-reveal, 72px by default); the
+	sidebar / heading / TOC start below that strip, over the image. See design-system/tokens.css
+	§2d and the README.
 	A theme that puts readable content in __inner should drop the aria-hidden.
 }}
 <div class="ak-keyart" aria-hidden="true"><div class="ak-keyart__inner"></div></div>
@@ -57,5 +58,5 @@
 	</div>
 </div>
 {{#data-footer}}{{>Footer}}{{/data-footer}}
-{{! Back to top: hidden below 1400px, where the TOC flyout carries the same link instead }}
+{{! Back to top: hidden below 1120px (and while the TOC flyout is open), where the flyout carries the same link instead }}
 <button type="button" class="ak-fab ak-back-to-top" id="ak-back-to-top" aria-label="{{msg-arknights-back-to-top}}" title="{{msg-arknights-back-to-top}}" hidden><span class="ak-icon ak-icon--collapse"></span></button>
