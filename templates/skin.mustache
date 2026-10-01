@@ -20,9 +20,10 @@
 <a class="ak-skip mw-jump-link" href="#bodyContent">{{msg-arknights-jumptocontent}}</a>
 {{>Header}}
 {{!
-	Key art — always emitted, but --ak-keyart-h is 0 by default, so it occupies nothing
-	until an event theme (a gadget, or MediaWiki:Common.css) sets --ak-keyart-image and a
-	height. See the theme interface in design-system/tokens.css §2d and the README.
+	Key art — always emitted; an event theme (a gadget, or MediaWiki:Common.css) sets
+	--ak-keyart-image and a height to show it. It sits behind the header glass and the layout
+	and takes no space by default (--ak-keyart-reveal: 0), so the sidebar / heading / TOC
+	still start right below the header. See design-system/tokens.css §2d and the README.
 	A theme that puts readable content in __inner should drop the aria-hidden.
 }}
 <div class="ak-keyart" aria-hidden="true"><div class="ak-keyart__inner"></div></div>

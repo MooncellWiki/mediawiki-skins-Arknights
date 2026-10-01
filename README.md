@@ -76,7 +76,7 @@ $wgArknightsMenuSidebar = true;
 ```css
 :root {
   --ak-theme-accent: #72a330;                       /* 页眉标语 / 悬停 / 外观开关选中项 / 搜索图标框、侧栏与目录分组条、页脚斜纹一起换 */
-  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 220px;   /* 头图 .ak-keyart：从页面顶端铺起、页眉压在它上面，-h 是页眉之下露出的那段，默认 0 不占位 */
+  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 280px;   /* 头图 .ak-keyart：从页面顶端铺起，垫在页眉与版面背后、不占位；-h 是页眉之下那段画的高度 */
   --ak-chrome-bg: rgba(8, 9, 10, .8);                                           /* 可选：页眉玻璃调淡些让头图多透一点（默认 .9，别低于 .72） */
   --ak-chrome-image: url(//media.prts.wiki/…/headleft.png);
   --ak-chrome-image-position: left top;   --ak-chrome-texture: 0;               /* 可选：顶栏角饰（现网 PRTSheadleft 那种活动徽章 / 深色底纹），有角饰就关掉默认网点 */
@@ -88,10 +88,10 @@ html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/
 
 完整变量表见 prts-design 文档站的「皮肤骨架 · 头图与主题接口」（/chrome/theming）与「色彩 · 页眉 / 头图 / 画布的主题接口」，可运行示例见上游 `packages/css/src/chrome/demo-theme.css`。四点注意：
 
-- **页眉是压在头图上的一块均匀黑玻璃**：头图从页面顶端铺起（CSS 负外边距，DOM 顺序不变），页眉之下露出 `--ak-keyart-h` 那一段，`--ak-keyart-position` / `-size` 按「页眉 + 露出段」整块取景。可读性由 `--ak-chrome-bg` 的 alpha 保证，与底下是什么画无关——所以头图不必自己压暗顶部，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
+- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认不占位——侧栏 / 页面标题 / 目录照常从页眉之下排起，不被往下推；想让画先完整露一段再开始正文，设 `--ak-keyart-reveal`（= `-h` 即旧的横幅带）。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
-- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
+- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽，高度 = 露出段，所以要先给 `--ak-keyart-reveal`）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
 
 ### 页脚链接列（`MediaWiki:Arknights-footer-links`）
 
