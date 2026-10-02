@@ -3,6 +3,8 @@
  * breakpoint, collapsing the header's main row on the way down so only the local nav
  * stays pinned.
  *
+ * Below 1120px it also turns Echo's bells back into plain links to Special:Notifications.
+ *
  * Both are progressive: the collapse is CSS-gated to < 1400px (see responsive.less) and
  * without JS the header simply keeps both rows; the tools card opens and closes on its own
  * checkbox, and this file only adds the dismissals a checkbox cannot express.
@@ -75,6 +77,27 @@ function initNavScreen( toggle ) {
 	}
 }
 
+/**
+ * Below 1120px the bells sit inside the tools card, and Echo's popup — anchored to a bell,
+ * in an overlay on <body> — opens underneath that card with nowhere to go. A phone gets the
+ * full page instead: the badge is already a link to Special:Notifications, so it is enough
+ * to keep the click from reaching Echo (ext.echo.init before the widgets load, OOUI's
+ * BadgeLinkWidget after), both of which cancel the navigation to open the popup.
+ *
+ * Capturing on the document runs ahead of either handler, whichever is bound by then.
+ */
+function initNotificationLinks() {
+	const mq = window.matchMedia( DESKTOP );
+	document.addEventListener( 'click', ( e ) => {
+		if ( mq.matches || !( e.target instanceof Element ) ) {
+			return;
+		}
+		if ( e.target.closest( '.ak-header__notifications a.mw-echo-notifications-badge[href]' ) ) {
+			e.stopPropagation();
+		}
+	}, true );
+}
+
 function init() {
 	const header = document.querySelector( '.ak-header' );
 	if ( !header ) {
@@ -86,6 +109,7 @@ function init() {
 	if ( navToggle ) {
 		initNavScreen( navToggle );
 	}
+	initNotificationLinks();
 
 	let lastY = Math.max( 0, window.scrollY );
 	let ticking = false;
