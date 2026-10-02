@@ -256,6 +256,38 @@ div > .flow-menu {
 }
 
 /**
+ * Action menus ("…") below Flow's own 768px breakpoint (@small in flow.variables.less).
+ *
+ * Upstream drops the whole menu back into the flow there — `position: static`, absolute
+ * only from @small up — so opening one pushed the rest of the topic down by the length of
+ * the list. The trigger stays where it is (its own row, under the topic's enlarged watch
+ * star), and only the list is lifted out, hanging from the trigger's edge as on desktop.
+ * `top: auto` cancels the title bar's `top: 2.5em`, written for the absolute layout: on a
+ * relative box it would shift the trigger itself.
+ */
+@media ( max-width: 767.98px ) {
+	div > .flow-menu,
+	.flow-topic-titlebar .flow-menu {
+		position: relative;
+		top: auto;
+
+		> ul {
+			position: absolute;
+			top: 100%;
+			/* @noflip */
+			right: 0;
+		}
+	}
+
+	.mw-content-rtl div > .flow-menu > ul {
+		/* @noflip */
+		right: auto;
+		/* @noflip */
+		left: 0;
+	}
+}
+
+/**
  * Text links Flow colours itself (mediawiki.ui/anchors.less): #36c / #d73333 and their
  * lighten() / darken() steps, hardcoded upstream to work around T357740.
  */
