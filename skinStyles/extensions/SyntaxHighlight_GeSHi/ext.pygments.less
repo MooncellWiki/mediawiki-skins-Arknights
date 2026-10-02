@@ -15,6 +15,16 @@
 	}
 }
 
+// 上游把行号 `position: absolute` 挂在 div.mw-highlight 上，包含块在会横向滚动的 pre 之外，
+// 所以长行横滑时行号不动、代码从它底下穿过；上游的行号是透明底，槽的底色是 pre 上不随滚动的
+// inset box-shadow（--background-color-neutral），代码文字画在它上面，两者就叠在一起了。
+// 这里给行号垫上同色的底把滑进槽里的代码盖住（行号保持钉在左侧），并让出 pre 左侧 3px 色条
+// （base/typography.css 的 border-left-width），右侧分隔线才与槽的右缘对齐。
+.mw-content-ltr.mw-highlight .linenos {
+	left: 3px;
+	background-color: var( --background-color-neutral );
+}
+
 // Pygments "default" palette is tuned for light backgrounds: soften the worst offenders in dark
 .ak-pygments-dark() {
 	.c,
