@@ -33,6 +33,12 @@ class SkinArknights extends SkinMustache {
 	/** Class prefix on <html>, shared with Vector 2022 / Minerva so on-wiki CSS can target one selector */
 	public const THEME_CLASS_PREFIX = 'skin-theme-clientpref-';
 
+	/**
+	 * The `userpage` item lifted out of the user menu (it becomes the card's head), or null.
+	 * Filled in runOnSkinTemplateNavigationHooks(), read in getTemplateData().
+	 */
+	private ?array $userPageLink = null;
+
 	public function __construct(
 		private readonly PermissionManager $permissionManager,
 		array $options = []
@@ -104,6 +110,15 @@ class SkinArknights extends SkinMustache {
 				$content_navigation['views'][$key] = $content_navigation['actions'][$key];
 				unset( $content_navigation['actions'][$key] );
 			}
+		}
+
+		// The user page link is the head of the user card (a.ak-menu__head#pt-userpage), so the
+		// name shows up once: take it out of the menu before the portlet is rendered.
+		if ( isset( $content_navigation['user-menu']['userpage'] )
+			&& is_array( $content_navigation['user-menu']['userpage'] )
+		) {
+			$this->userPageLink = $content_navigation['user-menu']['userpage'];
+			unset( $content_navigation['user-menu']['userpage'] );
 		}
 
 		// Core sets no `icon` on views / associated-pages, so the action cluster maps its own.
@@ -190,7 +205,7 @@ class SkinArknights extends SkinMustache {
 				$localizer,
 				$user,
 				$parentData['data-portlets']['data-user-menu'] ?? [],
-				$parentData['data-portlets']['data-user-page'] ?? [],
+				$this->userPageLink,
 				$parentData['data-portlets']['data-notifications'] ?? [],
 				$parentData['data-portlets']['data-user-interface-preferences'] ?? []
 			),

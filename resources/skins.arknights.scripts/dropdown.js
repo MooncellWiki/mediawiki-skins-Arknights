@@ -1,8 +1,11 @@
 /**
  * Dropdowns — .ak-dropdown > details enhancements:
  * only one open at a time, close on outside click / Escape / link activation.
+ *
+ * A <details> carrying [data-ak-flat] is laid out flat and held open by its owner (the user
+ * menu inside the header's tools card below 1120px, see header.js) — it is skipped here.
  */
-const SELECTOR = '.ak-dropdown > details';
+const SELECTOR = '.ak-dropdown > details:not( [data-ak-flat] )';
 
 /**
  * @param {HTMLDetailsElement|null} except

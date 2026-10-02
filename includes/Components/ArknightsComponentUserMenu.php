@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace MediaWiki\Skins\Arknights\Components;
 
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\User\User;
 use MessageLocalizer;
 
@@ -17,7 +19,7 @@ class ArknightsComponentUserMenu implements ArknightsComponent {
 		private readonly MessageLocalizer $localizer,
 		private readonly User $user,
 		private readonly array $userMenuData,
-		private readonly array $userPageData,
+		private readonly ?array $userPageLink,
 		private readonly array $notificationsData,
 		private readonly array $userInterfacePreferencesData
 	) {
@@ -28,7 +30,6 @@ class ArknightsComponentUserMenu implements ArknightsComponent {
 		$isTemp = $this->user->isTemp();
 
 		$userMenu = ( new ArknightsComponentMenu( $this->userMenuData ) )->getTemplateData();
-		$userPage = $this->userPageData ? ( new ArknightsComponentMenu( $this->userPageData ) )->getTemplateData() : null;
 		$notifications = $this->notificationsData
 			? ( new ArknightsComponentMenu( $this->notificationsData ) )->getTemplateData()
 			: null;
@@ -56,7 +57,14 @@ class ArknightsComponentUserMenu implements ArknightsComponent {
 			'label' => $label,
 			'msg-toggle' => $this->localizer->msg( 'arknights-usermenu-toggle' )->text(),
 			'data-user-menu' => $userMenu,
-			'data-user-page' => $userPage && !$userPage['is-empty'] ? $userPage : null,
+			// Head of the card: the user page link lifted out of the personal tools (see
+			// SkinArknights::runOnSkinTemplateNavigationHooks). Null → the head is plain text.
+			'data-user-page' => isset( $this->userPageLink['href'] ) ? [
+				'href' => $this->userPageLink['href'],
+				'html-attributes' => Html::expandAttributes(
+					Linker::tooltipAndAccesskeyAttribs( 'pt-userpage' )
+				),
+			] : null,
 			'data-notifications' => $notifications && !$notifications['is-empty'] ? $notifications : null,
 			'data-user-interface-preferences' => $uiPrefs && !$uiPrefs['is-empty'] ? $uiPrefs : null,
 		];

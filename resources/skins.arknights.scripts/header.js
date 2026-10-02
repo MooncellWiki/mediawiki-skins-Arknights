@@ -20,6 +20,10 @@ const DESKTOP = '( min-width: 1120px )';
  * Opening it is pure CSS — this only closes it again on Escape, on an in-page link, on a
  * click outside it, and on the way back to desktop widths.
  *
+ * Inside the card the user menu is laid out flat rather than folded: below 1120px its
+ * <details> is held open (responsive.css hides the summary row), and handed back to the
+ * dropdown behaviour at desktop widths.
+ *
  * @param {HTMLInputElement} toggle
  */
 function initNavScreen( toggle ) {
@@ -52,11 +56,23 @@ function initNavScreen( toggle ) {
 		}
 	} );
 
-	window.matchMedia( DESKTOP ).addEventListener( 'change', ( e ) => {
+	const flat = document.querySelectorAll( '.ak-header__tools .ak-dropdown > details' );
+	const mq = window.matchMedia( DESKTOP );
+	// The attribute tells dropdown.js to leave it alone: flat, it is not a dropdown to fold
+	// on an outside click or on Escape
+	const setFlat = ( open ) => flat.forEach( ( details ) => {
+		details.toggleAttribute( 'data-ak-flat', open );
+		details.open = open;
+	} );
+	mq.addEventListener( 'change', ( e ) => {
 		if ( e.matches ) {
 			close();
 		}
+		setFlat( !e.matches );
 	} );
+	if ( !mq.matches ) {
+		setFlat( true );
+	}
 }
 
 function init() {

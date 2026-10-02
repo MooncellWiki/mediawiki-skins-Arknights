@@ -27,6 +27,7 @@ const SCORE = {
 	titleInfix: 60,
 	aliasExact: 55,
 	aliasPrefix: 50,
+	initialsExact: 48,
 	initialsPrefix: 46,
 	pinyinPrefix: 42,
 	aliasInfix: 38,
@@ -95,7 +96,9 @@ function scoreItem( item, q, asciiQuery ) {
 
 	if ( asciiQuery && item.p ) {
 		let score = 0;
-		if ( item.p.startsWith( q ) ) {
+		if ( item.p === q ) {
+			score = SCORE.initialsExact;
+		} else if ( item.p.startsWith( q ) ) {
 			score = SCORE.initialsPrefix;
 		} else if ( item.f && item.f.startsWith( q ) ) {
 			score = SCORE.pinyinPrefix;
@@ -146,6 +149,16 @@ function createMatcher( groups ) {
 		}
 		const asciiQuery = /^[a-z]+$/.test( q );
 		let budget = MAX_TOTAL;
+		// Whole-word initials ("yh" → 银灰) count as an exact match only when a single
+		// entry has them — Enter must not depend on how two namesakes happen to sort
+		let initialsExact = 0;
+		if ( asciiQuery ) {
+			groups.forEach( ( group ) => group.items.forEach( ( item ) => {
+				if ( item.p === q ) {
+					initialsExact++;
+				}
+			} ) );
+		}
 
 		return groups.map( ( group ) => {
 			if ( budget <= 0 ) {
@@ -184,6 +197,10 @@ function createMatcher( groups ) {
 					// Only highlight the typed text when it really is in the title —
 					// a pinyin or alias hit has nothing to underline there
 					match: score >= SCORE.titleInfix,
+					// Pre-highlighted by the palette (a title typed in full is detected there):
+					// an alias typed in full, or initials that name exactly one entry
+					exact: score === SCORE.aliasExact ||
+						( score === SCORE.initialsExact && initialsExact === 1 ) || undefined,
 					redirect: via || null,
 					meta: metaFor( item )
 				} ) )

@@ -2,13 +2,15 @@
 	object data-notifications  Echo badges portlet (id p-notifications)
 	object data-user-menu      personal tools portlet (id p-personal)
 	object data-user-interface-preferences
+	object data-user-page      href / html-attributes of the user page link — lifted out of data-user-menu
+	                           to be the card's head, so the name appears once (absent: plain-text head)
 	bool is-registered / is-anon
 	string username / label / msg-toggle
 
 	DOM contract of chrome/header.css (+ components/dropdown.css):
 	  .ak-dropdown.ak-header__user-menu > details > summary.ak-btn.ak-btn--ghost.ak-header__user
 	                                              + .ak-menu.ak-menu--right.ak-header__user-card
-	                                                  > .ak-menu__head + nav.ak-menu__group#p-user-interface-preferences + nav.ak-menu__group#p-personal
+	                                                  > a.ak-menu__head#pt-userpage( .ak-avatar + .ak-menu__head-name ) + nav.ak-menu__group#p-user-interface-preferences + nav.ak-menu__group#p-personal
 }}
 {{#data-notifications}}
 <div class="ak-header__notifications" id="{{id}}"{{{html-tooltip}}}>
@@ -22,7 +24,10 @@
 			<span class="ak-header__user-name">{{label}}</span>
 		</summary>
 		<div class="ak-menu ak-menu--right ak-header__user-card">
-			{{#is-registered}}<div class="ak-menu__head"><span class="ak-icon ak-icon--userAvatar"></span>{{username}}</div>{{/is-registered}}
+			{{#is-registered}}
+			{{#data-user-page}}<a class="ak-menu__head" id="pt-userpage" href="{{href}}"{{{html-attributes}}}><span class="ak-avatar"><span class="ak-icon ak-icon--userAvatar"></span></span><span class="ak-menu__head-name">{{username}}</span></a>{{/data-user-page}}
+			{{^data-user-page}}<div class="ak-menu__head"><span class="ak-icon ak-icon--userAvatar"></span>{{username}}</div>{{/data-user-page}}
+			{{/is-registered}}
 			{{#data-user-interface-preferences}}{{>MenuGroup}}{{/data-user-interface-preferences}}
 			{{#data-user-menu}}{{>MenuGroup}}{{/data-user-menu}}
 		</div>

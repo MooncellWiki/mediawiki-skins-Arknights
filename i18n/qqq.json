@@ -58,6 +58,7 @@
 	"arknights-search-redirect": "Note on a result reached through a redirect or an alternate name. Parameters:\n* $1 - the title that matched",
 	"arknights-search-hint-navigate": "Footer key hint for the arrow keys. Keep it short.",
 	"arknights-search-hint-open": "Footer key hint for Enter. Keep it short.",
+	"arknights-search-hint-go": "Footer key hint for Enter when no row is highlighted: Enter then runs MediaWiki's \"Go\" (exact title, else full-text results). Keep it short.",
 	"arknights-search-hint-fulltext": "Footer key hint for Shift+Enter. Keep it short.",
 	"arknights-search-hint-close": "Footer key hint for Escape when there is nothing to clear. Keep it short.",
 	"arknights-search-hint-clear": "Footer key hint for Escape while the query is non-empty. Keep it short.",

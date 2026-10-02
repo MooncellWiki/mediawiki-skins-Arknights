@@ -154,7 +154,9 @@ function init() {
 			redirect: page.matched_title &&
 				isRedirectWorthShowing( page.title, page.matched_title ) ?
 				mw.msg( 'arknights-search-redirect', page.matched_title ) :
-				null
+				null,
+			// The redirect that was hit: typing it in full is an exact match (pre-highlighted)
+			matched: page.matched_title || ''
 		} ) ) );
 	}
 
@@ -173,14 +175,22 @@ function init() {
 			// points at the redirect ("/w/SilverAsh"), not at the page the index listed
 			// ("/w/银灰"), so URLs alone would let the same operator through twice.
 			const seen = new Set();
+			const byLabel = new Map();
 			groups.forEach( ( group ) => group.items.forEach( ( item ) => {
 				seen.add( item.url );
 				seen.add( item.label );
+				byLabel.set( item.label, item );
 			} ) );
 
-			const rest = results[ 1 ].filter(
-				( item ) => !seen.has( item.url ) && !seen.has( item.label )
-			);
+			const rest = results[ 1 ].filter( ( item ) => {
+				// The index row that wins keeps the redirect the REST hit came through, so
+				// typing that redirect in full still counts as an exact match
+				const kept = byLabel.get( item.label );
+				if ( kept && item.matched && !kept.matched ) {
+					kept.matched = item.matched;
+				}
+				return !seen.has( item.url ) && !seen.has( item.label );
+			} );
 			if ( rest.length ) {
 				groups.push( {
 					id: 'pages',
@@ -405,6 +415,7 @@ function init() {
 		results: mw.msg( 'arknights-search-results' ),
 		hintNavigate: mw.msg( 'arknights-search-hint-navigate' ),
 		hintOpen: mw.msg( 'arknights-search-hint-open' ),
+		hintGo: mw.msg( 'arknights-search-hint-go' ),
 		hintFulltext: mw.msg( 'arknights-search-hint-fulltext' ),
 		hintClose: mw.msg( 'arknights-search-hint-close' ),
 		hintClear: mw.msg( 'arknights-search-hint-clear' ),
