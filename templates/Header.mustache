@@ -54,6 +54,8 @@
 		It stays pinned once the main row scrolls away, so the drawer and the table of
 		contents are reachable at any scroll position without a floating corner button.
 		The TOC flyout is opened by the checkbox below (pure CSS, works without JS).
+		At < 640px it is no row of its own: CSS folds both buttons into the main row
+		(display:contents on this and .ak-header__inner), so the DOM stays as it is.
 	}}
 	<div class="ak-local-nav">
 		<button type="button" class="ak-local-nav__btn ak-local-nav__menu" id="ak-drawer-toggle" aria-controls="ak-sidebar" aria-expanded="false">

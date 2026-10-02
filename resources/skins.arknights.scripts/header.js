@@ -5,9 +5,10 @@
  *
  * Below 1120px it also turns Echo's bells back into plain links to Special:Notifications.
  *
- * Both are progressive: the collapse is CSS-gated to < 1400px (see responsive.less) and
- * without JS the header simply keeps both rows; the tools card opens and closes on its own
- * checkbox, and this file only adds the dismissals a checkbox cannot express.
+ * Both are progressive: the collapse is CSS-gated to 640–1399px (see responsive.css; below
+ * 640px the two rows are one and it stays put) and without JS the header simply keeps both
+ * rows; the tools card opens and closes on its own checkbox, and this file only adds the
+ * dismissals a checkbox cannot express.
  */
 
 /** Distance from the top below which the header is always expanded */
