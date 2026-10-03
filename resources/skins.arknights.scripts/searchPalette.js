@@ -356,7 +356,10 @@ function init() {
 			label: mw.msg( 'arknights-search-mode-file' ),
 			desc: mw.msg( 'arknights-search-mode-file-desc' ),
 			placeholder: mw.msg( 'arknights-search-mode-file-placeholder' ),
-			search: ( query ) => api.get( {
+			// No request without a query: gpssearch is a required parameter and the API rejects an
+			// empty one (missingparam), which the palette would report as "search unavailable".
+			// An empty result makes it show the mode's description instead.
+			search: ( query ) => ( !query ? [] : api.get( {
 				action: 'query',
 				generator: 'prefixsearch',
 				gpssearch: query,
@@ -378,7 +381,7 @@ function init() {
 						url: mw.util.getUrl( page.title ),
 						thumb: page.thumbnail && page.thumbnail.source
 					} ) )
-			} ] )
+			} ] ) )
 		}
 	];
 

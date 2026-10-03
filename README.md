@@ -251,7 +251,7 @@ Widget / 小工具 / 模板里直接写裸 `<input>` `<select>` `<textarea>` `<b
 |---|---|---|
 | 标题搜索 | `GET /rest.php/v1/search/title` | 与 Vector 2022 / Citizen 相同。`thumbnail` 需要 PageImages，`description` 需要短描述扩展；两者缺失时静默降级 |
 | 本地即时索引 | `mw.hook( 'skin.arknights.search' )` | 见下节。给出中缀匹配、别名与拼音首字母 —— 核心标题搜索只能前缀匹配 |
-| 模式 | Action API | `#` 分类（空查询＝本页所属）· `@` 用户 · `~` 文件；`>` 动作直接扫本页的 `#p-views #p-cactions #p-tb #p-personal` 与页面标签 |
+| 模式 | Action API | `#` 分类（空查询＝本页所属）· `@` 用户 · `~` 文件（空查询不发请求：`gpssearch` 必填，空串会被 API 拒掉）；`>` 动作直接扫本页的 `#p-views #p-cactions #p-tb #p-personal` 与页面标签 |
 
 ### 快捷入口（`MediaWiki:Arknights-search-shortcuts`）
 
