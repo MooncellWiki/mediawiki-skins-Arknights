@@ -1,12 +1,19 @@
 /**
  * jquery.tablesorter — sort indicators (base.css draws ⇅ ↑ ↓; hide core's bitmaps)
+ *
+ * The bitmaps have to be beaten here: core ships them in the module's `styles`, not
+ * `skinStyles.default`, so dropping the `+` in skin.json would not remove them. Core's dark
+ * rules (`html.skin-theme-clientpref-night.client-js .jquery-tablesorter th.headerSort`, and the
+ * `-os` copy under prefers-color-scheme: dark) swap in *_inverted.svg at 0,4,2, which outranks a
+ * plain 0,2,1 `background-image: none` — the inverted arrows then sat under the ::after glyph as
+ * a second icon. Sorted headers keep `.headerSort`, so this also covers headerSortUp / Down.
+ * The first selector is core's pre-JS placeholder, which draws sort_both.svg before tablesorter runs.
  */
+.client-js .sortable:not( .jquery-tablesorter ) > * > tr:first-child > th:not( .unsortable ),
 .jquery-tablesorter th.headerSort {
-	background-image: none;
-	padding-right: 1.6em;
+	background-image: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
-.jquery-tablesorter th.headerSortUp,
-.jquery-tablesorter th.headerSortDown {
-	background-image: none;
+.jquery-tablesorter th.headerSort {
+	padding-right: 1.6em;
 }
