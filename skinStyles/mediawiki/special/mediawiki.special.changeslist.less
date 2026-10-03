@@ -56,10 +56,6 @@
 		font-weight: 700;
 	}
 
-	.unpatrolled {
-		color: var( --ak-danger );
-	}
-
 	.mw-tag-markers {
 		color: var( --ak-fg-muted );
 	}
@@ -112,7 +108,8 @@
 	}
 }
 
-// 标记块（新 / 小 / 机 / !）：分组与非分组列表、图例三处同一个样子
+// 标记块（新 / 小 / 机 / !）：分组与非分组列表、图例三处同一个样子。
+// 「!」不跟核心染红，与小 / 机同一个中性块。
 .mw-changeslist abbr,
 .mw-changeslist-legend dt {
 	&.newpage,
@@ -144,12 +141,6 @@
 		border-color: var( --ak-accent-muted );
 		background: var( --ak-accent-subtle );
 		color: var( --ak-accent );
-	}
-
-	&.unpatrolled {
-		border-color: var( --ak-danger );
-		background: var( --ak-danger-bg );
-		color: var( --ak-danger );
 	}
 }
 
