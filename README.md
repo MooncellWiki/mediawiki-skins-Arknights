@@ -167,7 +167,7 @@ resources/
   design-system/                  ← 从 prts-design/packages/css/src 原样同步，勿改：tokens.css · bridge-codex.css ·
                                   scope.css · base/ · components/ · decor/ · arknights/ · utilities.css · forced-colors.css ·
                                   chrome/（骨架层）· img/ · sidebar-tree.js · search-palette.js
-  design-system/fonts.css         ← 同上：121 条 @font-face（自托管 web 字体，见下文「字体」）
+  design-system/fonts.css         ← 同上：122 条 @font-face（自托管 web 字体，见下文「字体」）
   design-system/fonts/            ← 同上：woff2 与各族授权全文（Noto Sans SC 101 片 + 5 族，≈5MB）
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
   skins.arknights.styles/         MediaWiki 胶水 LESS：shell-glue（无 JS 真搜索表单 / 菜单卡片里的 MW 项 / 副标题 / 页脚描述）· base（站点通知等）·
@@ -207,11 +207,11 @@ scripts/sync-design-system.sh     同步设计系统：拷贝 packages/css/src �
 | 角色 | 字族 | 来源 |
 |---|---|---|
 | 正文 `--ak-font-body` | Noto Sans SC 100–900 可变 | OFL；沿用 Google 的 101 片 `unicode-range` 切分，一页典型只下 5–15 片 |
-| 展示 `--ak-font-display` | Novecento Sans Wide 500–800 → Bender → Oswald | 前两族取自明日方舟官网静态资源（**ASCII 子集**，`·` `»` `—` 等非 ASCII 逐字落到后面的 OFL 字体） |
+| 展示 `--ak-font-display` | Novecento Sans Wide 500–800 → Bender → Oswald | Novecento 500–700 是完整字形（带 `lnum`：用展示字的规则都带 `font-variant-numeric: lining-nums`，数字与大写等高）；Novecento 800 与 Bender 取自明日方舟官网静态资源（**ASCII 子集**，`·` `»` `—` 等非 ASCII 逐字落到后面的 OFL 字体） |
 | HUD 标签 / 数值 `--ak-font-label` | Bender 400/700 → Chakra Petch | 同上；Chakra Petch（OFL）接非 ASCII |
 | 压缩 `--ak-font-condensed` / 等宽 `--ak-font-mono` | Oswald / JetBrains Mono | OFL |
 
-- **授权**：Novecento Sans Wide 与 Bender 是商用字，PRTS.wiki 作为明日方舟官方赞助站点按与鹰角同一组织下共用授权使用；各族授权全文与来源说明随字体文件放在 `resources/design-system/fonts/<族>/{LICENSE,NOTICE.md}`。上游 `prts-design/scripts/fetch-fonts.py` 负责抓取与生成，这里只做同步。
+- **来源**：各族的 `LICENSE` / `NOTICE.md` 随字体文件放在 `resources/design-system/fonts/<族>/`。上游 `prts-design/scripts/fetch-fonts.py` 负责生成，这里只做同步。
 - **落盘 ≈5MB，但按需下载**：`font-display: swap` + `unicode-range` 分片，ResourceLoader 只重写 `url()` 不内联。上线后建议确认 CSSMin 没有动 `unicode-range`。
 - **要关掉**（用户偏好 / Gadget / 低带宽）：把 `skins.arknights.fonts` 从 `skin.json` 的 `styles` 里去掉即可，字体链会自然退到装机字与系统字，排版不塌。
 - **数字**：Bender 只做 HUD 层（徽章、面板数值、大字号）。正文尺寸的连续数字（时间戳、差异行号、分页页数、表格数字列）走正文字体 + `font-variant-numeric: tabular-nums` —— Noto Sans SC 的数字本身等宽，天然对齐，而官网 Bender 子集没有 `tnum`、小字号又偏细。
