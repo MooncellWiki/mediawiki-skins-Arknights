@@ -52,8 +52,8 @@ class ArknightsComponentPageHeading implements ArknightsComponent {
 				return $nsMsg->parse();
 			}
 		}
-		$msg = $this->localizer->msg( 'tagline' );
-		return $msg->isDisabled() ? '' : $msg->parse();
+		// No fallback to core's `tagline` (「来自{{SITENAME}}」): it says nothing on the wiki itself
+		return '';
 	}
 
 	public function getTemplateData(): array {

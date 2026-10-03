@@ -66,7 +66,7 @@ $wgArknightsMenuSidebar = true;
 | `MediaWiki:Arknights-header-tagline` | 页眉/页脚站名下方的拉丁小字（如 `ARKNIGHTS WIKI`） |
 | `MediaWiki:Arknights-footer-desc` / `-footer-tagline` | 页脚描述段 / 底栏一句话（wikitext，默认关闭） |
 | `MediaWiki:Arknights-footer-links` | 页脚「关于」列之前的链接列（同 `MediaWiki:Sidebar` 语法，含分组标题，默认关闭，见下文「页脚链接列」） |
-| `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间覆盖标题下方的 tagline |
+| `MediaWiki:Arknights-tagline-ns-<名字空间小写>` | 按名字空间在标题下方挂一行 tagline（页面有短描述时让位给短描述；都没有就不显示，不再回退到核心的「来自{{SITENAME}}」） |
 | `MediaWiki:Arknights.css` / `MediaWiki:Arknights.js` | 皮肤专属站点样式/脚本（MediaWiki 自动加载） |
 
 ## 活动主题：头图 · 顶栏角饰 · 站标 · 主色
