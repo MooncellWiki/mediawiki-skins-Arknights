@@ -249,6 +249,12 @@ class SkinArknights extends SkinMustache {
 			&& !empty( $parentData['data-toc']['array-sections'] );
 		$parentData['has-theme-toggle'] = $config->get( 'ArknightsEnableThemeToggle' ) === true;
 		$parentData['html-logo-icon-src'] = $this->getLogoIconSrc( $parentData['data-logos'] ?? [] );
+		// Whitespace-only indicators (SMW's entity examiner holds a "\n" placeholder until its script finds
+		// something) are trimmed to truly :empty, so chrome/page-header.css can collapse the row they sit in
+		$parentData['array-indicators'] = array_map(
+			static fn ( array $indicator ) => [ 'html' => trim( $indicator['html'] ?? '' ) ] + $indicator,
+			$parentData['array-indicators'] ?? []
+		);
 		$parentData['has-indicators'] = !empty( $parentData['array-indicators'] );
 		$parentData['html-header-tagline'] = $this->getOptionalMessageText( 'arknights-header-tagline' );
 
