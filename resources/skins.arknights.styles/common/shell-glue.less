@@ -201,6 +201,19 @@
 	display: block;
 }
 
+// SMW's entity examiner holds a loading bar in its indicator until its API check answers, then
+// swaps in its findings or nothing. The bar tells a reader nothing: hidden, and while it is all the
+// indicator holds the eyebrow row doesn't open for it (extends chrome/page-header.css's
+// "nothing but empty indicators" rule — :has() can't nest, hence the third branch spelled out;
+// one :not( :has() ) per branch because less.php can't parse a selector list inside :has()).
+#mw-indicator-smw-entity-examiner > .smw-indicator-vertical-bar-loader {
+	display: none;
+}
+
+.ak-page-header__top:not( :has( > :not( .mw-indicators ) ) ):not( :has( > .mw-indicators > :not( :empty ):not( #mw-indicator-smw-entity-examiner ) ) ):not( :has( > .mw-indicators > #mw-indicator-smw-entity-examiner > :not( .smw-indicator-vertical-bar-loader ) ) ) {
+	display: none;
+}
+
 #contentSub {
 	margin: 0 0 var( --ak-space-3 );
 
