@@ -11,7 +11,10 @@
  *     and an engine with neither (.client-nojs plus no :has()) falls back to a static card
  *     in the flow — so the flyout stays a real flyout in the older WebViews a lot of phone
  *     browsers ship;
- *   - the page behind it is scroll-locked while it is open;
+ *   - on phones (≤639px, where the flyout spans the viewport) the page behind it is
+ *     scroll-locked while it is open. Wider than that the flyout has no backdrop and its
+ *     content is this page's headings, so the page keeps scrolling (upstream prts-design
+ *     331d643; VitePress does not lock for its outline dropdown either);
  *   - it closes after following an entry, on Escape, on a click outside, and on the way
  *     back up to the rail breakpoint.
  */
@@ -24,10 +27,11 @@ function setupFlyout() {
 	}
 
 	const mq = window.matchMedia( '(max-width: 1399.98px)' );
+	const lockMq = window.matchMedia( '(max-width: 639px)' );
 	const sync = () => {
 		const open = cb.checked && mq.matches;
 		document.documentElement.classList.toggle( 'ak-toc-open', open );
-		scrollLock.set( 'toc', open );
+		scrollLock.set( 'toc', open && lockMq.matches );
 	};
 	const dismiss = () => {
 		if ( cb.checked ) {
@@ -75,6 +79,8 @@ function setupFlyout() {
 				dismiss();
 			}
 		} );
+		// Crossing 639px while open: the lock follows
+		lockMq.addEventListener( 'change', sync );
 	}
 }
 
