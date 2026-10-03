@@ -25,6 +25,22 @@
 		margin-bottom: 0;
 	}
 
+	// Phones: the action cluster goes too (editors reach the page through the desktop view or
+	// the edit URL) — on a 390px screen it was a whole row of icons between the header and the
+	// hero. The heading stays sr-only in the row, so the header is left with nothing visible
+	// (the subtitle is normally empty here): its margins go as well, the body's own top padding
+	// is the only gap.
+	@media ( max-width: @ak-bp-mobile-max ) {
+		.ak-page-tools {
+			display: none;
+		}
+
+		.ak-page-header,
+		#contentSub {
+			margin-bottom: 0;
+		}
+	}
+
 	// There is no table of contents here, but the rail's width is kept rather than given
 	// back: the page's blocks bring their own containers and its right edge stays aligned
 	// with the pages that do have one. (`.ak-layout--no-toc` narrows to the reading column,
