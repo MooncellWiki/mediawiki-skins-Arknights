@@ -1,6 +1,7 @@
 /**
  * RecentChanges filters UI
  */
+@import '../../resources/skins.arknights.styles/mixins.less';
 
 /* 过滤器控件区是一摞互相嵌套的 OOUI 盒子，各自从 Codex 桥拿到不同的语义底色：
  *   .mw-rcfilters-ui-filterTagMultiselectWidget  ← --background-color-neutral-subtle  = --ak-bg-canvas
@@ -72,4 +73,39 @@
 .mw-rcfilters-ui-changesListWrapperWidget-highlighted .mw-rcfilters-highlight-color-c4,
 .mw-rcfilters-ui-changesListWrapperWidget-highlighted .mw-rcfilters-highlight-color-c5 {
 	color: var( --ak-fg );
+}
+
+/* 核心让分组表的最后一格 width: 100%（表格布局里把其余格挤到最小）。分组表已换成 grid（changeslist.enhanced），
+ * 格子本来就填满自己的列；100% 再加上子行正文格的左内边距与竖线，会比列宽多出 14px、伸出白纸。同形同特指度，靠本文件排在核心之后盖过。 */
+.mw-rcfilters-ui-changesListWrapperWidget table.mw-enhanced-rc td:last-child {
+	width: auto;
+}
+
+/* 高亮圆点：核心用负外边距把它们挂在列表左侧的留白里，留白已在 changeslist 里去掉（最近更改上平时那 50px 什么都不放）。
+ * 圆点显示出来时改为占位：分组列表里落进 grid 的 hl 列（子行的圆点与父行同列），非分组列表里排在行首。
+ * 显示的时机有两种：开了高亮（五色点，宽度按五个点留，各行对齐）；监视列表上不开高亮也有一个「已读 / 未读」点
+ * （highlightCircles.seenunseen），这时只有这一个点，宽度跟着收到一个点。 */
+.mw-rcfilters-ui-highlights {
+	margin-left: 0;
+
+	.mw-rcfilters-ui-changesListWrapperWidget:not( .mw-rcfilters-ui-changesListWrapperWidget-highlighted ) & {
+		width: auto;
+	}
+}
+
+/* 手机：输入框与「命名空间 / 标签」两个视图按钮挤在一行，按钮带字要 187px，输入框只剩一半、
+ * 占位文字截成「过滤更改（使用」。按钮只留图标（文字视觉隐藏，读屏照读；悬停有 title），输入框拿回宽度，
+ * 占位文字仍放不下时以省略号收尾。 */
+@media ( max-width: 639px ) {
+	.mw-rcfilters-ui-filterTagMultiselectWidget-views-select-widget .oo-ui-buttonElement-button {
+		padding-right: 0;
+
+		> .oo-ui-labelElement-label {
+			.ak-sr-only();
+		}
+	}
+
+	.mw-rcfilters-ui-filterTagMultiselectWidget-views-input input {
+		text-overflow: ellipsis;
+	}
 }

@@ -9,11 +9,35 @@
 		color: var( --ak-fg );
 	}
 
+	// 日期标题吸在页眉下沿：几百条的列表滚到中间也知道在看哪一天。底色同白纸（.ak-body），
+	// 后一天的标题滚上来时直接盖住前一天的。
 	h4 {
+		position: sticky;
+		top: var( --ak-header-h );
+		z-index: 2;
 		color: var( --ak-fg );
+		background: var( --ak-bg-surface );
 		border-left: 3px solid var( --ak-border-strong );
-		padding-left: var( --ak-space-3 );
-		margin: var( --ak-space-6 ) 0 var( --ak-space-3 );
+		padding: 6px 0 6px var( --ak-space-3 );
+		margin: var( --ak-space-6 ) 0 var( --ak-space-1 );
+		font-size: var( --ak-fs-body );
+		font-variant-numeric: tabular-nums;
+	}
+
+	// 分隔符：核心写死的「. .」不画任何符号，只留一段空隙。字节数有自己的颜色、链接组自带括号，
+	// 靠间距就分得开；符号折行后落在行首 / 行尾，读起来不知道在分隔什么。
+	// 空隙用 U+2005（四分之一全角空格）而不是 margin：它是空白字符，落在行尾时随行尾空白挂出去，
+	// margin 则会把行撑出容器几像素。
+	.mw-changeslist-separator:empty::before {
+		content: '\2005';
+	}
+
+	.mw-diff-bytes {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.mw-changeslist-links {
+		white-space: nowrap;
 	}
 
 	.mw-changeslist-date,
@@ -36,23 +60,118 @@
 		color: var( --ak-danger );
 	}
 
-	.newpage,
-	.minoredit,
-	.botedit {
-		background: var( --ak-bg-surface-3 );
-		color: var( --ak-fg-secondary );
-		border-radius: 0;
-	}
-
 	.mw-tag-markers {
 		color: var( --ak-fg-muted );
 	}
+
+	// 标签块是带框的小块，折行时从中间断开会拆成两个半框
+	.mw-tag-marker,
+	.mw-diff-bytes {
+		white-space: nowrap;
+	}
+
+	/* 非分组列表（偏好里关掉「按页面分组」、或 enhanced=0）：<ul class="special"> 每条一个 li，
+	 * 时间、标记、标题都是行内文本，窄屏照常折行即可，只补分隔与留白。 */
+	ul.special {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		> li {
+			margin: 0;
+			padding: 6px 0;
+			border-left: 0;
+			border-top: 1px solid var( --ak-border-subtle );
+
+			&:first-child {
+				border-top: 0;
+			}
+		}
+	}
+
+	.mw-changeslist-date,
+	.mw-changeslist-time {
+		font-variant-numeric: tabular-nums;
+	}
 }
 
-.mw-changeslist-legend {
-	background: var( --ak-bg-surface-2 );
-	border-color: var( --ak-border );
-	color: var( --ak-fg-secondary );
+// 页首说明（MediaWiki:Recentchangestext 等）：设计系统只把正文的第一个子元素的上边距清零，
+// 这里第一个子元素是 .mw-specialpage-summary，它里面 <p> 的上边距穿过去折叠到正文外，页面头下多空出 16px。
+// mediawiki.special（管 .mw-specialpage-summary 的那份）在这几页不加载，就近写在这里。
+.mw-specialpage-summary > p:first-child {
+	margin-top: 0;
+}
+
+// RCFilters（mediawiki.rcfilters.filters.base.styles）为高亮圆点在列表左侧常驻留出约 50px，
+// 没开高亮时这条空白什么也不放，手机上白白吃掉七分之一的宽度。这里去掉留白；开了高亮时圆点改为占位排在行首
+// （见 mediawiki.rcfilters.filters.ui.less）。选择器与核心同形同特指度，靠加载顺序（本模块在后）盖过。
+.client-js .mw-changeslist {
+	ul,
+	table.mw-enhanced-rc {
+		margin-left: 0;
+	}
+}
+
+// 标记块（新 / 小 / 机 / !）：分组与非分组列表、图例三处同一个样子
+.mw-changeslist abbr,
+.mw-changeslist-legend dt {
+	&.newpage,
+	&.minoredit,
+	&.botedit,
+	&.unpatrolled {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		// 18 × 18 的方块：12px 汉字 + 左右各 2px + 1px 边框正好 18，时间列按两块 18px 的宽度算
+		min-width: 18px;
+		height: 18px;
+		padding: 0 2px;
+		border: 1px solid var( --ak-border );
+		border-radius: 0;
+		background: var( --ak-bg-surface-2 );
+		color: var( --ak-fg-secondary );
+		font-family: var( --ak-font-body );
+		font-size: var( --ak-fs-xs );
+		font-weight: bold;
+		line-height: 1;
+		word-spacing: normal;
+		text-decoration: none;
+		vertical-align: 1px;
+	}
+
+	&.newpage {
+		border-color: var( --ak-accent-muted );
+		background: var( --ak-accent-subtle );
+		color: var( --ak-accent );
+	}
+
+	&.unpatrolled {
+		border-color: var( --ak-danger );
+		background: var( --ak-danger-bg );
+		color: var( --ak-danger );
+	}
+}
+
+.mw-changeslist abbr {
+	&.newpage,
+	&.minoredit,
+	&.botedit,
+	&.unpatrolled {
+		cursor: help;
+	}
+}
+
+@media ( max-width: 639px ) {
+	.mw-changeslist {
+		h4 {
+			margin-top: var( --ak-space-5 );
+		}
+
+		ul.special > li {
+			padding: 8px 0;
+		}
+	}
 }
 
 .rcoptions,

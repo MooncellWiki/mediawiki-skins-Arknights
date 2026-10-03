@@ -1,0 +1,78 @@
+/**
+ * Changes list legend（「缩写列表」）
+ *
+ * 核心让它向右浮动、clear: right：桌面上把开头几条更改挤窄，手机上和第一个日期标题抢一行
+ * （日期被压成三行）。这里改成列表上方一块整宽的面板，<details> 收起 / 展开照旧（核心脚本记住状态）。
+ */
+.mw-changeslist-legend {
+	float: none;
+	clear: none;
+	margin: 0 0 var( --ak-space-3 );
+	padding: var( --ak-space-2 ) var( --ak-space-3 );
+	border: 1px solid var( --ak-border );
+	background: var( --ak-bg-surface-2 );
+	color: var( --ak-fg-secondary );
+	font-size: var( --ak-fs-xs );
+	line-height: 18px;
+
+	summary {
+		color: var( --ak-fg-secondary );
+
+		strong {
+			font-weight: 600;
+		}
+	}
+
+	// 桌面：五组「标记 说明」排成一行流式文字，宽屏一行放完。dt / dd 之间、dd 与下一个 dt 之间的空白都不换行
+	// （dl 上 nowrap），只在说明文字内部折行——标记永远跟着自己说明的第一个字，不会孤零零落在行尾。
+	dl {
+		margin: var( --ak-space-1 ) 0 0;
+		white-space: nowrap;
+	}
+
+	dt,
+	dd {
+		display: inline;
+		float: none;
+		margin: 0;
+		line-height: 24px;
+	}
+
+	dt {
+		margin-right: 6px;
+		font-weight: normal;
+	}
+
+	dd {
+		margin-right: var( --ak-space-4 );
+		white-space: normal;
+	}
+
+	dt.mw-plusminus-pos {
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+// 手机：一组一行，标记对齐成一列
+@media ( max-width: 639px ) {
+	.mw-changeslist-legend {
+		dl {
+			display: grid;
+			grid-template-columns: auto minmax( 0, 1fr );
+			gap: 4px var( --ak-space-2 );
+			align-items: center;
+			margin-top: var( --ak-space-2 );
+			white-space: normal;
+		}
+
+		dt,
+		dd {
+			margin: 0;
+			line-height: 18px;
+		}
+
+		dt {
+			justify-self: start;
+		}
+	}
+}

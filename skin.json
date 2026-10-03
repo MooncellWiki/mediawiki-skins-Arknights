@@ -520,6 +520,7 @@
 			"+mediawiki.special": "skinStyles/mediawiki/special/mediawiki.special.less",
 			"+mediawiki.special.changeslist": "skinStyles/mediawiki/special/mediawiki.special.changeslist.less",
 			"+mediawiki.special.changeslist.enhanced": "skinStyles/mediawiki/special/mediawiki.special.changeslist.enhanced.less",
+			"+mediawiki.special.changeslist.legend": "skinStyles/mediawiki/special/mediawiki.special.changeslist.legend.less",
 			"+mediawiki.special.preferences.styles.ooui": "skinStyles/mediawiki/special/mediawiki.special.preferences.styles.ooui.less",
 			"+mediawiki.special.search.styles": "skinStyles/mediawiki/special/mediawiki.special.search.styles.less",
 			"+mediawiki.special.userlogin.common.styles": "skinStyles/mediawiki/special/mediawiki.special.userlogin.common.styles.less",

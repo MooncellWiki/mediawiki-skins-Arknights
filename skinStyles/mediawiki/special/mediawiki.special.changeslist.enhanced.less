@@ -1,30 +1,49 @@
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
 /**
  * Enhanced recent changes (grouped)
+ *
+ * 核心把每条更改（或每组同页更改）输出成一张独立的 <table>，列宽各算各的：
+ *   分组行 / 单条行  td(高亮圆点) · td(箭头) · td.mw-changeslist-line-prefix · td.mw-enhanced-rc(标记 + 时间, colspan 2) · td.mw-changeslist-line-inner
+ *   展开后的子行    td · td · td · td.mw-enhanced-rc(标记) · td(高亮圆点) · td.mw-enhanced-rc-nested(时间 + 正文)
+ * 表与表之间没有共同的列，于是「新 / 小」这类标记一出现，时间就往右错开；手机上前四格不肯收缩，
+ * 正文只剩一半宽度。这里把 tr 换成同一份 grid 列模板，所有行跨表对齐，窄屏只改列宽。
  */
-.mw-enhanced-rc,
+
+// 时间列的宽度用 ch 写，在用到它的元素上按那里的字体解析——时间格与箭头热区都设成等宽字体，5ch 正好是「16:20」。
+// 桌面放得下时间 + 两个标记（18px 块 + 4px 间距；新 + !、小 + ! 是最常见的组合），再多的折到第二行。
+// 末尾 2px 是余量：正好等宽时小数取整就会把第二块挤下去。
+.mw-changeslist {
+	--_rc-time-w: calc( 5ch + 2 * 22px + var( --ak-space-3 ) + 2px );
+	--_rc-arrow-w: 24px;
+}
+
 table.mw-enhanced-rc {
+	display: block;
 	color: var( --ak-fg );
+	line-height: 1.6;
+	border-top: 1px solid var( --ak-border-subtle );
 
-	td {
+	// 同一天的第一条不画分隔线，紧贴日期标题
+	:where( h4 + div ) > &:first-child,
+	:where( h4 + div ) > .mw-enhancedchanges-checkbox:first-child + & {
+		border-top: 0;
+	}
+
+	> tbody {
+		display: block;
+	}
+
+	// :where 压低特指度，下面 td.mw-enhanced-rc 的 display: flex 才盖得过
+	:where( td ) {
+		display: block;
 		border: 0;
+		padding: 0;
 	}
 
-	.mw-enhanced-rc-nested,
-	.mw-enhanced-rc-time {
-		color: var( --ak-fg-muted );
-	}
-
-	.mw-enhancedchanges-arrow,
-	.mw-enhancedchanges-arrow-space {
-		filter: none;
-	}
-
-	/* 分组行是一张 auto 布局的表，宽度由单元格的最小内容宽度决定；.mw-body-content 的 overflow-wrap: break-word
-	 * 只在最终排版时断长串，不改最小内容宽度，所以救不了表格。
-	 * 「用户创建日志」这类分组把几十个用户名用全角「；」串在一起，每个名字又套着 a（unicode-bidi: embed）+ bdi（isolate），
-	 * Chrome 在「拉丁名；拉丁名」之间找不到换行点，整段连成一千多像素的不可断内容，表格就被撑出白纸。
-	 * 用户名改成 inline-block：名字本身成为原子项，只在「；」处换行、不再从名字中间切开；
-	 * anywhere 作兜底：极长用户名 / 摘要里的长串仍能压回容器内，表格的最小内容宽度不再超过可用宽度。 */
+	/* 「用户创建日志」这类分组把几十个用户名用全角「；」串在一起，每个名字又套着 a（unicode-bidi: embed）+ bdi（isolate），
+	 * Chrome 在「拉丁名；拉丁名」之间找不到换行点。用户名改成 inline-block：名字本身成为原子项，只在「；」处换行；
+	 * anywhere 作兜底：极长用户名 / 摘要里的长串仍能压回容器内。 */
 	overflow-wrap: anywhere;
 
 	.changedby a {
@@ -32,6 +51,245 @@ table.mw-enhanced-rc {
 	}
 }
 
+// 特指度故意压低（:where 包住外层）：核心收起子行用的是
+// `.mw-enhancedchanges-checkbox:not( :checked ) + * .mw-rcfilters-ui-highlights-enhanced-nested { display: none }`（0,3,0），
+// 这里的 display: grid 必须比它弱，否则子行永远展开。
+:where( table.mw-enhanced-rc > tbody ) > tr {
+	display: grid;
+	grid-template-columns: [hl] auto [arrow] var( --_rc-arrow-w ) [prefix] auto [time] auto [main] minmax( 0, 1fr );
+	padding: 6px 0;
+}
+
+// 每行只有一行 grid：格子都钉在第 1 行。只给列不给行的话，子行的高亮格先占了 hl 列第 1 行，
+// 前四格会被自动排布挤到第 2 行（子行的标记掉到正文下面）。
+table.mw-enhanced-rc > tbody > tr {
+	> td {
+		grid-row: 1;
+	}
+
+	> td:nth-child( 1 ) {
+		grid-column: hl;
+	}
+
+	// 箭头格是展开热区（label::after）的定位基准
+	> td:nth-child( 2 ) {
+		grid-column: arrow;
+		position: relative;
+	}
+
+	> td:nth-child( 3 ) {
+		grid-column: prefix;
+	}
+
+	// 监视列表核心给这一格定宽 1.25em，留给「×」取消监视链接（偏好 watchlistunwatchlinks）；没开时格子是空的，不占位
+	> td.mw-changeslist-line-prefix:empty {
+		width: auto;
+	}
+
+	> td.mw-enhanced-rc {
+		grid-column: time;
+	}
+
+	> td.mw-changeslist-line-inner,
+	> td.mw-enhanced-rc-nested {
+		grid-column: main;
+	}
+
+	// 子行的高亮圆点在第 5 格（父行的这一格是正文），与父行的圆点放进同一列
+	> td:nth-child( 5 ):not( .mw-changeslist-line-inner ) {
+		grid-column: hl;
+	}
+}
+
+/* ─── 时间 + 标记 ──────────────────────────────────────────────
+ * 格里是「标记们 + &nbsp; 占位 + 时间 + &nbsp;」，时间是裸文本节点，选不中。
+ * flex 把 abbr 和文本各自变成项：abbr 排到最后（order）。核心用 &nbsp; 给缺席的标记占位（四个位置缺一个补一个），
+ * word-spacing 同样作用于 &nbsp;，等宽字体里 1ch = 一个空格宽，-1ch 正好把它们压成 0——
+ * 于是时间永远贴在格子左缘，标记跟在后面、窄屏折到下一行。
+ *
+ * 各格都拉满整行高（RCFilters 的高亮底色画在格子上，不拉满会拼成高矮两块），时间与正文的首行
+ * 靠同一个行高对齐：正文 14px × 1.6，时间格的行高写成同一个绝对值。
+ * 选择器带上 table：核心的 `table.mw-enhanced-rc td { padding: 0 }`（0,1,2）比单写 td.mw-enhanced-rc 高。 */
+table.mw-enhanced-rc td.mw-enhanced-rc {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	align-content: flex-start;
+	box-sizing: border-box;
+	width: var( --_rc-time-w );
+	padding-right: var( --ak-space-3 );
+	font-family: var( --ak-font-mono );
+	font-size: 0.8125rem;
+	line-height: calc( var( --ak-fs-sm ) * 1.6 );
+	font-variant-numeric: tabular-nums;
+	word-spacing: -1ch;
+	white-space: nowrap;
+	color: var( --ak-fg-muted );
+
+	> abbr {
+		order: 1;
+		margin-left: 4px;
+	}
+
+	// Flow 把时间换成话题版本的链接（span.mw-changeslist-date > a）：同其它行一样是灰色时间，悬停才显出链接色
+	a {
+		color: inherit;
+	}
+}
+
+// 子行的时间在正文格里；标记格只剩标记，往右让出时间的宽度，与父行的标记对齐
+table.mw-enhanced-rc .mw-rcfilters-ui-highlights-enhanced-nested > td.mw-enhanced-rc {
+	padding-left: 5ch;
+}
+
+/* ─── 展开箭头 ─────────────────────────────────────────────────
+ * 核心的箭头是 label 自身：Codex 图标遮罩（mask）画三角，收起时整个 label rotate(-90deg)。
+ * 这里要让 label::after 铺成点击热区（箭头本体只有 15px，点中全凭运气），而 transform 会把 label 变成
+ * ::after 的定位基准、mask 又会把它裁回 15px——所以 label 本身去掉遮罩与旋转，箭头改画在 ::before 上
+ * （换成皮肤的 › 折角，与侧栏同一个），转的也只是 ::before。
+ * 热区从箭头格起铺满箭头 + 时间两列、整行高：时间那格只有文本和标记，整块都能点开分组。
+ * 选择器要压过核心旋转那条 `[dir='ltr'] .mw-enhancedchanges-checkbox:not( :checked ) + * .mw-enhancedchanges-arrow`（0,4,0）。 */
+.mw-enhancedchanges-checkbox + table.mw-enhanced-rc label.mw-enhancedchanges-arrow.mw-enhancedchanges-arrow-space {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 15px;
+	height: 15px;
+	// 在首行（14px × 1.6）里居中
+	margin-top: calc( ( var( --ak-fs-sm ) * 1.6 - 15px ) / 2 );
+	padding: 0;
+	-webkit-mask: none;
+	mask: none;
+	background: none;
+	color: var( --ak-fg-muted );
+	filter: none;
+	transform: none;
+	transition: none;
+
+	&::before {
+		.ak-chevron( 6px, 1.5px );
+		display: block;
+		// 收起 ›，展开 ∨
+		transform: rotate( -45deg );
+		transition: transform 250ms ease;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: -6px;
+		bottom: -6px;
+		left: 0;
+		width: calc( var( --_rc-arrow-w ) + var( --_rc-time-w ) );
+		// --_rc-time-w 里的 ch 按这里的字体解析，与时间格同一种字体才等宽
+		font-family: var( --ak-font-mono );
+		font-size: 0.8125rem;
+		cursor: pointer;
+	}
+
+	[ dir='rtl' ] &::before {
+		transform: rotate( 135deg );
+	}
+}
+
+// 核心在复选框 :focus 时给箭头画 outline: auto，点一下（焦点随 label 落到复选框上）也会出框；只留给键盘
+.mw-enhancedchanges-checkbox:focus:not( :focus-visible ) + table.mw-enhanced-rc label.mw-enhancedchanges-arrow {
+	outline: 0;
+}
+
+.mw-enhancedchanges-checkbox:checked + table.mw-enhanced-rc label.mw-enhancedchanges-arrow.mw-enhancedchanges-arrow-space {
+	color: var( --ak-fg );
+
+	&::before,
+	[ dir='rtl' ] &::before {
+		transform: rotate( 45deg );
+	}
+}
+
+table.mw-enhanced-rc .mw-enhanced-rc-time {
+	font-family: var( --ak-font-mono );
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+	color: var( --ak-fg-muted );
+
+	a {
+		color: inherit;
+	}
+}
+
+table.mw-enhanced-rc .mw-enhanced-rc-time a:hover,
+table.mw-enhanced-rc td.mw-enhanced-rc a:hover {
+	color: var( --ak-link );
+}
+
+/* ─── 分组的父行与子行 ─────────────────────────────────────────
+ * 父行标题加重；子行收进一条细竖线里，读起来是「这一组」。 */
+.mw-rcfilters-ui-highlights-enhanced-toplevel .mw-title {
+	font-weight: 600;
+}
+
+.mw-enhancedchanges-checkbox:checked + table.mw-enhanced-rc {
+	background: var( --ak-bg-surface-2 );
+}
+
+// 子行不留上下边距、留在正文格里，竖线才能一路连下来
+:where( table.mw-enhanced-rc > tbody ) > tr.mw-rcfilters-ui-highlights-enhanced-nested {
+	padding: 0;
+
+	&:last-child {
+		padding-bottom: 6px;
+	}
+}
+
+.mw-rcfilters-ui-highlights-enhanced-nested > td.mw-enhanced-rc-nested {
+	border-left: 2px solid var( --ak-border );
+
+	// 盖掉核心的 `table.mw-enhanced-rc td.mw-enhanced-rc-nested { padding-left: 1em }`
+	table.mw-enhanced-rc & {
+		padding: 3px 0 3px var( --ak-space-3 );
+	}
+}
+
 .mw-enhanced-rc .mw-enhanced-rc-collapsed .mw-collapsible-toggle .mw-collapsible-text {
 	color: var( --ak-fg-muted );
+}
+
+@media ( hover: hover ) {
+	:where( table.mw-enhanced-rc > tbody ) > tr:hover {
+		background: var( --ak-bg-surface-2 );
+	}
+
+	.mw-enhancedchanges-checkbox:checked + table.mw-enhanced-rc > tbody > tr:hover {
+		background: var( --ak-bg-surface-3 );
+	}
+}
+
+/* ─── 手机 ──────────────────────────────────────────────────────
+ * 时间列收到正好放下「16:20」，标记折到时间下面；正文从约 190px 拿回到约 280px。 */
+@media ( max-width: 639px ) {
+	.mw-changeslist {
+		--_rc-time-w: calc( 5ch + 6px + var( --ak-space-2 ) );
+		--_rc-arrow-w: 20px;
+	}
+
+	:where( table.mw-enhanced-rc > tbody ) > tr {
+		padding: 8px 0;
+	}
+
+	table.mw-enhanced-rc td.mw-enhanced-rc {
+		padding-right: var( --ak-space-2 );
+		row-gap: 3px;
+
+		> abbr {
+			margin: 0 3px 0 0;
+		}
+	}
+
+	table.mw-enhanced-rc .mw-rcfilters-ui-highlights-enhanced-nested > td.mw-enhanced-rc {
+		padding-left: 0;
+	}
+
+	:where( table.mw-enhanced-rc > tbody ) > tr.mw-rcfilters-ui-highlights-enhanced-nested:last-child {
+		padding-bottom: 8px;
+	}
 }
