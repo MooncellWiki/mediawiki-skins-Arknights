@@ -256,6 +256,13 @@ class SkinArknights extends SkinMustache {
 			$parentData['array-indicators'] ?? []
 		);
 		$parentData['has-indicators'] = !empty( $parentData['array-indicators'] );
+		// Between announcements MediaWiki:Sitenotice is left as an empty shell (on PRTS an empty .nomobile
+		// and an empty .mobileonly div around two transcluded subpages). .ak-sitenotice would still render
+		// with its top padding — 12px above every page — so a notice that shows nothing is not output at all.
+		// Nothing fills #siteNotice client-side here (no CentralNotice, no gadget touches it).
+		if ( self::isBlankHtml( $parentData['html-site-notice'] ?? '' ) ) {
+			$parentData['html-site-notice'] = null;
+		}
 		$parentData['html-header-tagline'] = $this->getOptionalMessageText( 'arknights-header-tagline' );
 
 		if ( $parentData['toc-enabled'] ) {
@@ -397,6 +404,20 @@ class SkinArknights extends SkinMustache {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Whether rendered HTML shows nothing: no text once tags, comments and entities are gone
+	 * (whitespace, NBSP and zero-width spaces count as nothing), and no element that is visible
+	 * without text (images, media, embeds, form controls).
+	 */
+	private static function isBlankHtml( string $html ): bool {
+		$visible = 'img|svg|picture|video|audio|iframe|object|embed|canvas|input|button|select|textarea';
+		if ( preg_match( "/<(?:$visible)\\b/i", $html ) ) {
+			return false;
+		}
+		$text = html_entity_decode( strip_tags( $html ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		return preg_replace( '/[\s\x{00A0}\x{200B}\x{FEFF}]+/u', '', $text ) === '';
 	}
 
 	/**
