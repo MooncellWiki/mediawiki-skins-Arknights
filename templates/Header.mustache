@@ -6,9 +6,9 @@
 	bool toc-enabled
 	object data-user-menu
 
-	The main row carries no site navigation: that lives in the sidebar only (MediaWiki:MenuSidebar
+	The header carries no site navigation: that lives in the sidebar only (MediaWiki:MenuSidebar
 	or the MediaWiki:Sidebar portlets), which is reachable at every width — as a column at ≥ 1120px
-	and as the drawer opened from the local nav below it.
+	and as the drawer opened from the local nav's menu button.
 }}
 <header class="ak-header mw-header" id="mw-head">
 	<div class="ak-header__inner">
@@ -50,12 +50,12 @@
 		</label>
 	</div>
 	{{!
-		Local nav — the header's second row, shown by CSS below 1400px only.
-		It stays pinned once the main row scrolls away, so the drawer and the table of
-		contents are reachable at any scroll position without a floating corner button.
-		The TOC flyout is opened by the checkbox below (pure CSS, works without JS).
-		At < 640px it is no row of its own: CSS folds both buttons into the main row
-		(display:contents on this and .ak-header__inner), so the DOM stays as it is.
+		Local nav — the drawer (< 1120px) and table-of-contents (< 1400px) buttons, shown by
+		CSS below 1400px only. It is no row of its own: CSS folds both buttons into the
+		header's single row (display:contents on this and .ak-header__inner), so the DOM stays
+		as it is. That row stays pinned, so both are reachable at any scroll position without a
+		floating corner button. The TOC flyout is opened by the checkbox below (pure CSS, works
+		without JS).
 	}}
 	<div class="ak-local-nav">
 		<button type="button" class="ak-local-nav__btn ak-local-nav__menu" id="ak-drawer-toggle" aria-controls="ak-sidebar" aria-expanded="false">

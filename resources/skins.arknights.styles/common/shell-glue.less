@@ -16,9 +16,10 @@
  * <input id="searchInput" type="search"> plus two submit inputs (.searchButton); this skin
  * wraps the icon in <label for="searchInput"> (.ak-search__icon-wrap).
  */
+// No margin reset here: a form has none to reset, and chrome/responsive.css spaces the field
+// with side margins below 1120px (this file loads after it, so a `margin: 0` would win)
 .ak-header__search {
 	position: relative;
-	margin: 0;
 
 	// padding-left clears the 32px icon well plus the 10px gap the trigger puts after it
 	#searchInput,

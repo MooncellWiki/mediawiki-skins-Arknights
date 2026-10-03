@@ -1,20 +1,14 @@
 /**
- * Header — scroll state class (shadow), the tools card below 1120px, and, below the TOC
- * breakpoint, collapsing the header's main row on the way down so only the local nav
- * stays pinned.
+ * Header — scroll state class, and the tools card below 1120px.
  *
  * Below 1120px it also turns Echo's bells back into plain links to Special:Notifications.
  *
- * Both are progressive: the collapse is CSS-gated to 640–1399px (see responsive.css; below
- * 640px the two rows are one and it stays put) and without JS the header simply keeps both
- * rows; the tools card opens and closes on its own checkbox, and this file only adds the
- * dismissals a checkbox cannot express.
+ * The header is a single row at every width and always stays pinned (the local nav's menu
+ * and TOC buttons sit in that same row, see chrome/responsive.css), so nothing here
+ * collapses it on scroll. The tools card opens and closes on its own checkbox, and this
+ * file only adds the dismissals a checkbox cannot express.
  */
 
-/** Distance from the top below which the header is always expanded */
-const EXPAND_ABOVE = 120;
-/** Scroll delta needed to flip the state, so a jittery wheel does not flicker it */
-const THRESHOLD = 4;
 /** Width at or above which the tools are back in the main row and the card is pointless */
 const DESKTOP = '( min-width: 1120px )';
 
@@ -104,31 +98,17 @@ function init() {
 	if ( !header ) {
 		return;
 	}
-	const root = document.documentElement;
-	const tocToggle = document.getElementById( 'ak-toc-toggle' );
 	const navToggle = document.getElementById( 'ak-nav-toggle' );
 	if ( navToggle ) {
 		initNavScreen( navToggle );
 	}
 	initNotificationLinks();
 
-	let lastY = Math.max( 0, window.scrollY );
 	let ticking = false;
 
 	const update = () => {
 		ticking = false;
-		const y = Math.max( 0, window.scrollY );
-		header.classList.toggle( 'is-scrolled', y > 4 );
-		// Leave the header alone while the TOC flyout or the tools card is open, so neither
-		// jumps away underneath the pointer
-		if ( !( tocToggle && tocToggle.checked ) && !( navToggle && navToggle.checked ) ) {
-			if ( y < EXPAND_ABOVE || y < lastY - THRESHOLD ) {
-				root.classList.remove( 'ak-condensed' );
-			} else if ( y > lastY + THRESHOLD ) {
-				root.classList.add( 'ak-condensed' );
-			}
-		}
-		lastY = y;
+		header.classList.toggle( 'is-scrolled', window.scrollY > 4 );
 	};
 
 	window.addEventListener( 'scroll', () => {
