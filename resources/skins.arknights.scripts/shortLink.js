@@ -4,8 +4,8 @@
  * click copies it, a modified click (new tab / window) is left to the browser.
  *
  * Feedback is the icon itself: .is-copied turns it into a check mark for a moment (icons.less,
- * chrome/page-header.css) and the label / tooltip say "copied" meanwhile — the label is an
- * aria-live region, so screen readers hear it too. No notification.
+ * chrome/page-header.css) and the tooltip / aria-label say "copied" meanwhile. No notification.
+ * The link sits inside the h1 and has no text of its own, so nothing here adds any.
  */
 const COPIED_MS = 2000;
 
@@ -35,16 +35,14 @@ function init() {
 	let timer = null;
 
 	const setCopied = ( link, copied ) => {
-		const label = link.querySelector( '.ak-sr-only' );
 		if ( copied && !link.dataset.title ) {
 			link.dataset.title = link.title;
+			link.dataset.label = link.getAttribute( 'aria-label' ) || '';
 		}
 		link.classList.toggle( 'is-copied', copied );
-		const text = mw.msg( copied ? 'arknights-shortlink-copied' : 'arknights-shortlink' );
+		const text = mw.msg( 'arknights-shortlink-copied' );
 		link.title = copied ? text : link.dataset.title;
-		if ( label ) {
-			label.textContent = text;
-		}
+		link.setAttribute( 'aria-label', copied ? text : link.dataset.label );
 	};
 
 	document.addEventListener( 'click', ( e ) => {

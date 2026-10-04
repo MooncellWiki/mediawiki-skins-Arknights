@@ -51,7 +51,7 @@ $wgArknightsMenuSidebar = true;
 | `$wgArknightsMenuSidebarAfterMessage` | `'MenuSidebarAfter'` | 侧栏下方追加内容的消息名，`''` 关闭 |
 | `$wgArknightsMenuSidebarHidePortlets` | `true` | 启用 MenuSidebar 时隐藏 `MediaWiki:Sidebar` 门户（工具箱与语言除外），与 VMS 行为一致 |
 | `$wgArknightsShowPageTools` | `true` | 页面工具可见性：`true` / `false` / `'login'` / `'permission-edit'` 等 |
-| `$wgArknightsShortUrl` | `''` | 页面短链接的 URL 模式，`$1` 为页面 ID（PRTS：`'/id/$1'`，路径按 `$wgCanonicalServer` 补全）。设了就在页面标题末尾出一枚「复制短链接」的链条图标（`a.ak-page-heading__shortlink`）：点击复制、图标变成对勾一下，不弹通知；`''` 关闭 |
+| `$wgArknightsShortUrl` | `''` | 页面短链接的 URL 模式，`$1` 为页面 ID（PRTS：`'/id/$1'`，路径按 `$wgCanonicalServer` 补全）。设了就在页面标题末尾出一枚「复制短链接」的链条图标（`a.ak-page-heading__shortlink`，在 h1 里、紧跟标题文字，脚本往 `#firstHeading` 追加的副标题排在它后面）：点击复制、图标变成对勾一下，不弹通知；`''` 关闭 |
 | `$wgArknightsSidebarFlyout` | `true` | 桌面端侧栏分支以飞出层展示子项（不就地展开）；关掉后桌面也和抽屉一样就地展开 |
 | `$wgArknightsTableOfContentsCollapseAtCount` | `28` | 标题数 ≥ 此值时目录默认折叠子节 |
 | `$wgArknightsSearchPalette` | `true` | 页眉搜索换成悬浮命令面板；`false` 保留原表单与核心搜索建议 |

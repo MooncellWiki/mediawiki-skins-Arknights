@@ -1,6 +1,6 @@
 {{!
-	object data-page-heading { html-title-heading, html-tagline, is-title-blank, namespace-text, is-special,
-	                           data-shortlink { url, label, tooltip } }
+	object data-page-heading { html-title-heading (the h1; ends with the copy-short-link icon when
+	                           $wgArknightsShortUrl is set), html-tagline, is-title-blank, namespace-text, is-special }
 	string html-subtitle     #mw-content-subtitle
 	array array-indicators
 	object data-page-tools
@@ -17,14 +17,8 @@
 		and a long title pushes the whole cluster onto the next line rather than squeezing it.
 	}}
 	<div class="ak-page-header__row">
-		{{!
-			Copy short link ($wgArknightsShortUrl): the chain icon trailing the title. It is the
-			h1's next sibling, not its child — core owns the h1, and its text / accessible name
-			should stay the title alone; --shortlink makes the h1 inline so the icon follows the
-			last character even when the title wraps. No whitespace between the two on purpose.
-		}}
-		<div class="ak-page-heading{{#is-title-blank}} ak-page-heading--blank{{/is-title-blank}}{{#data-shortlink}} ak-page-heading--shortlink{{/data-shortlink}}">
-			{{{html-title-heading}}}{{#data-shortlink}}<a class="ak-page-heading__shortlink" id="ak-shortlink" href="{{url}}" title="{{tooltip}}"><span class="ak-icon ak-icon--shortLink" aria-hidden="true"></span><span class="ak-sr-only" aria-live="polite">{{label}}</span></a>{{/data-shortlink}}
+		<div class="ak-page-heading{{#is-title-blank}} ak-page-heading--blank{{/is-title-blank}}">
+			{{{html-title-heading}}}
 			{{#html-tagline}}<div id="siteSub" class="ak-page-heading__tagline">{{{.}}}</div>{{/html-tagline}}
 		</div>
 		{{#data-page-tools}}{{#has-tools}}{{>PageTools}}{{/has-tools}}{{/data-page-tools}}

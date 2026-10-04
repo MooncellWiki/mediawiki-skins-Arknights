@@ -401,7 +401,6 @@
 			],
 			"messages": [
 				"arknights-search-load-error",
-				"arknights-shortlink",
 				"arknights-shortlink-copied",
 				"arknights-shortlink-copy-failed"
 			]
