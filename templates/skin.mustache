@@ -14,7 +14,7 @@
 
 	DOM follows prts-design's chrome/ layer (docs site /guide/skin-template):
 	  body > a.ak-skip + header.ak-header + .ak-keyart + .ak-page > .ak-layout > aside.ak-sidebar + main.ak-main > .ak-main__inner
-	       > header.ak-page-header + .ak-toc-dock(aside.ak-toc) + .ak-body(#bodyContent) + #catlinks; footer.ak-footer; button.ak-fab
+	       > [.ak-sitenotice] + header.ak-page-header + .ak-toc-dock(aside.ak-toc) + .ak-body(#bodyContent) + #catlinks; footer.ak-footer; button.ak-fab
 }}
 {{>IconSprite}}
 <a class="ak-skip mw-jump-link" href="#bodyContent">{{msg-arknights-jumptocontent}}</a>
@@ -22,18 +22,24 @@
 {{!
 	Key art — always emitted; an event theme (a gadget, or MediaWiki:Common.css) sets
 	--ak-keyart-image and a height to show it. It sits behind the header glass and the layout
-	and only keeps a thin strip above the layout (--ak-keyart-reveal, 72px by default); the
-	sidebar / heading / TOC start below that strip, over the image. See design-system/tokens.css
-	§2d and the README.
+	and takes no room of its own (--ak-keyart-reveal is 0 by default): the sidebar / heading /
+	TOC start right under the header, over the image. See design-system/tokens.css §2d and
+	the README.
 	A theme that puts readable content in __inner should drop the aria-hidden.
 }}
 <div class="ak-keyart" aria-hidden="true"><div class="ak-keyart__inner"></div></div>
 <div class="ak-page">
-	{{#html-site-notice}}<div class="ak-sitenotice">{{{.}}}</div>{{/html-site-notice}}
 	<div class="ak-layout{{^toc-enabled}} ak-layout--no-toc{{/toc-enabled}}{{#is-mainpage-view}} ak-layout--mainpage{{/is-mainpage-view}}">
 		{{>Sidebar}}
 		<main class="ak-main mw-body" id="content">
 			<div class="ak-main__inner">
+			{{!
+				The site notice sits in the content column (as in Vector 2022), not across the
+				page above the layout: nothing but the header may come before .ak-layout, or the
+				sidebar starts lower than where it sticks — its max-height is the viewport minus
+				that sticky offset, so its bottom would be off screen until the page is scrolled.
+			}}
+			{{#html-site-notice}}<div class="ak-sitenotice">{{{.}}}</div>{{/html-site-notice}}
 			{{>PageHeader}}
 			{{!
 				The table of contents belongs to the page, so it sits right after the heading:

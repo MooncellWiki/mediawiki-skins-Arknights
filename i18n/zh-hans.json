@@ -33,7 +33,7 @@
 	"arknights-config-menusidebaraftermessage": "渲染在侧栏下方的 MediaWiki 名字空间消息名。空字符串表示禁用。",
 	"arknights-config-menusidebarhideportlets": "启用 wikitext 侧栏时隐藏 MediaWiki:Sidebar 的门户（工具箱与语言除外）。",
 	"arknights-config-showpagetools": "页面工具的可见性：true、false、'login' 或 'permission-<权限>'。",
-	"arknights-config-sidebarflyout": "在桌面端启用侧栏折叠分支的悬停飞出预览。",
+	"arknights-config-sidebarflyout": "在桌面端以飞出层展示侧栏分支的子项，而不是就地展开。",
 	"arknights-config-enablethemetoggle": "在页眉显示主题切换。",
 	"arknights-search-label": "搜索",
 	"arknights-search-placeholder": "搜索 $1…",

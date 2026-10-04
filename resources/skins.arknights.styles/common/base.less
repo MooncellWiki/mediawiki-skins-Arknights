@@ -4,7 +4,7 @@
  * (chrome/shell.css, chrome/keyart.css, scope.css); .ak-sr-only from utilities.css.
  */
 
-// Wrapper for site notice + layout between the key art and the footer (skin.mustache).
+// Wrapper for the layout between the key art and the footer (skin.mustache).
 // body.skin-arknights is a column flex (chrome/shell.css); this keeps the footer at the bottom.
 .ak-page {
 	flex: 1 0 auto;
@@ -13,13 +13,9 @@
 	min-width: 0;
 }
 
-/* Site notice */
+/* Site notice — first thing in the content column (.ak-main__inner), above the page header */
 .ak-sitenotice {
-	max-width: @ak-page-max;
-	width: 100%;
-	margin: 0 auto;
-	padding: var( --ak-space-3 ) var( --ak-gutter ) 0;
-	box-sizing: border-box;
+	margin: 0 0 var( --ak-space-4 );
 	font-size: var( --ak-fs-sm );
 
 	&:empty {

@@ -583,7 +583,7 @@
 		},
 		"SidebarFlyout": {
 			"value": true,
-			"description": "Enable hover fly-out previews of collapsed sidebar branches on desktop pointers.",
+			"description": "Show the children of sidebar branches in fly-outs on desktop pointers instead of expanding them in place.",
 			"descriptionmsg": "arknights-config-sidebarflyout",
 			"public": true
 		},

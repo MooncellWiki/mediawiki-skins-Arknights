@@ -1,6 +1,7 @@
 /**
- * Multi-level sidebar navigation: tree expand / collapse with memory, current-page
- * path, keyboard support and desktop hover fly-outs.
+ * Multi-level sidebar navigation: on desktop pointers branches open as fly-outs (hover,
+ * click to pin, keyboard) and never expand in place; in the drawer they expand / collapse
+ * with memory and the current page's path opens by itself.
  *
  * The implementation is the design-system script (resources/design-system/sidebar-tree.js,
  * synced verbatim from prts-design). It self-initialises on `.ak-sidebar` and watches

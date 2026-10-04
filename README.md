@@ -6,7 +6,7 @@
 - 终端（暗）/ 档案（亮）/ 跟随系统 三态主题，`<html class="skin-theme-clientpref-*">`，与 Vector 2022 / Minerva 同一套类名（`.skin-invert` `.notheme` `.mw-no-invert` 约定同样支持）
 - **wikitext 侧栏**：`MediaWiki:MenuSidebar` 以当前页面为上下文解析后直接渲染进侧栏（VectorMenuSidebar 的皮肤原生实现，见下文）
 - 页眉主行是与正文三列对齐的 **品牌 · 搜索 · 工具** 网格，不放站点级主导航（导航只由侧栏承担）
-- 多层树形侧栏（任意深度展开、记忆、当前页路径自动展开、桌面悬停飞出）
+- 多层侧栏：桌面分支只飞出（悬停 / 点击 / 键盘）、不就地展开，侧栏高度固定；抽屉里任意深度展开、记忆、当前页路径自动展开
 - 右侧粘性目录（scrollspy + 阅读进度 + 折叠），640–1400 收成正文右上角一枚独立的目录按钮（同 Vector 2022：平时在页面里，滚过后贴着页眉）+ 浮层，手机上入口在页眉里
 - 响应式：≥1400 三栏 · ≥1120 双栏 · <1120 侧栏抽屉 + 页眉工具卡片 · <640 页眉合成一行
 - Codex/OOUI/核心特殊页面/常用扩展（Echo、TabberNeue、WikiEditor、CodeMirror、ULS、Cargo、SMW …）的 skinStyles
@@ -51,7 +51,7 @@ $wgArknightsMenuSidebar = true;
 | `$wgArknightsMenuSidebarAfterMessage` | `'MenuSidebarAfter'` | 侧栏下方追加内容的消息名，`''` 关闭 |
 | `$wgArknightsMenuSidebarHidePortlets` | `true` | 启用 MenuSidebar 时隐藏 `MediaWiki:Sidebar` 门户（工具箱与语言除外），与 VMS 行为一致 |
 | `$wgArknightsShowPageTools` | `true` | 页面工具可见性：`true` / `false` / `'login'` / `'permission-edit'` 等 |
-| `$wgArknightsSidebarFlyout` | `true` | 桌面端侧栏折叠分支的悬停飞出预览 |
+| `$wgArknightsSidebarFlyout` | `true` | 桌面端侧栏分支以飞出层展示子项（不就地展开）；关掉后桌面也和抽屉一样就地展开 |
 | `$wgArknightsTableOfContentsCollapseAtCount` | `28` | 标题数 ≥ 此值时目录默认折叠子节 |
 | `$wgArknightsSearchPalette` | `true` | 页眉搜索换成悬浮命令面板；`false` 保留原表单与核心搜索建议 |
 | `$wgArknightsSearchIndex` | `[]` | 面板本地即时索引的 Cargo 数据源（见下文），空数组关闭 |
@@ -76,7 +76,7 @@ $wgArknightsMenuSidebar = true;
 ```css
 :root {
   --ak-theme-accent: #72a330;                       /* 页眉标语 / 悬停 / 外观开关选中项 / 搜索图标框、侧栏与目录分组条、页脚斜纹一起换 */
-  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 280px;   /* 头图 .ak-keyart：从页面顶端铺起，垫在页眉与版面背后、只留 72px 一小条；-h 是页眉之下那段画的高度 */
+  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 280px;   /* 头图 .ak-keyart：从页面顶端铺起，整幅垫在页眉与版面背后、不占位；-h 是页眉之下那段画的高度 */
   --ak-chrome-bg: rgba(8, 9, 10, .8);                                           /* 可选：页眉玻璃调淡些让头图多透一点（默认 .9，别低于 .72） */
   --ak-chrome-image: url(//media.prts.wiki/…/headleft.png);
   --ak-chrome-image-position: left top;   --ak-chrome-texture: 0;               /* 可选：顶栏角饰（现网 PRTSheadleft 那种活动徽章 / 深色底纹），有角饰就关掉默认网点 */
@@ -88,10 +88,10 @@ html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/
 
 完整变量表见 prts-design 文档站的「皮肤骨架 · 头图与主题接口」（/chrome/theming）与「色彩 · 页眉 / 头图 / 画布的主题接口」，可运行示例见上游 `packages/css/src/chrome/demo-theme.css`。四点注意：
 
-- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认只在版面之上露 72px 一小条（`--ak-keyart-reveal`，≤639 收到 10vw 以内），侧栏 / 页面标题 / 目录从那以下压在画上、不被整幅往下推；想多露一些调高它，想顶满设 0，= `-h` 即旧的横幅带。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
+- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认不占位（`--ak-keyart-reveal: 0`），侧栏 / 页面标题 / 目录直接从页眉之下排起、压在画上；想先露一条画就设 `72px` 之类（≤639 收到 10vw 以内），= `-h` 即旧的横幅带。露出段会把侧栏往下推——它的高度按吸顶位置算，矮窗口里首屏底下一截会出视口；站点公告也因此放在正文列里（`.ak-main__inner` 的第一项），不横在 `.ak-layout` 上面。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
-- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽，高度 = 露出段 `--ak-keyart-reveal`，默认 72px，放内容要调高）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
+- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽，高度 = 露出段 `--ak-keyart-reveal`，默认 0，放内容要设一个高度）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
 
 ### 页脚链接列（`MediaWiki:Arknights-footer-links`）
 
@@ -336,7 +336,7 @@ $wgArknightsSearchIndex = [
 | 输出位置 | 页尾隐藏 div + 内联 JS 搬运 | 服务端直接渲染进 `aside.ak-sidebar > #mw-panel > nav#MenuSidebar`，无 JS 依赖、无闪动、无内联脚本（CSP 友好） |
 | 工具箱 | 复制 `#p-tb ul` 到 `#MSToolbox` 后删除门户 | 工具箱作为标准门户 `#p-tb` 保留在侧栏中（`mw.util.addPortletLink('p-tb', …)` 继续可用），并带图标 |
 | 样式 | `MediaWiki:MenuSidebar.css` 内联 `<style>` | 设计系统 `chrome/sidebar.css` + `chrome/sidebar-tree.css`（解析产物的 `p` / `ul` / `li > b` 结构上游本来就支持），皮肤只补 `common/menu-sidebar.less`；站点定制放 `MediaWiki:Arknights.css` |
-| 交互 | CSS `:hover` 飞出 | `design-system/sidebar-tree.js`：任意深度展开/收起 + `localStorage` 记忆 + 当前页路径自动展开 + 键盘 + 桌面悬停飞出 |
+| 交互 | CSS `:hover` 飞出 | `design-system/sidebar-tree.js`：桌面飞出（悬停 / 点击钉住 / 键盘，不就地展开，当前页路径只高亮）；抽屉里任意深度展开/收起 + `localStorage` 记忆 + 当前页路径自动展开 + 键盘 |
 | 输出结构 | `p` / `ul` / `li > b` / `li > a` | 完全相同（HTML 由同一段 wikitext 解析得到），`#MenuSidebar` id 也保留 |
 | 模板里的 TemplateStyles / 模块 | 丢失 | `ParserOutput` 的 modules / moduleStyles / jsConfigVars 转发到 OutputPage |
 | 其他皮肤 | 只对 vector 生效 | 只对 arknights 生效；VMS 与本皮肤可以同时安装、互不干扰（各自检查 skin name） |

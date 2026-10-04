@@ -38,7 +38,7 @@
 	"arknights-config-menusidebaraftermessage": "Name of the MediaWiki-namespace message rendered below the sidebar. Empty string disables it.",
 	"arknights-config-menusidebarhideportlets": "Hide the MediaWiki:Sidebar portlets (except toolbox and languages) when the wikitext sidebar is enabled.",
 	"arknights-config-showpagetools": "Visibility of the page tools: true, false, 'login' or 'permission-<right>'.",
-	"arknights-config-sidebarflyout": "Enable hover fly-out previews of collapsed sidebar branches on desktop.",
+	"arknights-config-sidebarflyout": "Show the children of sidebar branches in fly-outs on desktop instead of expanding them in place.",
 	"arknights-config-enablethemetoggle": "Show the theme toggle in the header.",
 	"arknights-search-label": "Search",
 	"arknights-search-placeholder": "Search $1…",
