@@ -80,7 +80,10 @@ let tipBox = null;
  * wired to the element through aria-describedby (a node in a hidden container) unless it
  * merely repeats the element's own name (an item image whose alt is the item name); elements
  * that are not focusable but carry information beyond their name get tabindex=0 so keyboard
- * focus shows the tip via :focus-visible.
+ * focus shows the tip via :focus-visible. When the carrier is the wrapper of a control
+ * (label.ak-switch / .ak-check, .ak-number, .ak-search — where the Vue components put
+ * data-ak-tip), the description goes on the control inside and no tabindex is added: focusing
+ * the control shows the tip via [data-ak-tip]:has(:focus-visible).
  *
  * @param {ParentNode} root
  */
@@ -106,9 +109,10 @@ function bindTips( root ) {
 		d.id = 'ak-tip-' + ( ++tipSeq );
 		d.textContent = tip;
 		tipBox.appendChild( d );
-		el.setAttribute( 'aria-describedby', ( ( el.getAttribute( 'aria-describedby' ) || '' ) + ' ' + d.id ).trim() );
-		if ( !el.matches( 'a[href], button, input, select, textarea, summary, [tabindex]' ) && !el.closest( 'a[href], button' ) ) {
-			el.tabIndex = 0;
+		const host = ( el.matches( 'label, .ak-number, .ak-search' ) && el.querySelector( 'input, select, textarea' ) ) || el;
+		host.setAttribute( 'aria-describedby', ( ( host.getAttribute( 'aria-describedby' ) || '' ) + ' ' + d.id ).trim() );
+		if ( !host.matches( 'a[href], button, input, select, textarea, summary, [tabindex]' ) && !host.closest( 'a[href], button' ) ) {
+			host.tabIndex = 0;
 		}
 	} );
 }
