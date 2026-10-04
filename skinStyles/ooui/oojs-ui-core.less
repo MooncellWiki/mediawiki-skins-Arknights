@@ -24,6 +24,34 @@
 	border-radius: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
+// 字号基准。OOUI 的尺寸全用 em，比例按 Vector 正文的 14px 定；本皮肤正文是 16px，控件原样继承就整体大一号
+// （输入框 / 按钮 16px、分组标题 18.3px、最近更改的过滤器选项 18.4px、对话框标题 24px），也比设计系统自己的
+// 表单控件（--ak-fs-sm）和它们旁边 14px 的列表大。把基准收回 --ak-fs-sm：
+//   · 只落在「最外层」的 OOUI 元素上，里面的 em 比例照旧逐级继承；
+//   · 挂在 body 末尾的弹层 / 对话框（.oo-ui-defaultOverlay、.oo-ui-windowManager，以及 rcfilters、Echo 等
+//     自建 overlay 里的弹出控件）不在正文之内，同样按最外层算；
+//   · 整条包在 :where() 里（零特指度），任何自带字号的规则都压得过它；
+//   · 页眉里的控件（Echo 铃铛）由皮肤按 px 另写，不参与。
+@ooui-roots: ~'.oo-ui-widget, .oo-ui-layout, .oo-ui-window, .oo-ui-windowManager, .oo-ui-defaultOverlay';
+
+// 整条选择器放在转义字符串里：less.php 解析不了直接写在选择器位置的 `:not( … * )`。
+@ooui-outermost: ~':where( @{ooui-roots} ):not( :where( @{ooui-roots}, .ak-header ) * )';
+
+@{ooui-outermost} {
+	font-size: var( --ak-fs-sm );
+}
+
+// iPhone：文本类控件字号 <16px 时聚焦会把整页放大且不缩回（同 design-system/base/forms.css），手机断点下留在 16px。
+// 要压过 OOUI 的 `.oo-ui-textInputWidget .oo-ui-inputWidget-input { font-size: inherit }`。
+@supports ( -webkit-touch-callout: none ) {
+	@media ( max-width: 639px ) {
+		.oo-ui-textInputWidget.oo-ui-widget .oo-ui-inputWidget-input,
+		.oo-ui-dropdownInputWidget.oo-ui-widget select {
+			font-size: 16px;
+		}
+	}
+}
+
 .oo-ui-buttonElement-framed > .oo-ui-buttonElement-button {
 	font-family: var( --ak-font-body );
 	font-weight: 600;
