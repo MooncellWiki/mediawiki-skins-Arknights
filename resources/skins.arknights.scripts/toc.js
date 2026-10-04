@@ -4,12 +4,15 @@
  *
  * Below 1400px the TOC folds into a button of its own (.ak-toc-btn) with the list as a
  * flyout under it; both hang off .ak-toc-dock, a sticky anchor that rests at the top of
- * the article and follows the header once scrolled past. Opening and closing is pure CSS
- * (#ak-toc-toggle, its label and the flyout are siblings), so it works without JS; this
- * module adds the parts a checkbox cannot express:
+ * the article and follows the header once scrolled past. On phones (≤639px) the button is
+ * a second label in the header instead (.ak-local-nav__toc) and the flyout hangs off the
+ * header. Opening and closing is pure CSS either way (#ak-toc-toggle and the flyout are
+ * siblings, the labels point at the checkbox), so it works without JS; this module adds
+ * the parts a checkbox cannot express:
  *
  *   - the checkbox state is mirrored onto html.ak-toc-open, which makes the back-to-top
- *     button step aside while the flyout is open (the two are no siblings);
+ *     button step aside while the flyout is open and lights up the header's label on
+ *     phones (neither is a sibling of the checkbox);
  *   - the flyout's height limit assumes the dock is pinned under the header. Until the
  *     page has scrolled that far the dock sits lower, and that offset goes into --_y so
  *     the flyout still ends inside the viewport;
@@ -79,8 +82,10 @@ function setupFlyout() {
 			return;
 		}
 		// Clicking the label dispatches a second click on the checkbox itself — that one
-		// lands inside the dock as well, so it does not count as "outside".
-		if ( !target.closest( '.ak-toc-dock' ) ) {
+		// lands inside the dock as well, so it does not count as "outside". The header's
+		// label (phones) is outside the dock and must be let through too: dismissing here
+		// would be undone by that second click, and the flyout would never close.
+		if ( !target.closest( '.ak-toc-dock, .ak-local-nav__toc' ) ) {
 			dismiss();
 		}
 	} );

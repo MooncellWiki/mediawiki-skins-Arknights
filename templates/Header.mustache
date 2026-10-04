@@ -1,8 +1,9 @@
 {{!
-	string msg-arknights-drawer-toggle
+	string msg-arknights-drawer-toggle / msg-toc
 	string msg-arknights-appearance / msg-arknights-nav-screen
 	object data-search-box   core search box data
 	bool has-theme-toggle
+	bool toc-enabled
 	object data-user-menu
 
 	The header carries no site navigation: that lives in the sidebar only (MediaWiki:MenuSidebar
@@ -49,15 +50,23 @@
 		</label>
 	</div>
 	{{!
-		Local nav — the drawer button, shown by CSS below 1120px only. It is no row of its
-		own: CSS folds it into the header's single row (display:contents on this and
-		.ak-header__inner), so the DOM stays as it is. That row stays pinned, so the drawer is
-		reachable at any scroll position. The table of contents has no entry up here: below
-		1400px it is a button of its own next to the article (see skin.mustache).
+		Local nav — the drawer button, shown by CSS below 1120px only, and on phones (≤ 639px)
+		the table-of-contents button. It is no row of its own: CSS folds both into the header's
+		single row (display:contents on this and .ak-header__inner), so the DOM stays as it is.
+		That row stays pinned, so they are reachable at any scroll position.
+
+		Between 640 and 1400px the table of contents has no entry up here: it is a button of
+		its own next to the article (see skin.mustache). Phones keep it in the header — a
+		floating square would sit on top of the text there. The label below toggles the same
+		checkbox (#ak-toc-toggle in .ak-toc-dock), so it still works without JS; it carries no
+		text — the name is the checkbox's aria-label.
 	}}
 	<div class="ak-local-nav">
 		<button type="button" class="ak-local-nav__btn ak-local-nav__menu" id="ak-drawer-toggle" aria-controls="ak-sidebar" aria-expanded="false">
 			<svg class="ak-icon" aria-hidden="true" focusable="false"><use href="#i-menu"/></svg>{{msg-arknights-drawer-toggle}}
 		</button>
+		{{#toc-enabled}}
+		<label class="ak-local-nav__btn ak-local-nav__toc" for="ak-toc-toggle" title="{{msg-toc}}"></label>
+		{{/toc-enabled}}
 	</div>
 </header>

@@ -37,12 +37,15 @@
 			{{>PageHeader}}
 			{{!
 				The table of contents belongs to the page, so it sits right after the heading:
-				≥ 1400px CSS lifts it into the rail reserved by .ak-main's right padding. Below
-				that it folds into a button of its own (the label — the same square as the
+				≥ 1400px CSS lifts it into the rail reserved by .ak-main's right padding. From
+				640px up to that it folds into a button of its own (the label — the same square as the
 				back-to-top button, in the same column) with the list as a flyout under it. The
 				dock is a zero-height sticky anchor: the button rests on the top right corner of
 				the article, flush with its top edge, and follows the header once that is
-				scrolled past, like the pinned TOC button in Vector 2022. One DOM, two shapes.
+				scrolled past, like the pinned TOC button in Vector 2022. On phones (≤ 639px)
+				the button is hidden: the entry is the label in the header's local nav
+				(Header.mustache), toggling this same checkbox, and the flyout hangs off the
+				header. One DOM, three shapes.
 
 				Checkbox, label and flyout are siblings, so opening it is pure CSS
 				(:checked ~) and works without JS; toc.js adds the rest. The label is the icon
