@@ -6,7 +6,7 @@
 .ak-menusidebar {
 	margin-bottom: var( --ak-space-5 );
 
-	// A leading list without a heading (home / short URL / support …)
+	// A leading list without a heading (home / support / feedback)
 	> ul:first-child {
 		margin-bottom: var( --ak-space-4 );
 	}
@@ -15,30 +15,6 @@
 	li > b > span,
 	li > a > span {
 		font-weight: inherit;
-	}
-
-	// {{#widget:CopyURL}} and other non-link rows written as <a> without href
-	li > a:not( [ href ] ) {
-		cursor: pointer;
-	}
-
-	// Vector-only rows. MediaWiki:MenuSidebar is one page shared with Extension:VectorMenuSidebar;
-	// what has another home in this skin (the footer columns, the copy-link icon after the title) and
-	// none in Vector stays on that page, marked with a span *inside* the row — wikitext cannot
-	// put a class on a list item or on a heading paragraph:
-	//   *<span class="menusidebar-vector-only">[[PRTS:常用代码|常用代码]]</span>    one row
-	//   *'''<span class="menusidebar-vector-only">官方网站</span>'''                a branch, with its sub-list
-	//   <span class="menusidebar-vector-only">探索</span>                           a group: heading + its list
-	// Two rules on purpose: a browser without :has() drops the whole second one and is left
-	// with the first — the label is gone, a branch / heading keeps an empty row.
-	.menusidebar-vector-only {
-		display: none;
-	}
-
-	li:has( > .menusidebar-vector-only, > b > .menusidebar-vector-only ),
-	> p:has( > .menusidebar-vector-only ),
-	> p:has( > .menusidebar-vector-only ) + ul {
-		display: none;
 	}
 
 	// Anything else the parser emits at the top level (tables, divs) gets breathing room

@@ -89,7 +89,7 @@ html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/
 
 完整变量表见 prts-design 文档站的「皮肤骨架 · 头图与主题接口」（/chrome/theming）与「色彩 · 页眉 / 头图 / 画布的主题接口」，可运行示例见上游 `packages/css/src/chrome/demo-theme.css`。四点注意：
 
-- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认只在版面之上露 72px 一小条（`--ak-keyart-reveal`，各宽度相同，手机上也露；不超过画高），侧栏 / 页面标题 / 目录从那以下压在画上、不被整幅往下推；想多露一些调高它，想顶满设 0，= `-h` 即旧的横幅带。露出段会把侧栏往下推这么多——它的高度按吸顶位置算，矮窗口里首屏底下一截要滚一下才看得到，所以侧栏里在本皮肤另有去处的项不再占行（见下文「只给 Vector 看的行」）；站点公告也放在正文列里（`.ak-main__inner` 的第一项），不横在 `.ak-layout` 上面再推一截。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
+- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认只在版面之上露 72px 一小条（`--ak-keyart-reveal`，各宽度相同，手机上也露；不超过画高），侧栏 / 页面标题 / 目录从那以下压在画上、不被整幅往下推；想多露一些调高它，想顶满设 0，= `-h` 即旧的横幅带。露出段会把侧栏往下推这么多——它的高度按吸顶位置算，矮窗口里首屏底下一截要滚一下才看得到，所以侧栏里在本皮肤另有去处的项不再占行（见下文「只给 Vector 看的项」）；站点公告也放在正文列里（`.ak-main__inner` 的第一项），不横在 `.ak-layout` 上面再推一截。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
 - 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽，高度 = 露出段 `--ak-keyart-reveal`，默认 72px，放内容要调高）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
@@ -344,17 +344,16 @@ $wgArknightsSearchIndex = [
 
 因此**无需改动 `MediaWiki:MenuSidebar` 的 wikitext** 即可迁移；`MediaWiki:MenuSidebarAfter` 同样支持。
 
-### 只给 Vector 看的行
+### 只给 Vector 看的项
 
-`MediaWiki:MenuSidebar` 是 Vector（VMS）与本皮肤共用的一页。有些项在本皮肤另有去处、在 Vector 下没有——「复制短链接」是标题末尾的链条图标（`$wgArknightsShortUrl`），「常用代码」「编辑指南」「探索」组等在页脚的链接列（`MediaWiki:Arknights-footer-links`）。这些项留在 MenuSidebar 里，行内包一层 `menusidebar-vector-only`，本皮肤用 CSS 隐藏所在的整行（`common/menu-sidebar.less`，`:has()`），Vector 不认这个类名、照常显示：
+`MediaWiki:MenuSidebar` 是 Vector（VMS）与本皮肤共用的一页。有些项在本皮肤另有去处、在 Vector 下没有——「复制短链接」是标题末尾的链条图标（`$wgArknightsShortUrl`），「常用代码」「编辑指南」「探索」组等在页脚的链接列（`MediaWiki:Arknights-footer-links`）。这类项不靠皮肤隐藏，而是按皮肤读取：VectorMenuSidebar ≥ 0.1.0 优先读 `MediaWiki:MenuSidebar-vector`，那一页只有一行 `{{MediaWiki:MenuSidebar|vector=1}}`；共用的 `MediaWiki:MenuSidebar` 里把只给 Vector 的部分包进 `{{#if:{{{vector|}}}|…}}`。本皮肤直接解析 `MediaWiki:MenuSidebar`，`{{{vector|}}}` 为空，这些项根本不输出。菜单仍只有一份，机器人照旧只改这一页。
 
 ```wikitext
-*<span class="menusidebar-vector-only">[[PRTS:常用代码|常用代码]]</span>         一行
-*'''<span class="menusidebar-vector-only">官方网站</span>'''                     一个分支（连同它的 ** 子项）
-<span class="menusidebar-vector-only">探索</span>                                整组：分组标题 + 紧跟的列表
+*[[上一项]]{{#if:{{{vector|}}}|*[[只给 Vector 的项]]}}          列表里的条件行接在上一行行尾（结果以 * 开头时解析器会自动另起一行；
+                                                              单独占一行的话，条件不成立时留下的空行会把列表断成两个 <ul>）
+{{#if:{{{vector|}}}|分组标题                                    整组（标题 + 列表）单独占一行
+*[[组里的项]]}}
 ```
-
-wikitext 没法给 `li` 或分组标题的 `p` 本身加类名，所以标记写在行内：标在 `*` 行里（或它的 `'''粗体'''` 里）隐藏这一行，标在分组标题那一行隐藏标题和紧跟的整张列表。不认 `:has()` 的浏览器（Chrome < 105、Firefox < 121、Safari < 15.4）只隐藏标记里的文字，分支 / 标题会留下一条空行。
 
 后续可评估的改进（尚未做，欢迎评估）：
 1. **缓存**：现在与 VMS 一样每次请求都解析一次；可以按 (页面 ID, 用户语言, MenuSidebar 最后修改时间) 做 WAN 缓存，代价是模板变化（如 `{{MenuSidebarAutoEvents}}`）会有 TTL 延迟。
