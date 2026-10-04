@@ -344,8 +344,7 @@ function init() {
 				items: ( ( data.query && data.query.allusers ) || [] ).map( ( user ) => ( {
 					type: 'user',
 					label: user.name,
-					url: mw.util.getUrl( 'User:' + user.name ),
-					desc: mw.msg( 'arknights-search-mode-user-row' )
+					url: mw.util.getUrl( 'User:' + user.name )
 				} ) )
 			} ] )
 		},

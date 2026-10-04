@@ -78,7 +78,6 @@
 	"arknights-search-mode-user": "Name of the users command mode, triggered by \"@\" or \"/user\".",
 	"arknights-search-mode-user-desc": "Description of the users mode in the command list.",
 	"arknights-search-mode-user-placeholder": "Field placeholder while the users mode is active.",
-	"arknights-search-mode-user-row": "Second line of a user result, naming the pages it leads to.",
 	"arknights-search-mode-file": "Name of the files command mode, triggered by \"~\" or \"/file\".",
 	"arknights-search-mode-file-desc": "Description of the files mode in the command list.",
 	"arknights-search-mode-file-placeholder": "Field placeholder while the files mode is active.",

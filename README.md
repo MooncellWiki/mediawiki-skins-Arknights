@@ -237,7 +237,7 @@ Widget / 小工具 / 模板里直接写裸 `<input>` `<select>` `<textarea>` `<b
   这套之所以便宜，是因为**页眉那个真表单本身就是加载前的兜底** —— 模块没到之前它照样提交到 `Special:Search`，
   所以预取失败可以完全静默，只有用户主动点了才需要提示（`arknights-search-load-error`）。
   唯一的约束：挂载会把输入框搬走，所以光标在框里或框里有字时不做静默挂载，留给下一次主动打开一起做。
-- 打开：点触发器 / 手机上的搜索图标 / 按 `/`、`Ctrl(⌘)K`、accesskey F。关闭：Esc（有字先清空，模式中先退出）、点遮罩、选中结果。
+- 打开：点触发器 / 手机上的搜索图标 / 按 `/`、`Ctrl(⌘)K`、accesskey F。关闭：Esc（有字先清空，模式中先退出）、点遮罩、选中结果；手机 / 触屏上另有右上角的「取消」（桌面不放关闭按钮）。
 - 空态显示最近访问（`localStorage['arknights-search-recent']`）与**站内可编辑的快捷入口**
   `MediaWiki:Arknights-search-shortcuts`（见下）；`/` 列出命令，`>` 动作 · `#` 分类 · `@` 用户 · `~` 文件。
 - 面板开启时 `SkinHooks::onSkinPageReadyConfig()` 会把 `mediawiki.page.ready` 的 `search` 开关置 false
