@@ -7,7 +7,7 @@
 - **wikitext 侧栏**：`MediaWiki:MenuSidebar` 以当前页面为上下文解析后直接渲染进侧栏（VectorMenuSidebar 的皮肤原生实现，见下文）
 - 页眉主行是与正文三列对齐的 **品牌 · 搜索 · 工具** 网格，不放站点级主导航（导航只由侧栏承担）
 - 多层树形侧栏（任意深度展开、记忆、当前页路径自动展开、桌面悬停飞出）
-- 右侧粘性目录（scrollspy + 阅读进度 + 折叠），窄屏变浮动抽屉
+- 右侧粘性目录（scrollspy + 阅读进度 + 折叠），<1400 收成正文右上角一枚独立的目录按钮（同 Vector 2022：平时在页面里，滚过后贴着页眉）+ 浮层
 - 响应式：≥1400 三栏 · ≥1120 双栏 · <1120 侧栏抽屉 + 页眉工具卡片 · <640 页眉合成一行
 - Codex/OOUI/核心特殊页面/常用扩展（Echo、TabberNeue、WikiEditor、CodeMirror、ULS、Cargo、SMW …）的 skinStyles
 
@@ -358,7 +358,7 @@ $wgArknightsSearchIndex = [
 | 动作簇（讨论 / 历史 / 编辑 / ★ / 更多）保留并靠右 | `.ak-page-header__row { justify-content: flex-end }`——标题出流后它是这一行唯一的项，默认会滑到左边 |
 | 正文不包白纸 | `.ak-body--mainpage`：无底色、无边框、无内边距（首页区块各自带容器，外层再套一张纸就是纸上贴纸） |
 | 不把目录导轨让出去 | `.ak-layout--mainpage .ak-main` 保留 `--ak-content-max + --ak-toc-w + --ak-gutter` 的总宽，右缘与有目录的页面对齐；其它无目录页（`.ak-layout--no-toc`）仍收窄到阅读列 |
-| 不出目录 | `toc-enabled` 在首页恒为假：右侧粘性目录与页眉里的「本页目录」都不渲染 |
+| 不出目录 | `toc-enabled` 在首页恒为假：右侧粘性目录与目录按钮都不渲染 |
 | 命名空间小标 / 指示器 | `.ak-page-header__top:empty` 自动收起（首页在主名字空间；真放了 `<indicator>` 会照常显示，要藏就自己在 `MediaWiki:Common.css` 写一行） |
 
 `MediaWiki:Mainpage-title` 置空的老办法仍然有效，且此时核心给出的是**空的** h1（`is-title-blank`）——没有页面工具时整条页面头收起。
@@ -370,10 +370,10 @@ $wgArknightsSearchIndex = [
 - 骨架样式就是 prts-design 的 `packages/css/src/chrome/`（文档站「皮肤骨架」），经 `skins.arknights.shell` 逐文件加载；`templates/*.mustache` 按它的 DOM 契约输出（文档站 /guide/skin-template）。**在 wiki 上发现的视觉问题先看规则属于哪边**：能用类名和令牌描述的改上游 `chrome/` 再同步；只对 MediaWiki 的 DOM 或某个扩展才成立的，进 `common/shell-glue.less`。MW 皮肤比预览骨架多出来的几样（`.ak-page-heading` 包装 + tagline、`.mw-indicators`、diff 页放回「阅读」、目录折叠钮、抽屉抬头 `.ak-sidebar__head`、Echo 徽标 `.ak-header__notifications`、页脚列数由内容定）已经写进上游。
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
 - **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`chrome/header.css` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。活动主题的接口见上文「活动主题」。
-- **页眉各宽度都只有一行**，始终贴顶、不随滚动收起：`.ak-local-nav`（「菜单」<1120、「本页目录」<1400）不另起一行——上游只改 CSS，≤1400 时 `.ak-header__inner` 与 `.ak-local-nav` 都 `display:contents`，子项排进 `.ak-header` 这一行，所以 `Header.mustache` 的 DOM 不动。1120–1400 是 品牌 | 搜索 | 目录 | 工具 四列网格；<1120 是 flex：◧ 菜单 · 品牌 · 搜索 · 目录 · ⋮。代价是 Tab / 读屏顺序仍按 DOM（品牌 → 搜索 → 工具或 ⋮ → 菜单 → 目录），与视觉顺序不一致。`common/shell-glue.less` 不给 `#searchform` 写 `margin: 0`——<1120 时上游用左右外边距把搜索框与品牌 / 目录隔开，这里排在后面，一写就把它盖掉。
-- **<1120 页眉**里的外观切换、Echo 徽标、用户菜单收进 ⋮ 卡片。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ⋮ 拉下、贴页眉右下沿的卡片（宽度随内容，最窄 240px）：第一行左边通知徽标、右边外观开关，下面用户菜单平铺、恒展开（`header.js` 在这一档把它的 `<details>` 置 `open` 并标 `data-ak-flat`，`dropdown.js` 据此不再把它当下拉收起；无 JS 时由 `::details-content` 桥接）。用户卡片的抬头 `a.ak-menu__head#pt-userpage` 就是去用户页的链接——`userpage` 一项在 `runOnSkinTemplateNavigationHooks()` 里从 `user-menu` 提出来，「个人工具」里不再重复，用户名只出现一次。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录浮层的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起。这一档里点通知徽标不开 Echo 弹层（它挂在 `<body>` 的浮层里，会被卡片盖住），而是直接去 Special:Notifications：`header.js` 在捕获阶段拦下点击、不让它到达 Echo，徽标本来就是指向该页的链接。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
-- **<640 页眉**（52px）全是图标：◧ 菜单 · 品牌 ……… 目录 · 搜索 · ⋮。
-- **<1400 的目录**是页眉里「目录」拉下的浮层，360px 定宽、高不超过页眉下沿到视口底（`100dvh`，不用 `100vh`——手机地址栏收放时那是「最大视口」，浮层底会被工具栏盖住却又不出内滚），内部由 `.ak-toc__inner` 滚。开合仍是纯 CSS 的 `input.ak-toc-cb` + `label.ak-local-nav__toc`，但显示的主路径是 `toc.js` 把 checkbox 状态镜像到 `html.ak-toc-open`：不依赖 `:has()`，旧内核的手机浏览器也是真浮层；`body:has()` 只作无 JS 时的桥接，既无 JS 又无 `:has()`（`.client-nojs`）才退回正文流内的静态卡片。
+- **页眉各宽度都只有一行**，始终贴顶、不随滚动收起：`.ak-local-nav`（「菜单」，<1120）不另起一行——上游只改 CSS，<1120 时 `.ak-header__inner` 与 `.ak-local-nav` 都 `display:contents`，子项排进 `.ak-header` 这一行，所以 `Header.mustache` 的 DOM 不动。1120–1400 与 ≥1400 是同一套三列网格（目录入口不在页眉里，见下）；<1120 是 flex：◧ 菜单 · 品牌 · 搜索 · ⋮。代价是 Tab / 读屏顺序仍按 DOM（品牌 → 搜索 → 工具或 ⋮ → 菜单），与视觉顺序不一致。`common/shell-glue.less` 不给 `#searchform` 写 `margin: 0`——<1120 时上游用左右外边距把搜索框与品牌 / ⋮ 隔开，这里排在后面，一写就把它盖掉。
+- **<1120 页眉**里的外观切换、Echo 徽标、用户菜单收进 ⋮ 卡片。外观切换、Echo 徽标、用户菜单包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ⋮ 拉下、贴页眉右下沿的卡片（宽度随内容，最窄 240px）：第一行左边通知徽标、右边外观开关，下面用户菜单平铺、恒展开（`header.js` 在这一档把它的 `<details>` 置 `open` 并标 `data-ak-flat`，`dropdown.js` 据此不再把它当下拉收起；无 JS 时由 `::details-content` 桥接）。用户卡片的抬头 `a.ak-menu__head#pt-userpage` 就是去用户页的链接——`userpage` 一项在 `runOnSkinTemplateNavigationHooks()` 里从 `user-menu` 提出来，「个人工具」里不再重复，用户名只出现一次。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录按钮的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起。这一档里点通知徽标不开 Echo 弹层（它挂在 `<body>` 的浮层里，会被卡片盖住），而是直接去 Special:Notifications：`header.js` 在捕获阶段拦下点击、不让它到达 Echo，徽标本来就是指向该页的链接。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
+- **<640 页眉**（52px）全是图标：◧ 菜单 · 品牌 ……… 搜索 · ⋮。
+- **<1400 的目录**收成一枚独立的按钮（`label.ak-toc-btn`：与右下角「回到顶部」同款的 44px 方块、同一列，图标是方点列表）+ 从它下面拉出的浮层，不在页眉里——参考 Vector 2022 的目录按钮：平时停在正文纸张的右上角（顶边与纸张的上框线平齐），往下滚就贴在页眉下沿跟着走。`skin.mustache` 里是 `.ak-toc-dock > input.ak-toc-cb + label.ak-toc-btn + aside.ak-toc`，紧跟页面标题：dock 是一条零高度的粘性锚（`position: sticky`，粘在页眉下沿再往下 12px 处），按钮与浮层绝对定位在它里面。不用 `position: fixed`——页面顶部那一角是状态指示器和动作簇，会被压住；dock 的层级比下拉低一档，「更多」卡片盖得住它。三者是兄弟，开合就是 `.ak-toc-cb:checked ~ .ak-toc`：纯 CSS，不依赖 `:has()` 也不依赖 JS。浮层 360px 定宽（≤639 拉满）、高不超过它的顶边到视口底（`100dvh`，不用 `100vh`——手机地址栏收放时那是「最大视口」，浮层底会被工具栏盖住却又不出内滚），内部由 `.ak-toc__inner` 滚。`toc.js` 只补收尾：点 dock 外 / Esc / 跳转后收起；把状态镜像到 `html.ak-toc-open` 让「回到顶部」让位；dock 还没贴住页眉时把它比页眉低的那一截写进 `--_y`，浮层限高才对。
 - **只有带遮罩或占满屏宽的层才锁页面滚动**：侧栏抽屉，以及手机（≤639）上的目录浮层（`scrollLock.js`，两者共用一把按持有者计数的锁）。640–1400 的目录浮层、页眉 ⋮ 卡片、下拉菜单都没有遮罩，不锁页面，也不写 `overscroll-behavior: contain`——它在没有内滚时也会吞掉滚轮，指针停在上面页面就滚不动。锁的做法：`html.ak-scroll-lock` 是 `overflow: hidden`，不改滚动位置；有实体滚动条时同时写 `scrollbar-gutter: stable`，页面不会左右抖一下；两者都没有的老桌面浏览器退回拦 `wheel` / `touchmove` / 翻页键（浮层内真正可滚的元素放行），iOS 另外拦 `touchmove`。
 - 图标有两套，共用 `.ak-icon`：皮肤骨架用 `skins.arknights.icons`（OOUI WikimediaUI 图标，`mask-image` + `currentColor`），类名 `<span class="ak-icon ak-icon--{name}">`，可用名称见 `includes/Menu/MenuItemDecorator.php::ICONS`（与 skin.json 保持同步）；模板 / Widget 按设计系统文档写的 `<svg class="ak-icon"><use href="#i-{name}"/></svg>` 取自页面顶部内联的 sprite（`templates/IconSprite.mustache`，同步脚本从上游抽取），图标名见文档站 /foundations/icons。
 - 模板/TemplateStyles 中直接使用 `.ak-*` 组件与 `var(--ak-*)` 令牌，与预览页一致；`data-bind`/`.ak-tabs`/`.ak-phase-tabs` 等交互约定由 `interactive.js` 提供。

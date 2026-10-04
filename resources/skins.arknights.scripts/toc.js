@@ -2,15 +2,17 @@
  * Table of contents — scroll spy, reading progress, collapsible top-level sections and
  * dismissing the flyout.
  *
- * Below 1400px the TOC is a flyout pulled down from the local nav. Opening and closing it
- * is pure CSS (#ak-toc-toggle + its label), so it works without JS; this module adds the
- * parts a checkbox cannot express:
+ * Below 1400px the TOC folds into a button of its own (.ak-toc-btn) with the list as a
+ * flyout under it; both hang off .ak-toc-dock, a sticky anchor that rests at the top of
+ * the article and follows the header once scrolled past. Opening and closing is pure CSS
+ * (#ak-toc-toggle, its label and the flyout are siblings), so it works without JS; this
+ * module adds the parts a checkbox cannot express:
  *
- *   - the checkbox state is mirrored onto html.ak-toc-open, which is what actually shows
- *     the flyout. The stylesheet's `body:has( .ak-toc-cb:checked )` is the no-JS bridge,
- *     and an engine with neither (.client-nojs plus no :has()) falls back to a static card
- *     in the flow — so the flyout stays a real flyout in the older WebViews a lot of phone
- *     browsers ship;
+ *   - the checkbox state is mirrored onto html.ak-toc-open, which makes the back-to-top
+ *     button step aside while the flyout is open (the two are no siblings);
+ *   - the flyout's height limit assumes the dock is pinned under the header. Until the
+ *     page has scrolled that far the dock sits lower, and that offset goes into --_y so
+ *     the flyout still ends inside the viewport;
  *   - on phones (≤639px, where the flyout spans the viewport) the page behind it is
  *     scroll-locked while it is open. Wider than that the flyout has no backdrop and its
  *     content is this page's headings, so the page keeps scrolling (upstream prts-design
@@ -22,15 +24,34 @@ const scrollLock = require( './scrollLock.js' );
 
 function setupFlyout() {
 	const cb = document.getElementById( 'ak-toc-toggle' );
-	if ( !cb ) {
+	const dock = cb && cb.closest( '.ak-toc-dock' );
+	if ( !dock ) {
 		return;
 	}
 
-	const mq = window.matchMedia( '(max-width: 1399.98px)' );
+	const mq = window.matchMedia( '(max-width: 1400px)' );
 	const lockMq = window.matchMedia( '(max-width: 639px)' );
+	let ticking = false;
+	const place = () => {
+		ticking = false;
+		if ( !cb.checked ) {
+			return;
+		}
+		// The dock's `top` is where it pins (just below the header)
+		const pinned = parseFloat( getComputedStyle( dock ).top ) || 0;
+		const offset = Math.max( 0, Math.round( dock.getBoundingClientRect().top - pinned ) );
+		dock.style.setProperty( '--_y', offset + 'px' );
+	};
+	const schedule = () => {
+		if ( cb.checked && !ticking ) {
+			ticking = true;
+			window.requestAnimationFrame( place );
+		}
+	};
 	const sync = () => {
 		const open = cb.checked && mq.matches;
 		document.documentElement.classList.toggle( 'ak-toc-open', open );
+		place();
 		scrollLock.set( 'toc', open && lockMq.matches );
 	};
 	const dismiss = () => {
@@ -42,6 +63,8 @@ function setupFlyout() {
 	// Clicking the label or pressing space fires `change`; closing from code calls sync()
 	cb.addEventListener( 'change', sync );
 	sync();
+	window.addEventListener( 'scroll', schedule, { passive: true } );
+	window.addEventListener( 'resize', schedule );
 
 	document.addEventListener( 'click', ( e ) => {
 		if ( !cb.checked ) {
@@ -55,9 +78,9 @@ function setupFlyout() {
 			dismiss();
 			return;
 		}
-		// Clicking the label dispatches a second click on the checkbox itself —
-		// that one must not count as "outside", or the flyout would close as it opens.
-		if ( !target.closest( '.ak-toc, .ak-local-nav__toc, .ak-toc-cb' ) ) {
+		// Clicking the label dispatches a second click on the checkbox itself — that one
+		// lands inside the dock as well, so it does not count as "outside".
+		if ( !target.closest( '.ak-toc-dock' ) ) {
 			dismiss();
 		}
 	} );

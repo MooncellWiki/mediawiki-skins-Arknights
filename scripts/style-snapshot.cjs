@@ -111,7 +111,7 @@ async function enterState( page, state ) {
 			await page.click( '.ak-page-tools__more summary' );
 			break;
 		case 'toc':
-			await page.click( 'label.ak-local-nav__toc' );
+			await page.click( 'label.ak-toc-btn' );
 			break;
 		case 'drawer':
 			await page.click( '.ak-local-nav__menu' );

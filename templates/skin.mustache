@@ -14,7 +14,7 @@
 
 	DOM follows prts-design's chrome/ layer (docs site /guide/skin-template):
 	  body > a.ak-skip + header.ak-header + .ak-keyart + .ak-page > .ak-layout > aside.ak-sidebar + main.ak-main > .ak-main__inner
-	       > header.ak-page-header + aside.ak-toc + .ak-body(#bodyContent) + #catlinks; footer.ak-footer; button.ak-fab
+	       > header.ak-page-header + .ak-toc-dock(aside.ak-toc) + .ak-body(#bodyContent) + #catlinks; footer.ak-footer; button.ak-fab
 }}
 {{>IconSprite}}
 <a class="ak-skip mw-jump-link" href="#bodyContent">{{msg-arknights-jumptocontent}}</a>
@@ -37,13 +37,25 @@
 			{{>PageHeader}}
 			{{!
 				The table of contents belongs to the page, so it sits right after the heading:
-				≥ 1400px CSS lifts it into the rail reserved by .ak-main's right padding,
-				below that it becomes the flyout pulled down from the local nav. One DOM, two shapes.
+				≥ 1400px CSS lifts it into the rail reserved by .ak-main's right padding. Below
+				that it folds into a button of its own (the label — the same square as the
+				back-to-top button, in the same column) with the list as a flyout under it. The
+				dock is a zero-height sticky anchor: the button rests on the top right corner of
+				the article, flush with its top edge, and follows the header once that is
+				scrolled past, like the pinned TOC button in Vector 2022. One DOM, two shapes.
+
+				Checkbox, label and flyout are siblings, so opening it is pure CSS
+				(:checked ~) and works without JS; toc.js adds the rest. The label is the icon
+				alone: the name is the checkbox's aria-label, the tooltip the label's title.
 			}}
 			{{#toc-enabled}}
-			<aside class="ak-toc" id="ak-toc" aria-label="{{msg-toc}}">
-				{{>TableOfContents}}
-			</aside>
+			<div class="ak-toc-dock">
+				<input type="checkbox" id="ak-toc-toggle" class="ak-toc-cb" aria-label="{{msg-toc}}" aria-controls="ak-toc">
+				<label class="ak-toc-btn" for="ak-toc-toggle" title="{{msg-toc}}"></label>
+				<aside class="ak-toc" id="ak-toc" aria-label="{{msg-toc}}">
+					{{>TableOfContents}}
+				</aside>
+			</div>
 			{{/toc-enabled}}
 			<div class="ak-body{{#is-mainpage-view}} ak-body--flat{{/is-mainpage-view}}" id="bodyContent">
 				{{#html-user-message}}{{{.}}}{{/html-user-message}}
