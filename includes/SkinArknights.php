@@ -17,6 +17,7 @@ use MediaWiki\Skins\Arknights\Components\ArknightsComponentUserMenu;
 use MediaWiki\Skins\Arknights\Menu\FooterLinksParser;
 use MediaWiki\Skins\Arknights\Menu\MenuItemDecorator;
 use MediaWiki\Skins\Arknights\Menu\WikitextMenuParser;
+use MediaWiki\Utils\UrlUtils;
 use SkinMustache;
 use SkinTemplate;
 
@@ -41,6 +42,7 @@ class SkinArknights extends SkinMustache {
 
 	public function __construct(
 		private readonly PermissionManager $permissionManager,
+		private readonly UrlUtils $urlUtils,
 		array $options = []
 	) {
 		if ( !isset( $options['name'] ) ) {
@@ -214,7 +216,8 @@ class SkinArknights extends SkinMustache {
 				$out,
 				$title,
 				$parentData['html-title-heading'] ?? '',
-				$parentData['is-title-blank'] ?? false
+				$parentData['is-title-blank'] ?? false,
+				$this->getShortUrl()
 			),
 			'data-page-tools' => new ArknightsComponentPageTools(
 				$config,
@@ -390,6 +393,24 @@ class SkinArknights extends SkinMustache {
 			}
 		}
 		return [];
+	}
+
+	/**
+	 * Short URL of the page being viewed, from $wgArknightsShortUrl ('$1' = page ID), or
+	 * null when the feature is off or the title has no page behind it (special pages,
+	 * pages that do not exist yet).
+	 *
+	 * A path such as '/id/$1' is expanded against the canonical server: the URL is meant to
+	 * be pasted somewhere else, so it must not depend on how this request reached the wiki.
+	 */
+	private function getShortUrl(): ?string {
+		$template = $this->getConfig()->get( 'ArknightsShortUrl' );
+		$title = $this->getTitle();
+		if ( !is_string( $template ) || $template === '' || $title === null || !$title->exists() ) {
+			return null;
+		}
+		$url = str_replace( '$1', (string)$title->getArticleID(), $template );
+		return $this->urlUtils->expand( $url, PROTO_CANONICAL );
 	}
 
 	/**

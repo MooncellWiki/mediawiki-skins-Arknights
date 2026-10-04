@@ -10,7 +10,8 @@ use MessageLocalizer;
 
 /**
  * Page title block: the h1 (with the parenthetical disambiguator wrapped so it
- * can be de-emphasised), the namespace eyebrow and the tagline / short description.
+ * can be de-emphasised), the namespace eyebrow, the tagline / short description and
+ * the "copy short link" icon that trails the title.
  */
 class ArknightsComponentPageHeading implements ArknightsComponent {
 
@@ -19,7 +20,8 @@ class ArknightsComponentPageHeading implements ArknightsComponent {
 		private readonly OutputPage $out,
 		private readonly Title $title,
 		private readonly string $titleHeadingHtml,
-		private readonly bool $isTitleBlank
+		private readonly bool $isTitleBlank,
+		private readonly ?string $shortUrl = null
 	) {
 	}
 
@@ -66,6 +68,13 @@ class ArknightsComponentPageHeading implements ArknightsComponent {
 			'is-title-blank' => $this->isTitleBlank,
 			'namespace-text' => $nsText !== '' ? str_replace( '_', ' ', $nsText ) : null,
 			'is-special' => $this->title->isSpecialPage(),
+			// The link is the short URL itself, so it is of use without the script too (open it,
+			// or copy it from the context menu); shortLink.js turns a plain click into a copy.
+			'data-shortlink' => $this->shortUrl !== null ? [
+				'url' => $this->shortUrl,
+				'label' => $this->localizer->msg( 'arknights-shortlink' )->text(),
+				'tooltip' => $this->localizer->msg( 'arknights-shortlink-tooltip' )->text(),
+			] : null,
 		];
 	}
 }

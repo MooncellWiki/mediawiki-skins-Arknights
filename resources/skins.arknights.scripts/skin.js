@@ -17,6 +17,7 @@ function main() {
 	}
 	require( './toc.js' ).init();
 	require( './backToTop.js' ).init();
+	require( './shortLink.js' ).init();
 	require( './catlinks.js' ).init();
 	require( './interactive.js' ).init();
 	// Multi-level sidebar navigation (shared with the design-system preview)

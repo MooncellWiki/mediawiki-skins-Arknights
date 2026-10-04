@@ -29,7 +29,8 @@
 		"arknights": {
 			"class": "MediaWiki\\Skins\\Arknights\\SkinArknights",
 			"services": [
-				"PermissionManager"
+				"PermissionManager",
+				"UrlUtils"
 			],
 			"args": [
 				{
@@ -387,6 +388,7 @@
 				"resources/skins.arknights.scripts/searchLoader.js",
 				"resources/skins.arknights.scripts/toc.js",
 				"resources/skins.arknights.scripts/backToTop.js",
+				"resources/skins.arknights.scripts/shortLink.js",
 				"resources/skins.arknights.scripts/catlinks.js",
 				"resources/skins.arknights.scripts/interactive.js",
 				"resources/skins.arknights.scripts/sidebarTree.js",
@@ -398,7 +400,10 @@
 				"mediawiki.user"
 			],
 			"messages": [
-				"arknights-search-load-error"
+				"arknights-search-load-error",
+				"arknights-shortlink",
+				"arknights-shortlink-copied",
+				"arknights-shortlink-copy-failed"
 			]
 		},
 		"skins.arknights.search": {
@@ -579,6 +584,12 @@
 			"value": true,
 			"description": "Visibility of the page tools (views/actions tabs): true, false, 'login' or 'permission-<right>'.",
 			"descriptionmsg": "arknights-config-showpagetools",
+			"public": true
+		},
+		"ShortUrl": {
+			"value": "",
+			"description": "URL pattern of a page's short link, '$1' being the page ID (e.g. '/id/$1'; a path is expanded against the canonical server). Adds a \"copy short link\" icon at the end of the page title. Empty string to disable.",
+			"descriptionmsg": "arknights-config-shorturl",
 			"public": true
 		},
 		"SidebarFlyout": {

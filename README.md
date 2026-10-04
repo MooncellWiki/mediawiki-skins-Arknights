@@ -51,6 +51,7 @@ $wgArknightsMenuSidebar = true;
 | `$wgArknightsMenuSidebarAfterMessage` | `'MenuSidebarAfter'` | 侧栏下方追加内容的消息名，`''` 关闭 |
 | `$wgArknightsMenuSidebarHidePortlets` | `true` | 启用 MenuSidebar 时隐藏 `MediaWiki:Sidebar` 门户（工具箱与语言除外），与 VMS 行为一致 |
 | `$wgArknightsShowPageTools` | `true` | 页面工具可见性：`true` / `false` / `'login'` / `'permission-edit'` 等 |
+| `$wgArknightsShortUrl` | `''` | 页面短链接的 URL 模式，`$1` 为页面 ID（PRTS：`'/id/$1'`，路径按 `$wgCanonicalServer` 补全）。设了就在页面标题末尾出一枚「复制短链接」的链条图标（`a.ak-page-heading__shortlink`）：点击复制、图标变成对勾一下，不弹通知；`''` 关闭 |
 | `$wgArknightsSidebarFlyout` | `true` | 桌面端侧栏分支以飞出层展示子项（不就地展开）；关掉后桌面也和抽屉一样就地展开 |
 | `$wgArknightsTableOfContentsCollapseAtCount` | `28` | 标题数 ≥ 此值时目录默认折叠子节 |
 | `$wgArknightsSearchPalette` | `true` | 页眉搜索换成悬浮命令面板；`false` 保留原表单与核心搜索建议 |
@@ -76,7 +77,7 @@ $wgArknightsMenuSidebar = true;
 ```css
 :root {
   --ak-theme-accent: #72a330;                       /* 页眉标语 / 悬停 / 外观开关选中项 / 搜索图标框、侧栏与目录分组条、页脚斜纹一起换 */
-  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 280px;   /* 头图 .ak-keyart：从页面顶端铺起，整幅垫在页眉与版面背后、不占位；-h 是页眉之下那段画的高度 */
+  --ak-keyart-image: url(//media.prts.wiki/…/kv.jpg);   --ak-keyart-h: 280px;   /* 头图 .ak-keyart：从页面顶端铺起，垫在页眉与版面背后、只留 72px 一小条；-h 是页眉之下那段画的高度 */
   --ak-chrome-bg: rgba(8, 9, 10, .8);                                           /* 可选：页眉玻璃调淡些让头图多透一点（默认 .9，别低于 .72） */
   --ak-chrome-image: url(//media.prts.wiki/…/headleft.png);
   --ak-chrome-image-position: left top;   --ak-chrome-texture: 0;               /* 可选：顶栏角饰（现网 PRTSheadleft 那种活动徽章 / 深色底纹），有角饰就关掉默认网点 */
@@ -88,10 +89,10 @@ html.skin-theme-clientpref-night { --ak-keyart-image: url(//media.prts.wiki/…/
 
 完整变量表见 prts-design 文档站的「皮肤骨架 · 头图与主题接口」（/chrome/theming）与「色彩 · 页眉 / 头图 / 画布的主题接口」，可运行示例见上游 `packages/css/src/chrome/demo-theme.css`。四点注意：
 
-- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认不占位（`--ak-keyart-reveal: 0`），侧栏 / 页面标题 / 目录直接从页眉之下排起、压在画上；想先露一条画就设 `72px` 之类（≤639 收到 10vw 以内），= `-h` 即旧的横幅带。露出段会把侧栏往下推——它的高度按吸顶位置算，矮窗口里首屏底下一截会出视口；站点公告也因此放在正文列里（`.ak-main__inner` 的第一项），不横在 `.ak-layout` 上面。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
+- **页眉是压在头图上的一块均匀黑玻璃，版面也压在头图上**：头图从页面顶端铺起、垫在页眉与版面背后（CSS 负外边距，DOM 顺序不变），默认只在版面之上露 72px 一小条（`--ak-keyart-reveal`，各宽度相同，手机上也露；不超过画高），侧栏 / 页面标题 / 目录从那以下压在画上、不被整幅往下推；想多露一些调高它，想顶满设 0，= `-h` 即旧的横幅带。露出段会把侧栏往下推这么多——它的高度按吸顶位置算，矮窗口里首屏底下一截要滚一下才看得到，所以侧栏里在本皮肤另有去处的项不再占行（见下文「只给 Vector 看的行」）；站点公告也放在正文列里（`.ak-main__inner` 的第一项），不横在 `.ak-layout` 上面再推一截。`--ak-keyart-position` / `-size` 按「页眉 + 画高」整块取景。可读性不赌画面：页眉靠 `--ak-chrome-bg` 的 alpha，版面压住的那段靠一层画布色的纱（`--ak-keyart-veil`，默认 60%，别低于 50%）——所以头图不必自己压暗 / 洗白，也不要再裁一条「顶栏底图」从左缘渐入。`--ak-chrome-image` 画在玻璃**之上**、不被压暗，只放深色低对比的角饰 / 底纹，照片一律走 `--ak-keyart-image`。
 - 接口变量里的 `url()` **必须写绝对地址**：Chromium 把自定义属性里的相对 `url()` 按「使用处」（`load.php`）解析，Firefox / WebKit 按「声明处」解析，相对地址两边指向不同目录。
 - 只覆盖 `--ak-theme-accent` 时正文的链接 / 选中色不动，只有「框」在换；想连正文一起换，再覆盖 `--ak-accent`（亮 / 暗各写一次）。
-- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽，高度 = 露出段 `--ak-keyart-reveal`，默认 0，放内容要设一个高度）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
+- 头图上要放活动标题 / 倒计时，可往 `.ak-keyart__inner` 里塞内容（与页眉三列同宽，高度 = 露出段 `--ak-keyart-reveal`，默认 72px，放内容要调高）；`.ak-keyart` 默认带 `aria-hidden`，放可读内容时记得去掉。
 
 ### 页脚链接列（`MediaWiki:Arknights-footer-links`）
 
@@ -342,6 +343,18 @@ $wgArknightsSearchIndex = [
 | 其他皮肤 | 只对 vector 生效 | 只对 arknights 生效；VMS 与本皮肤可以同时安装、互不干扰（各自检查 skin name） |
 
 因此**无需改动 `MediaWiki:MenuSidebar` 的 wikitext** 即可迁移；`MediaWiki:MenuSidebarAfter` 同样支持。
+
+### 只给 Vector 看的行
+
+`MediaWiki:MenuSidebar` 是 Vector（VMS）与本皮肤共用的一页。有些项在本皮肤另有去处、在 Vector 下没有——「复制短链接」是标题末尾的链条图标（`$wgArknightsShortUrl`），「常用代码」「编辑指南」「探索」组等在页脚的链接列（`MediaWiki:Arknights-footer-links`）。这些项留在 MenuSidebar 里，行内包一层 `menusidebar-vector-only`，本皮肤用 CSS 隐藏所在的整行（`common/menu-sidebar.less`，`:has()`），Vector 不认这个类名、照常显示：
+
+```wikitext
+*<span class="menusidebar-vector-only">[[PRTS:常用代码|常用代码]]</span>         一行
+*'''<span class="menusidebar-vector-only">官方网站</span>'''                     一个分支（连同它的 ** 子项）
+<span class="menusidebar-vector-only">探索</span>                                整组：分组标题 + 紧跟的列表
+```
+
+wikitext 没法给 `li` 或分组标题的 `p` 本身加类名，所以标记写在行内：标在 `*` 行里（或它的 `'''粗体'''` 里）隐藏这一行，标在分组标题那一行隐藏标题和紧跟的整张列表。不认 `:has()` 的浏览器（Chrome < 105、Firefox < 121、Safari < 15.4）只隐藏标记里的文字，分支 / 标题会留下一条空行。
 
 后续可评估的改进（尚未做，欢迎评估）：
 1. **缓存**：现在与 VMS 一样每次请求都解析一次；可以按 (页面 ID, 用户语言, MenuSidebar 最后修改时间) 做 WAN 缓存，代价是模板变化（如 `{{MenuSidebarAutoEvents}}`）会有 TTL 延迟。
