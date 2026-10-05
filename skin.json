@@ -211,6 +211,7 @@
 				"resources/design-system/components/empty.css",
 				"resources/design-system/components/avatar.css",
 				"resources/design-system/components/breadcrumb.css",
+				"resources/design-system/components/pathnav.css",
 				"resources/design-system/components/pagination.css",
 				"resources/design-system/components/timeline.css",
 				"resources/design-system/components/stepper.css",
