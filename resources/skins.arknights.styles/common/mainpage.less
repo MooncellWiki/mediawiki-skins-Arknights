@@ -41,14 +41,9 @@
 		}
 	}
 
-	// There is no table of contents here, but the rail's width is kept rather than given
-	// back: the page's blocks bring their own containers and its right edge stays aligned
-	// with the pages that do have one. (`.ak-layout--no-toc` narrows to the reading column,
-	// which is what an ordinary heading-less article wants — not this one.)
-	.ak-main {
-		max-width: calc( var( --ak-content-max ) + var( --ak-toc-w ) + var( --ak-gutter ) );
-		padding-right: 0;
-	}
+	// No table of contents here, and nothing more to do about the width: since design system
+	// v0.1.31 `.ak-layout--no-toc` itself keeps the rail's width (the content runs to reading
+	// column + rail, right edge aligned with the pages that do have a TOC).
 }
 
 // When the title is blanked (MediaWiki:Mainpage-title = -), collapse the header entirely
