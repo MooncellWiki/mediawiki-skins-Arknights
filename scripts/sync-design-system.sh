@@ -49,7 +49,7 @@ fi
 # relative url()s (fonts, img/) against each file's own directory, so the tree keeps its shape.
 rm -rf "$DEST"
 mkdir -p "$DEST"
-FILES=(fonts.css tokens.css bridge-codex.css scope.css utilities.css forced-colors.css sidebar-tree.js search-palette.js)
+FILES=(fonts.css tokens.css bridge-codex.css scope.css utilities.css forced-colors.css sidebar-tree.js search-palette.js client-prefs.js sections.js)
 for f in "${FILES[@]}"; do
 	cp "$CSS/$f" "$DEST/$f"
 	echo "synced $f"
@@ -108,7 +108,7 @@ files = expand(os.path.join(css_root, 'index.css'))
 ADOPTED_CHROME = [
     'chrome/shell.css', 'chrome/header.css', 'chrome/local-nav.css', 'chrome/keyart.css', 'chrome/layout.css',
     'chrome/sidebar.css', 'chrome/sidebar-tree.css', 'chrome/page-header.css', 'chrome/body.css', 'chrome/toc.css',
-    'chrome/footer.css', 'chrome/theme-toggle.css', 'chrome/search-palette.css', 'chrome/special-pages.css',
+    'chrome/footer.css', 'chrome/theme-toggle.css', 'chrome/prefs.css', 'chrome/search-palette.css', 'chrome/special-pages.css',
     'chrome/responsive.css',
 ]
 

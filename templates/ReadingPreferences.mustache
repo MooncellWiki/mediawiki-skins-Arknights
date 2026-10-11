@@ -1,0 +1,32 @@
+{{!
+	Reading preferences form (ArknightsComponentReadingPreferences) — compact in the header panel
+	(is-panel, .ak-prefs--panel inside dialog.ak-prefs-panel, see Header.mustache) and full size
+	on Special:ReadingPreferences. DOM contract of chrome/prefs.css + components/seg.css:
+	  form.ak-prefs > fieldset.ak-pref( legend.ak-pref__label + .ak-seg[data-pref=<feature>] > label > input[type=radio] + span )
+	                + .ak-prefs__actions( .ak-prefs__submit · .ak-prefs__reset · a.ak-prefs__back )   ← special page only
+
+	A real form: without JS it posts to the special page. With JS, client-prefs.js applies a
+	change as soon as a radio is picked and keeps the groups in step with <html>'s classes
+	(several forms on one page, other tabs); the save button is hidden and "restore defaults"
+	and "back" are handled in place.
+}}
+<form class="ak-prefs{{#is-panel}} ak-prefs--panel{{/is-panel}}" method="post" action="{{action}}">
+	{{#array-prefs}}
+	<fieldset class="ak-pref">
+		<legend class="ak-pref__label">{{label}}</legend>
+		<div class="ak-seg{{^is-panel}} ak-seg--lg{{/is-panel}}{{#is-font-size}} ak-seg--font{{/is-font-size}}" role="radiogroup" aria-label="{{label}}" data-pref="{{feature}}">
+			{{#array-options}}<label><input type="radio" name="{{feature}}" value="{{value}}"{{#is-checked}} checked{{/is-checked}}><span>{{label}}</span></label>{{/array-options}}
+		</div>
+	</fieldset>
+	{{/array-prefs}}
+	{{#data-actions}}
+	<input type="hidden" name="wpEditToken" value="{{token}}">
+	{{#returnto}}<input type="hidden" name="returnto" value="{{.}}">{{/returnto}}
+	{{#returntoquery}}<input type="hidden" name="returntoquery" value="{{.}}">{{/returntoquery}}
+	<div class="ak-prefs__actions">
+		<button type="submit" class="ak-btn ak-btn--primary ak-prefs__submit">{{msg-save}}</button>
+		<button type="submit" name="reset" value="1" class="ak-btn ak-prefs__reset">{{msg-reset}}</button>
+		<a class="ak-btn ak-prefs__back" href="{{href-back}}">{{msg-back}}</a>
+	</div>
+	{{/data-actions}}
+</form>

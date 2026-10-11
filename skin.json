@@ -30,7 +30,8 @@
 			"class": "MediaWiki\\Skins\\Arknights\\SkinArknights",
 			"services": [
 				"PermissionManager",
-				"UrlUtils"
+				"UrlUtils",
+				"UserOptionsLookup"
 			],
 			"args": [
 				{
@@ -79,10 +80,6 @@
 						"arknights-drawer-toggle",
 						"arknights-search-toggle",
 						"arknights-search-shortcut",
-						"arknights-theme-toggle-label",
-						"arknights-theme-os",
-						"arknights-theme-day",
-						"arknights-theme-night",
 						"arknights-usermenu-toggle",
 						"arknights-usermenu-anon",
 						"arknights-usermenu-preferences",
@@ -92,7 +89,6 @@
 						"arknights-variants-toggle",
 						"arknights-languages-toggle",
 						"arknights-sidebar-label",
-						"arknights-appearance",
 						"arknights-nav-screen",
 						"arknights-footer-powered",
 						"arknights-footer-about",
@@ -114,6 +110,9 @@
 			"i18n"
 		]
 	},
+	"ExtensionMessagesFiles": {
+		"ArknightsAlias": "Arknights.alias.php"
+	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Skins\\Arknights\\": "includes/"
 	},
@@ -134,8 +133,17 @@
 			]
 		}
 	},
+	"SpecialPages": {
+		"ReadingPreferences": {
+			"class": "MediaWiki\\Skins\\Arknights\\Special\\SpecialReadingPreferences",
+			"services": [
+				"UserOptionsManager"
+			]
+		}
+	},
 	"Hooks": {
 		"BeforePageDisplay": "SkinHooks",
+		"GetPreferences": "SkinHooks",
 		"OutputPageAfterGetHeadLinksArray": "SkinHooks",
 		"SkinPageReadyConfig": "SkinHooks"
 	},
@@ -177,6 +185,7 @@
 				"resources/design-system/base/media.css",
 				"resources/design-system/base/toc.css",
 				"resources/design-system/base/collapsible.css",
+				"resources/design-system/base/sections.css",
 				"resources/design-system/base/references.css",
 				"resources/design-system/base/notices.css",
 				"resources/design-system/base/catlinks.css",
@@ -198,6 +207,7 @@
 				"resources/design-system/components/panel.css",
 				"resources/design-system/components/heading.css",
 				"resources/design-system/components/tabs.css",
+				"resources/design-system/components/seg.css",
 				"resources/design-system/components/message.css",
 				"resources/design-system/components/cbox.css",
 				"resources/design-system/components/tooltip.css",
@@ -296,6 +306,7 @@
 				"resources/design-system/chrome/toc.css",
 				"resources/design-system/chrome/footer.css",
 				"resources/design-system/chrome/theme-toggle.css",
+				"resources/design-system/chrome/prefs.css",
 				"resources/design-system/chrome/search-palette.css",
 				"resources/design-system/chrome/special-pages.css",
 				"resources/design-system/chrome/responsive.css"
@@ -380,7 +391,8 @@
 					"name": "resources/skins.arknights.scripts/config.json",
 					"callback": "MediaWiki\\Skins\\Arknights\\Hooks\\ResourceLoaderHooks::getSkinResourceLoaderConfig"
 				},
-				"resources/skins.arknights.scripts/theme.js",
+				"resources/skins.arknights.scripts/clientPrefs.js",
+				"resources/skins.arknights.scripts/sectionCollapse.js",
 				"resources/skins.arknights.scripts/scrollLock.js",
 				"resources/skins.arknights.scripts/drawer.js",
 				"resources/skins.arknights.scripts/dropdown.js",
@@ -393,7 +405,9 @@
 				"resources/skins.arknights.scripts/catlinks.js",
 				"resources/skins.arknights.scripts/interactive.js",
 				"resources/skins.arknights.scripts/sidebarTree.js",
-				"resources/design-system/sidebar-tree.js"
+				"resources/design-system/sidebar-tree.js",
+				"resources/design-system/client-prefs.js",
+				"resources/design-system/sections.js"
 			],
 			"dependencies": [
 				"mediawiki.storage",
@@ -600,7 +614,7 @@
 		},
 		"EnableThemeToggle": {
 			"value": true,
-			"description": "Show the terminal / archive / system theme toggle in the header.",
+			"description": "Offer the terminal / archive / follow-system theme choice in the reading preferences (header panel and Special:ReadingPreferences).",
 			"descriptionmsg": "arknights-config-enablethemetoggle",
 			"public": true
 		},

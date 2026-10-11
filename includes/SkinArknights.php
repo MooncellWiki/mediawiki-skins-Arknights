@@ -6,17 +6,21 @@ namespace MediaWiki\Skins\Arknights;
 
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Skin\SkinComponentUtils;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentFooter;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentMainMenu;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentMenuSidebar;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentPageFooter;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentPageHeading;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentPageTools;
+use MediaWiki\Skins\Arknights\Components\ArknightsComponentReadingPreferences;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentTableOfContents;
 use MediaWiki\Skins\Arknights\Components\ArknightsComponentUserMenu;
 use MediaWiki\Skins\Arknights\Menu\FooterLinksParser;
 use MediaWiki\Skins\Arknights\Menu\MenuItemDecorator;
 use MediaWiki\Skins\Arknights\Menu\WikitextMenuParser;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use SkinMustache;
 use SkinTemplate;
@@ -31,18 +35,18 @@ class SkinArknights extends SkinMustache {
 	/** Client-pref values understood by the theme switcher */
 	public const THEMES = [ 'os', 'day', 'night' ];
 
-	/** Class prefix on <html>, shared with Vector 2022 / Minerva so on-wiki CSS can target one selector */
-	public const THEME_CLASS_PREFIX = 'skin-theme-clientpref-';
-
 	/**
 	 * The `userpage` item lifted out of the user menu (it becomes the card's head), or null.
 	 * Filled in runOnSkinTemplateNavigationHooks(), read in getTemplateData().
 	 */
 	private ?array $userPageLink = null;
 
+	private ?ReadingPreferences $readingPreferences = null;
+
 	public function __construct(
 		private readonly PermissionManager $permissionManager,
 		private readonly UrlUtils $urlUtils,
+		private readonly UserOptionsLookup $userOptionsLookup,
 		array $options = []
 	) {
 		if ( !isset( $options['name'] ) ) {
@@ -60,9 +64,10 @@ class SkinArknights extends SkinMustache {
 	}
 
 	/**
-	 * Add the default theme class and feature flags to <html>.
-	 * The inline script added in SkinHooks::onBeforePageDisplay swaps the theme
-	 * class before first paint when the visitor has stored a preference.
+	 * Add the reading preference classes (theme, sections, text sizes) and feature flags to
+	 * <html>. These are the defaults, or for logged-in users what they saved without JS; the
+	 * inline script added in SkinHooks::onBeforePageDisplay swaps in what the visitor picked in
+	 * this browser before the first paint.
 	 *
 	 * @inheritDoc
 	 */
@@ -70,9 +75,9 @@ class SkinArknights extends SkinMustache {
 		$attrs = parent::getHtmlElementAttributes();
 		$config = $this->getConfig();
 
-		$classes = [
-			self::THEME_CLASS_PREFIX . self::normalizeTheme( $config->get( 'ArknightsThemeDefault' ) ),
-		];
+		// `<feature>-clientpref-<value>`, shared with Vector 2022 / Minerva for the theme so
+		// on-wiki CSS can target one selector
+		$classes = $this->getReadingPreferences()->getHtmlClasses( $this->getUser() );
 		if ( $config->get( 'ArknightsSidebarFlyout' ) !== true ) {
 			// Read by resources/design-system/sidebar-tree.js
 			$attrs['data-akds-flyout'] = 'off';
@@ -250,7 +255,7 @@ class SkinArknights extends SkinMustache {
 		$parentData['is-mainpage-view'] = $title->isMainPage() && $this->getActionName() === 'view';
 		$parentData['toc-enabled'] = !$parentData['is-mainpage-view']
 			&& !empty( $parentData['data-toc']['array-sections'] );
-		$parentData['has-theme-toggle'] = $config->get( 'ArknightsEnableThemeToggle' ) === true;
+		$parentData['data-reading-prefs'] = $this->getReadingPreferencesData();
 		$parentData['html-logo-icon-src'] = $this->getLogoIconSrc( $parentData['data-logos'] ?? [] );
 		// Whitespace-only indicators (SMW's entity examiner holds a "\n" placeholder until its script finds
 		// something) are trimmed to truly :empty, so chrome/page-header.css can collapse the row they sit in
@@ -277,6 +282,35 @@ class SkinArknights extends SkinMustache {
 		}
 
 		return $parentData;
+	}
+
+	private function getReadingPreferences(): ReadingPreferences {
+		$this->readingPreferences ??= new ReadingPreferences( $this->getConfig(), $this->userOptionsLookup );
+		return $this->readingPreferences;
+	}
+
+	/**
+	 * The header's reading preferences: the glasses icon (a link to the special page, which
+	 * is what it stays without JS) and the panel it opens, holding the compact form.
+	 */
+	private function getReadingPreferencesData(): array {
+		$prefs = $this->getReadingPreferences();
+		$special = SpecialPage::getTitleFor( 'ReadingPreferences' );
+		// Back to this page (with its query) after a no-JS submit, as the login link does
+		$href = $special->getLocalURL( SkinComponentUtils::getReturnToParam(
+			$this->getTitle(), $this->getRequest(), $this->getAuthority()
+		) );
+		$form = new ArknightsComponentReadingPreferences(
+			$this->getContext(),
+			$prefs,
+			$prefs->getValues( $this->getUser() ),
+			$href
+		);
+		return [
+			'href' => $href,
+			'msg-label' => $this->msg( 'arknights-prefs' )->text(),
+			'data-form' => $form->getTemplateData(),
+		];
 	}
 
 	/**

@@ -13,7 +13,7 @@
 const DESKTOP = '( min-width: 1120px )';
 
 /**
- * The tools card (theme toggle / notifications / user menu) pulled down by the burger.
+ * The tools card (reading preferences / notifications / user menu) pulled down by the burger.
  * Opening it is pure CSS — this only closes it again on Escape, on an in-page link, on a
  * click outside it, and on the way back to desktop widths.
  *

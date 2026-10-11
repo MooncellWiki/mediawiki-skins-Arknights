@@ -1,8 +1,8 @@
 {{!
 	string msg-arknights-drawer-toggle / msg-toc
-	string msg-arknights-appearance / msg-arknights-nav-screen
+	string msg-arknights-nav-screen
 	object data-search-box   core search box data
-	bool has-theme-toggle
+	object data-reading-prefs  href (Special:ReadingPreferences, with returnto) / msg-label / data-form
 	bool toc-enabled
 	object data-user-menu
 
@@ -23,10 +23,10 @@
 			<span class="ak-icon ak-icon--search"></span>
 		</button>
 		{{!
-			Below 1120px the tools (theme toggle, notifications, user menu) collapse into the card
-			pulled down by the burger; above it .ak-header__screen is display:contents, so they take
-			part in the main row's grid directly. One DOM either way — the Echo and #p-personal ids
-			are never duplicated.
+			Below 1120px the tools (reading preferences, notifications, user menu) collapse into the
+			card pulled down by the burger; above it .ak-header__screen is display:contents, so they
+			take part in the main row's grid directly. One DOM either way — the Echo and #p-personal
+			ids are never duplicated.
 
 			Opening the card is pure CSS, so it works without JS: the checkbox has to precede both
 			the card and the label for `~` to reach them. header.js only adds Escape, outside
@@ -35,12 +35,14 @@
 		<input type="checkbox" id="ak-nav-toggle" class="ak-nav-cb" aria-controls="ak-nav-screen">
 		<div class="ak-header__screen" id="ak-nav-screen">
 			<div class="ak-header__tools">
-				{{#has-theme-toggle}}
-				<div class="ak-header__tool">
-					<span class="ak-header__tool-label">{{msg-arknights-appearance}}</span>
-					{{>ThemeToggle}}
-				</div>
-				{{/has-theme-toggle}}
+				{{!
+					Reading preferences (appearance, sections, text size — Vector 2022's "Appearance"
+					menu): glasses, left of the bell. A link to the special page, which is what it
+					stays without JS; client-prefs.js opens the panel below instead.
+				}}
+				{{#data-reading-prefs}}
+				<a class="ak-btn ak-btn--icon ak-header__prefs" id="ak-prefs-toggle" href="{{href}}" title="{{msg-label}}" aria-label="{{msg-label}}" aria-haspopup="dialog" aria-controls="ak-prefs-panel" aria-expanded="false"><svg class="ak-icon" aria-hidden="true" focusable="false"><use href="#i-glasses"/></svg></a>
+				{{/data-reading-prefs}}
 				{{#data-user-menu}}{{>UserMenu}}{{/data-user-menu}}
 			</div>
 		</div>
@@ -70,3 +72,15 @@
 		{{/toc-enabled}}
 	</div>
 </header>
+{{!
+	The reading preferences panel sits outside the header: in there the semantic tokens are
+	remapped to the black chrome, and the panel follows the light / dark theme like the page.
+	Fixed under the header's right end at ≥ 640px (dialog.show()), centred and modal on phones
+	(showModal()) — chrome/prefs.css, client-prefs.js. Its head links to the special page.
+}}
+{{#data-reading-prefs}}
+<dialog class="ak-menu ak-menu--right ak-prefs-panel" id="ak-prefs-panel" aria-labelledby="ak-prefs-panel-title">
+	<a class="ak-menu__head" href="{{href}}"><svg class="ak-icon" aria-hidden="true" focusable="false"><use href="#i-glasses"/></svg><span class="ak-menu__head-name" id="ak-prefs-panel-title">{{msg-label}}</span></a>
+	{{#data-form}}{{>ReadingPreferences}}{{/data-form}}
+</dialog>
+{{/data-reading-prefs}}

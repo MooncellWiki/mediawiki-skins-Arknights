@@ -9,7 +9,9 @@ use MediaWiki\Html\Html;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\Hook\OutputPageAfterGetHeadLinksArrayHook;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Skins\Arknights\ReadingPreferences;
 use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
 
 /**
@@ -17,6 +19,7 @@ use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
  */
 class SkinHooks implements
 	BeforePageDisplayHook,
+	GetPreferencesHook,
 	OutputPageAfterGetHeadLinksArrayHook,
 	SkinPageReadyConfigHook
 {
@@ -67,6 +70,25 @@ class SkinHooks implements
 			)
 		);
 		$out->addHeadItem( 'skin.arknights.inline', self::$inlineScript );
+	}
+
+	/**
+	 * Register the reading preferences as hidden user options, which is what the no-JS form
+	 * of Special:ReadingPreferences saves for logged-in users. Hidden ('api') because
+	 * that page, not Special:Preferences, is where they are edited; registered so the API
+	 * accepts them and maintenance scripts do not treat them as unknown.
+	 *
+	 * No defaults (DefaultUserOptions): a stored value then always means an explicit choice,
+	 * which is what lets an explicit 'regular' override the text size migrated from
+	 * mf-font-size (see ReadingPreferences::getValues()).
+	 *
+	 * @param User $user
+	 * @param array &$preferences
+	 */
+	public function onGetPreferences( $user, &$preferences ) {
+		foreach ( array_keys( ReadingPreferences::FEATURES ) as $feature ) {
+			$preferences[$feature] = [ 'type' => 'api' ];
+		}
 	}
 
 	/**
