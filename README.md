@@ -77,7 +77,7 @@ $wgArknightsMenuSidebar = true;
 
 | 偏好（`<html>` 类 `<feature>-clientpref-<value>`） | 值（**粗体**为默认） | 作用 |
 |---|---|---|
-| `skin-theme` | **`os`**（`ThemeDefault`）/ `day` / `night` | 外观 |
+| `skin-theme` | **`os`**（`ThemeDefault`，不是 `os` 时另写 `<html data-akds-theme-default>` 给「恢复默认设置」用）/ `day` / `night` | 外观 |
 | `ak-sections-on` | **`mobile`**（只在 ≤639）/ `all` / `off` | 章节折叠在哪开 |
 | `ak-sections` | **`expand`** / `collapse` | 开着时打开页面是展开还是收起（窄屏 + 收起 = 原 Minerva 的行为） |
 | `ak-font-size` | `xsmall` 12 / `small` 14 / **`regular`** 16 / `large` 20 | `.mw-body-content` 里的字号令牌整体换档，页眉 / 侧栏 / 目录不动 |
@@ -85,7 +85,7 @@ $wgArknightsMenuSidebar = true;
 
 **值存在哪**：与主题一样，所有访客（登录与否）的选择都存在本机 `localStorage['mwclientpreferences']`（核心 clientPrefs cookie 的同一格式），`inline.js` 首帧前打到 `<html>` 上。面板与表单是上游共用的 `design-system/client-prefs.js`；它遇到 `<html>` 上已有该项的类时会交给 `mw.user.clientPrefs`，而本皮肤没开 `clientPrefEnabled`（核心不会把 cookie 读回来），登录用户调用还会直接抛错，所以 `clientPrefs.js` 把 `mw.user.clientPrefs.set` 换成写同一处 `localStorage` 的实现——小工具调用它也一样落到这里。
 
-**服务端**只给默认值，以及登录用户在无 JS 时提交 `Special:ReadingPreferences` 存下的用户选项（键 = 偏好名，`GetPreferences` 里登记为隐藏的 `api` 项、不设默认值）；本机 `localStorage` 里有值时以它为准。匿名访客的页面因此永远是默认类、照常进 CDN 缓存；匿名且无 JS 提交表单时只给一句说明（无处可存）。原手机版用户的 `mf-font-size` 用户选项迁移成字号：`small` → `small`，`regular` / `large` → `large`，只在没设 `ak-font-size` 时生效、不回写。
+**服务端**只给默认值，以及登录用户在无 JS 时提交 `Special:ReadingPreferences` 存下的用户选项（键 = 偏好名，`GetPreferences` 里登记为隐藏的 `api` 项、不设默认值）；本机 `localStorage` 里有值时以它为准。匿名访客的页面因此永远是默认类、照常进 CDN 缓存；匿名且无 JS 提交表单时只给一句说明（无处可存）。原手机版的 `mf-font-size` **不迁移**：它的 `small` 是 MF 的「标准」档，三档都只改 `<p>` 的字号、只在手机版生效，`ak-font-size` 换的是整块正文的字号令牌、桌面也生效，几档对不上，迁过来反而会让在手机上调过字号的人桌面突然变样。
 
 `Special:ReadingPreferences`（`includes/Special/`，不列在特殊页面列表里）：面板那份表单的完整版，同一个组件 + `templates/ReadingPreferences.mustache` 渲染。有 JS 时改了即生效、「保存」藏起，「恢复默认设置」就地重置、「返回」同源来路时 `history.back()`；无 JS 时真提交，登录用户只写改过的项，302 回 `returnto` / `returntoquery`。
 
@@ -172,7 +172,7 @@ $wgFooterIcons = [
 skin.json                         注册：ValidSkinNames / ResourceModules / skinStyles / config
 includes/
   SkinArknights.php               SkinMustache 子类：模板数据、<html> 阅读设置类、watch 星标搬到 views、菜单图标
-  ReadingPreferences.php          阅读设置的登记表（偏好 / 值 / 消息 / 默认）与服务端取值（用户选项、mf-font-size 迁移）
+  ReadingPreferences.php          阅读设置的登记表（偏好 / 值 / 消息 / 默认）与服务端取值（默认值 / 登录用户的用户选项）
   Special/SpecialReadingPreferences.php  Special:ReadingPreferences（无 JS 兜底的表单页）
   Components/*.php                每块 UI 一个组件（Citizen 风格）：MainMenu / MenuSidebar / UserMenu /
                                   PageHeading / PageTools / TableOfContents / PageFooter / Footer / Menu / ReadingPreferences

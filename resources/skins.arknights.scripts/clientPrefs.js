@@ -96,19 +96,13 @@ function initThemeToggles() {
 	sync();
 }
 
-/**
- * @param {Object} config
- */
-function init( config ) {
+function init() {
 	mw.user.clientPrefs.set = set;
 	// The panel is modal on phones and locks the page like the drawer and the TOC flyout do
 	window.akdsScrollLock = scrollLock.set;
 	require( '../design-system/client-prefs.js' );
 
 	const prefs = window.akdsClientPrefs;
-	// The shared script takes 'os' for the theme's default; "restore defaults" should go
-	// back to this wiki's
-	prefs.defaults[ 'skin-theme' ] = config.wgArknightsThemeDefault;
 	// HTML cached from before a feature existed has no class for it, and core's get() — which
 	// set() above goes by — needs one
 	const html = document.documentElement;

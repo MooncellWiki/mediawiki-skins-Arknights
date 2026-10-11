@@ -78,9 +78,8 @@ class SkinHooks implements
 	 * that page, not Special:Preferences, is where they are edited; registered so the API
 	 * accepts them and maintenance scripts do not treat them as unknown.
 	 *
-	 * No defaults (DefaultUserOptions): a stored value then always means an explicit choice,
-	 * which is what lets an explicit 'regular' override the text size migrated from
-	 * mf-font-size (see ReadingPreferences::getValues()).
+	 * No defaults (DefaultUserOptions): those live in ReadingPreferences, where the theme's
+	 * follows $wgArknightsThemeDefault — an unset option means "follow the default".
 	 *
 	 * @param User $user
 	 * @param array &$preferences

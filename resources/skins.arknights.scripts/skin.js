@@ -8,7 +8,7 @@ const config = require( './config.json' );
 
 function main() {
 	// Reading preferences (theme, sections, text size), then section collapsing, which reads them
-	require( './clientPrefs.js' ).init( config );
+	require( './clientPrefs.js' ).init();
 	require( './sectionCollapse.js' ).init();
 	require( './dropdown.js' ).init();
 	require( './drawer.js' ).init();

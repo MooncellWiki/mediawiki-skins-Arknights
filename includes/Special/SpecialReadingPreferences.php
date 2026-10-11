@@ -110,7 +110,7 @@ class SpecialReadingPreferences extends UnlistedSpecialPage {
 				continue;
 			}
 			// Only what was changed: an untouched field stays unset and keeps following the
-			// site default (or, for the text size, the old mobile site's choice)
+			// site default
 			$value = $request->getRawVal( $feature );
 			if ( ReadingPreferences::isValid( $feature, $value ) && $value !== $current[$feature] ) {
 				$this->userOptionsManager->setOption( $user, $feature, $value );

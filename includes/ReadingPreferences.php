@@ -7,7 +7,6 @@ namespace MediaWiki\Skins\Arknights;
 use MediaWiki\Config\Config;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserIdentity;
 
 /**
  * Reading preferences: appearance, section collapsing, text size and table text size,
@@ -23,7 +22,7 @@ use MediaWiki\User\UserIdentity;
  *      "feature-clientpref-value,…" string, the format of core's cookie) before the first
  *      paint. The panel writes there for everyone, logged in or not (clientPrefs.js);
  *   2. for logged-in users, the user option of the same name, which the no-JS form of the
- *      special page saves — and for the text size, the old mobile site's mf-font-size;
+ *      special page saves;
  *   3. the default.
  * The server can only do 2 and 3, so logged-out page views always carry the defaults and
  * stay cacheable.
@@ -84,17 +83,6 @@ final class ReadingPreferences {
 		'ak-table-font-size' => 'auto',
 	];
 
-	/**
-	 * MobileFrontend's text size (Special:MobileOptions on the old m. site) → ak-font-size.
-	 * PRTS's MediaWiki:Mobile.css rendered "small" at 13px; "regular" (18) and "large" (20)
-	 * both land on the 20px step, Minerva's large.
-	 */
-	private const MF_FONT_SIZE = [
-		'small' => 'small',
-		'regular' => 'large',
-		'large' => 'large',
-	];
-
 	public function __construct(
 		private readonly Config $config,
 		private readonly UserOptionsLookup $userOptionsLookup
@@ -144,8 +132,6 @@ final class ReadingPreferences {
 			$stored = $this->userOptionsLookup->getOption( $user, $feature );
 			if ( self::isValid( $feature, $stored ) ) {
 				$values[$feature] = $stored;
-			} elseif ( $feature === 'ak-font-size' ) {
-				$values[$feature] = $this->getMobileFontSize( $user ) ?? $values[$feature];
 			}
 		}
 		return $values;
@@ -163,21 +149,5 @@ final class ReadingPreferences {
 			$classes[] = $feature . '-clientpref-' . $value;
 		}
 		return $classes;
-	}
-
-	/**
-	 * The text size a user picked on the old mobile site, mapped onto ak-font-size; null
-	 * if they never picked one.
-	 */
-	private function getMobileFontSize( UserIdentity $user ): ?string {
-		$size = $this->userOptionsLookup->getOption( $user, 'mf-font-size' );
-		// While MobileFrontend is loaded it hands out its own default for everyone who never
-		// chose; only a stored choice counts. Once it is gone the default is null.
-		if ( !is_string( $size )
-			|| $size === $this->userOptionsLookup->getDefaultOption( 'mf-font-size', $user )
-		) {
-			return null;
-		}
-		return self::MF_FONT_SIZE[$size] ?? null;
 	}
 }

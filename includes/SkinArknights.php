@@ -77,7 +77,13 @@ class SkinArknights extends SkinMustache {
 
 		// `<feature>-clientpref-<value>`, shared with Vector 2022 / Minerva for the theme so
 		// on-wiki CSS can target one selector
-		$classes = $this->getReadingPreferences()->getHtmlClasses( $this->getUser() );
+		$prefs = $this->getReadingPreferences();
+		$classes = $prefs->getHtmlClasses( $this->getUser() );
+		$themeDefault = $prefs->getDefault( 'skin-theme' );
+		if ( $themeDefault !== 'os' ) {
+			// Read by resources/design-system/client-prefs.js: what "restore defaults" goes back to
+			$attrs['data-akds-theme-default'] = $themeDefault;
+		}
 		if ( $config->get( 'ArknightsSidebarFlyout' ) !== true ) {
 			// Read by resources/design-system/sidebar-tree.js
 			$attrs['data-akds-flyout'] = 'off';
