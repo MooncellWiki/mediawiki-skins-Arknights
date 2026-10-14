@@ -1,6 +1,8 @@
 /**
  * UniversalLanguageSelector — interface trigger inside the skin header / user menu
  */
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
 .uls-trigger,
 .mw-interlanguage-selector {
 	color: inherit;
@@ -12,4 +14,19 @@
 	border-color: var( --ak-border );
 	box-shadow: var( --ak-shadow-lg );
 	border-radius: 0;
+}
+
+/**
+ * The ⚙ strip under the header's language selector (jquery.uls.less has the panel itself).
+ * ULS paints it #fcfcfc to match its list, which on that panel is the card's own surface; a line
+ * on top sets it off as the card's footer. The cog is black artwork painted as the background of
+ * a quiet button that also takes a hover wash — see .ak-invert-bg-icon().
+ */
+.uls-menu.notheme.skin-invert #uls-settings-block {
+	background-color: var( --ak-bg-surface );
+	border-top: 1px solid var( --ak-border );
+
+	> button.uls-language-settings-button {
+		.ak-invert-bg-icon( 20px );
+	}
 }

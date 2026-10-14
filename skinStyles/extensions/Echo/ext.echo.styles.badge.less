@@ -25,8 +25,10 @@
 			opacity: 1;
 		}
 
+		// The hover wash is painted on the container below, not here: the badge carries the
+		// invert() filter, which turned the white wash black — on the black bar, a darkening
+		// nobody could see.
 		&:hover {
-			background-color: var( --ak-bg-hover );
 			opacity: 1;
 		}
 
@@ -88,6 +90,25 @@
 	#pt-notifications-notice:has( .mw-echo-notifications-badge:focus-visible ) {
 		outline: 2px solid var( --ak-focus );
 		outline-offset: -2px;
+	}
+
+	/**
+	 * Hover and open: the wash every other header tool gets (.ak-header__tools .ak-btn--icon:hover,
+	 * the glasses' .is-open), on the same filter-free container as the focus ring. Once Echo has
+	 * loaded, that container is its widget (it takes over the <li>'s id); header.js sets .is-open
+	 * on it while the popup is out, which is how the open bell is told apart now that the popup
+	 * has no notch.
+	 */
+	#pt-notifications-alert,
+	#pt-notifications-notice {
+		&:hover,
+		&.is-open {
+			background-color: var( --ak-bg-hover );
+		}
+
+		&.is-open .mw-echo-notifications-badge {
+			opacity: 1;
+		}
 	}
 
 	/**

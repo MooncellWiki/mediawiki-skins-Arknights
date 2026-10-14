@@ -1,6 +1,13 @@
 /**
  * jquery.uls — language selector dialog
+ *
+ * Two kinds of panel use this class. The rules first in this file are the theme-following
+ * surface for any of them (Special:Preferences' language field, VisualEditor's picker …);
+ * the second half puts the ones dropping out of the header on the header's palette.
  */
+@import '../../../resources/skins.arknights.styles/chrome-palette.generated.less';
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
 .uls-menu {
 	background: var( --ak-bg-surface );
 	color: var( --ak-fg );
@@ -53,3 +60,88 @@ html.skin-theme-clientpref-night .uls-menu .uls-icon-close {
 		filter: invert( 1 );
 	}
 }
+
+/**
+ * The panels that drop out of the header.
+ *
+ * The user menu's 「中文（中国大陆）」 row opens the language selector, and its ⚙ the
+ * language-settings dialog, both in the spot the user card has just left; the dialog's 「…」
+ * opens one more selector in the same place. They are header overlays — the family of the user
+ * menu, the reading-preferences panel and Echo's popups (prts-design /chrome/header
+ * 「拉下来的浮层」) — and are written the same way: the header's palette in either theme, the
+ * .ak-menu frame, hung from the header's bottom line with the right edge on the tools column.
+ *
+ * Telling them apart from other ULS panels: ULS itself tags the first two `notheme skin-invert`
+ * (T365990, its "this is chrome, do not theme it" marker), and wraps the third one's search box
+ * in .uls-search-wrapper-wrapper to fit a back arrow beside it. The ULS on Special:Preferences or
+ * in VisualEditor has neither, and keeps following the theme above.
+ *
+ * Why the marker has to be undone: ULS compiles against Codex's *legacy* token file — literal hex,
+ * not CSS variables — so it cannot follow a theme, and this skin renders `notheme skin-invert` as
+ * "the light token set, then invert() the whole subtree in the dark theme" (notheme.generated.less,
+ * dark-compat.less). Here: no flip, the palette instead, and ULS's literal colours repainted from
+ * tokens — the selector's in this file, the dialog's in ext.uls.languagesettings.less and
+ * ext.uls.displaysettings.less, whose modules arrive later in the cascade. .notheme still lays the
+ * light set for the tokens the palette leaves alone (status colours, canvas …); none are read here.
+ */
+@uls-header-panels: ~'.uls-menu.notheme.skin-invert, .uls-menu:has( .uls-search-wrapper-wrapper )';
+
+@{uls-header-panels} {
+	.ak-chrome-palette();
+	// Outranks dark-compat's `html.skin-theme-clientpref-night .skin-invert` / `.notheme` (0-2-1).
+	filter: none;
+	color-scheme: dark;
+	// ULS sets `medium`, the size Vector's chrome is drawn at; the cards here are 14.
+	font-size: var( --ak-fs-sm );
+	border: 1px solid var( --ak-border );
+	z-index: calc( var( --ak-z-header ) + 1 );
+	max-width: calc( 100vw - var( --ak-gutter ) * 2 );
+	max-height: calc( 100dvh - var( --ak-header-h ) - var( --ak-space-4 ) );
+	overflow-y: auto;
+
+	// Region headings (美洲 / 亚洲) are group labels in a menu: .ak-menu__label.
+	.uls-lcd-region-title {
+		.ak-overline();
+		color: var( --ak-fg-subtle );
+	}
+
+	.uls-search-label,
+	.uls-languagefilter-clear,
+	.uls-icon-close,
+	.uls-icon-back {
+		filter: invert( 1 );
+	}
+
+	.uls-icon-back {
+		border-color: var( --ak-border );
+	}
+}
+
+// Wide panels may not fit a narrow window; ULS's min-width (715px) would push them off-screen.
+.uls-menu.uls-wide.notheme.skin-invert,
+.uls-menu.uls-wide:has( .uls-search-wrapper-wrapper ) {
+	min-width: ~'min( 715px, calc( 100vw - var( --ak-gutter ) * 2 ) )';
+}
+
+/**
+ * Geometry. ULS writes an inline top / right (or left) from the trigger's offset — inside a user
+ * card that has closed by the time the panel shows — in document coordinates. Take the prefs
+ * panel's rule instead (chrome/prefs.css): fixed, hung from the sticky header. On phones ULS's
+ * .uls-mobile is 95% wide from left: 2.5%; here it runs gutter to gutter instead.
+ * max() escaped: less.php has a max() of its own, and this is the CSS one.
+ */
+/* stylelint-disable declaration-no-important */
+.uls-menu.notheme.skin-invert,
+.uls-menu:has( .uls-search-wrapper-wrapper ) {
+	position: fixed !important;
+	top: calc( var( --ak-header-h ) + 1px ) !important;
+	right: ~'max( var( --ak-gutter ), calc( ( 100vw - 1680px ) / 2 + var( --ak-gutter ) ) )' !important;
+	left: auto !important;
+	margin-top: 0;
+
+	&.uls-mobile {
+		left: var( --ak-gutter ) !important;
+		width: auto;
+	}
+}
+/* stylelint-enable declaration-no-important */

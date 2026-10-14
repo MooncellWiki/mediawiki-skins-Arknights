@@ -195,7 +195,8 @@ resources/
   design-system/fonts/            ← 同上：woff2 与各族授权全文（Noto Sans SC 101 片 + 5 族，≈5MB）
   mediawiki.less/                 mediawiki.skin.variables.less（Codex 令牌 → --ak-* 桥接）
   skins.arknights.styles/         MediaWiki 胶水 LESS：shell-glue（无 JS 真搜索表单 / 菜单卡片里的 MW 项 / 副标题 / 页脚描述）· base（站点通知等）·
-                                  icons · menu-sidebar · mainpage · mediawiki-ui · message-box · dark-compat · notheme.generated · legacy-device-classes · print
+                                  icons · menu-sidebar · mainpage · mediawiki-ui · message-box · dark-compat · notheme.generated · legacy-device-classes · print；
+                                  chrome-palette.generated（页眉配色的 mixin，给加不上类的页眉浮层用，见下文）
   skins.arknights.scripts/        常驻：clientPrefs(阅读设置) · sectionCollapse(章节折叠) · dropdown · drawer · header · toc · backToTop · interactive ·
                                   scrollLock(抽屉/浮层共用的页面滚动锁) · sidebarTree ·
                                   searchLoader(搜索面板的懒加载存根) · search(面板关闭时的回退) · inline(<head>)
@@ -204,7 +205,7 @@ skinStyles/                       核心 / OOUI / jQuery / 扩展 的皮肤覆�
 i18n/                             en · qqq · zh-hans · zh-hant · ja
 Arknights.alias.php               特殊页面别名（阅读设置 / 閱讀設定 / 閲覧設定）
 scripts/sync-design-system.sh     同步设计系统：拷贝 packages/css/src → 按 index.css 的顺序重写 skin.json 的逐文件列表 →
-                                  抽取图标 sprite → 生成 .notheme 令牌重置
+                                  抽取图标 sprite → 生成 .notheme 令牌重置与 .ak-chrome-palette() mixin
 ```
 
 ### ResourceLoader 模块与层序
@@ -405,7 +406,7 @@ $wgArknightsSearchIndex = [
 
 - 骨架样式就是 prts-design 的 `packages/css/src/chrome/`（文档站「皮肤骨架」），经 `skins.arknights.shell` 逐文件加载；`templates/*.mustache` 按它的 DOM 契约输出（文档站 /guide/skin-template）。**在 wiki 上发现的视觉问题先看规则属于哪边**：能用类名和令牌描述的改上游 `chrome/` 再同步；只对 MediaWiki 的 DOM 或某个扩展才成立的，进 `common/shell-glue.less`。MW 皮肤比预览骨架多出来的几样（`.ak-page-heading` 包装 + tagline、`.mw-indicators`、diff 页放回「阅读」、目录折叠钮、抽屉抬头 `.ak-sidebar__head`、Echo 徽标 `.ak-header__notifications`、页脚列数由内容定）已经写进上游。
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
-- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`chrome/header.css` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。活动主题的接口见上文「活动主题」。
+- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`chrome/header.css` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。从工具区拉下、但挂在页眉外面的浮层也是页眉配色（上游文档站 /chrome/header「拉下来的浮层」）：阅读设置面板由上游在同一条重映射里点名；Echo 的两个通知弹层由 Echo 的 JS 建在 `<body>` 末尾、加不上类，`skinStyles/extensions/Echo/ext.echo.ui.desktop.less` 用同步脚本生成的 `.ak-chrome-palette()`（这条重映射 + Codex 令牌桥接——Echo / OOUI 自己的规则读 `var(--background-color-base, …)`，不在弹层上重新声明就还是 `:root` 上按页面主题解析好的值）套到它们的选择器上，框与位置也照阅读设置面板：1px 框 + 大阴影、不画顶部亮线、没有 OOUI 的小三角，贴页眉底线挂下来、右缘对齐工具区；开着的那个铃铛保持悬停底色（`header.js` 跟着弹层的 toggle 事件给它加 `.is-open`）。用户菜单「中文（中国大陆）」拉出的 ULS 语言菜单、它 ⚙ 打开的语言设置、设置里「…」再开的语言列表也一样（`skinStyles/extensions/UniversalLanguageSelector/`）：ULS 用 Codex 的 legacy 令牌（写死的十六进制，不读 CSS 变量），并给这几个面板打 `notheme skin-invert`（T365990），本皮肤对它的处理是「亮色令牌 + 暗色主题整块 invert()」；这里撤掉翻转、套 `.ak-chrome-palette()`，写死的颜色逐个改读令牌，pt 字号换到设计系统的字号阶梯上。只认这几个面板（ULS 自己的标记 / 「…」那层的 `.uls-search-wrapper-wrapper`），参数设置页、VisualEditor 里的 ULS 照旧跟主题。活动主题的接口见上文「活动主题」。
 - **页眉各宽度都只有一行**，始终贴顶、不随滚动收起：`.ak-local-nav`（「菜单」<1120、手机 ≤639 上多一个「本页目录」）不另起一行——上游只改 CSS，<1120 时 `.ak-header__inner` 与 `.ak-local-nav` 都 `display:contents`，子项排进 `.ak-header` 这一行，所以 `Header.mustache` 的 DOM 不动。1120–1400 与 ≥1400 是同一套三列网格（640–1400 目录入口不在页眉里，见下）；<1120 是 flex：◧ 菜单 · 品牌 · 搜索 · ⋮。代价是 Tab / 读屏顺序仍按 DOM（品牌 → 搜索 → 工具或 ⋮ → 菜单），与视觉顺序不一致。`common/shell-glue.less` 不给 `#searchform` 写 `margin: 0`——<1120 时上游用左右外边距把搜索框与品牌 / ⋮ 隔开，这里排在后面，一写就把它盖掉。
 - **<1120 页眉**里的阅读设置（眼镜）、Echo 徽标、用户菜单收进 ⋮ 卡片。三者包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ⋮ 拉下、贴页眉右下沿的卡片（宽度随内容，最窄 240px）：第一行是眼镜 · 通知徽标（点眼镜开面板时卡片收起），下面用户菜单平铺、恒展开（`header.js` 在这一档把它的 `<details>` 置 `open` 并标 `data-ak-flat`，`dropdown.js` 据此不再把它当下拉收起；无 JS 时由 `::details-content` 桥接）。用户卡片的抬头 `a.ak-menu__head#pt-userpage` 就是去用户页的链接——`userpage` 一项在 `runOnSkinTemplateNavigationHooks()` 里从 `user-menu` 提出来，「个人工具」里不再重复，用户名只出现一次。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录按钮的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起。这一档里点通知徽标不开 Echo 弹层（它挂在 `<body>` 的浮层里，会被卡片盖住），而是直接去 Special:Notifications：`header.js` 在捕获阶段拦下点击、不让它到达 Echo，徽标本来就是指向该页的链接。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
 - **<640 页眉**（52px）全是图标：◧ 菜单 · 品牌 ……… 目录 · 搜索 · ⋮。目录入口在手机上留在页眉里（`Header.mustache` 的 `label.ak-local-nav__toc[for=ak-toc-toggle]`，方点列表图标），不出浮动按钮——44px 的方块在这个宽度上会一直压着正文右上角；浮层固定在页眉下沿、拉满宽度，开着时锁页面滚动。它开合的是正文 `.ak-toc-dock` 里同一个 checkbox。
@@ -421,7 +422,7 @@ $wgArknightsSearchIndex = [
 scripts/sync-design-system.sh [path/to/prts-design]   # 同步设计系统；不给路径时在皮肤/MediaWiki 的相邻目录里找 prts-design
 ```
 
-同步脚本做四件事：整目录替换 `resources/design-system/`（上游 `packages/css/src/`，含 `chrome/`，不含示例活动主题 `demo-theme.css`）；按上游 `index.css` 展开的顺序重写 `skin.json` 里 `skins.arknights.base / components / fonts / shell / tokens` 的文件列表（模块定义与 `SkinModule` 特性仍手写；`shell` 只装脚本里 `ADOPTED_CHROME` 列出的 `chrome/` 文件）；从上游 `skin/templates/skin.mustache` 抽出 SVG sprite 写成 `templates/IconSprite.mustache`；由 `tokens.css` §2b 与 `bridge-codex.css` 生成 `common/notheme.generated.less`。上游增删文件后只要重跑即可。
+同步脚本做这几件事：整目录替换 `resources/design-system/`（上游 `packages/css/src/`，含 `chrome/`，不含示例活动主题 `demo-theme.css`）；按上游 `index.css` 展开的顺序重写 `skin.json` 里 `skins.arknights.base / components / fonts / shell / tokens` 的文件列表（模块定义与 `SkinModule` 特性仍手写；`shell` 只装脚本里 `ADOPTED_CHROME` 列出的 `chrome/` 文件）；从上游 `skin/templates/skin.mustache` 抽出 SVG sprite 写成 `templates/IconSprite.mustache`；由 `tokens.css` §2b 与 `bridge-codex.css` 生成 `common/notheme.generated.less`，由 `chrome/header.css` 里那条页眉配色重映射与 `bridge-codex.css` 生成 `chrome-palette.generated.less`（`.ak-chrome-palette()` mixin）。上游增删文件后只要重跑即可。
 
 本地验证：把仓库放到 MediaWiki 的 `skins/Arknights`，`wfLoadSkin( 'Arknights' )`，打开 `?debug=2` 查看未压缩的 LESS 输出。改骨架前后可以拍计算样式快照比对（沙盒 prts-sandbox 直接挂载本仓库，Playwright 从旁边的 prts-design 里借）：
 

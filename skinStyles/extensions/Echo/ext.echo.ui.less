@@ -44,16 +44,35 @@
 		box-shadow: none;
 	}
 
-	// Title carries the message; the excerpt below it is secondary. Echo paints both from
-	// `--color-emphasized`, and the override this skin used to carry put *both* at
-	// `--ak-fg-secondary`, which flattened the two into one grey.
+	/**
+	 * Type, on the design system's steps: 14 for the message (the card's --ak-fs-sm, which the
+	 * popup already inherits) and 12 for the metadata row.
+	 *
+	 * The title carries the message, the excerpt under it is secondary — told apart by colour.
+	 * Echo paints both from `--color-emphasized`, and an earlier override here put *both* at
+	 * `--ak-fg-secondary`, flattening them into one grey. Weight stays regular: Echo's headers
+	 * already embolden what matters (`<strong>` around the page, the user, the topic), and a
+	 * 600 on the whole title washed that out — every row read as one bold block.
+	 *
+	 * Echo's 1.3em leading is set for Latin; two lines of CJK at 1.3 nearly touch. 1.5 is what
+	 * the design system gives small multi-line UI text (controls in scope.css, the page tagline),
+	 * short of the 1.7 kept for prose.
+	 */
+	&-content-message {
+		line-height: 1.5;
+	}
+
 	&-content-message-header {
 		color: var( --ak-fg );
-		font-weight: 600;
 	}
 
 	&-content-message-body {
 		color: var( --ak-fg-muted );
+	}
+
+	// Echo's 0.9em — 12.6px, between two steps. The timestamp inherits it.
+	&-content-actions {
+		font-size: var( --ak-fs-xs );
 	}
 }
 

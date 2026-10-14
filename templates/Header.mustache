@@ -73,9 +73,11 @@
 	</div>
 </header>
 {{!
-	The reading preferences panel sits outside the header: in there the semantic tokens are
-	remapped to the black chrome, and the panel follows the light / dark theme like the page.
-	Fixed under the header's right end at ≥ 640px (dialog.show()), centred and modal on phones
+	The reading preferences panel is on the black header palette like the user menu (upstream
+	lists .ak-prefs-panel beside .ak-header in the token remap), but sits outside the header:
+	below 1120px the glasses live in the tools card, which closes when the panel opens and would
+	hide it along with itself, and a header with backdrop-filter (event themes) would become its
+	containing block. Hung from the header's bottom line at ≥ 640px (dialog.show()), centred and modal on phones
 	(showModal()) — chrome/prefs.css, client-prefs.js. Its head links to the special page.
 }}
 {{#data-reading-prefs}}

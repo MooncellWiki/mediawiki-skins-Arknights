@@ -499,6 +499,8 @@
 			"+ext.CodeMirror.v6": "skinStyles/extensions/CodeMirror/ext.CodeMirror.v6.less",
 			"+ext.CodeMirror.lib": "skinStyles/extensions/CodeMirror/ext.CodeMirror.lib.less",
 			"+ext.uls.interface": "skinStyles/extensions/UniversalLanguageSelector/ext.uls.interface.less",
+			"+ext.uls.languagesettings": "skinStyles/extensions/UniversalLanguageSelector/ext.uls.languagesettings.less",
+			"+ext.uls.displaysettings": "skinStyles/extensions/UniversalLanguageSelector/ext.uls.displaysettings.less",
 			"+ext.uls.pt": "skinStyles/extensions/UniversalLanguageSelector/ext.uls.pt.less",
 			"+jquery.uls": "skinStyles/extensions/UniversalLanguageSelector/jquery.uls.less",
 			"+ext.charinsert.styles": "skinStyles/extensions/CharInsert/ext.charinsert.styles.less",

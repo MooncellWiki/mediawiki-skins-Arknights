@@ -63,3 +63,26 @@
 	border-top-width: @w;
 	border-image: linear-gradient( @color @w, @frame @w ) ~'@{slice} 1 1 1';
 }
+
+// A black glyph that an extension paints as an element's own background-image, on an element
+// that also carries text or a hover wash, needing to read on a dark surface. invert() on the
+// element would flip the text and the wash with it, so the element's copy is shrunk away and
+// the same image is repainted — `background-image: inherit` keeps whatever URL the extension
+// resolved — on a ::before that alone is inverted. @x / @y are measured from the padding box,
+// like the extension's own background-position.
+.ak-invert-bg-icon( @size: 20px; @x: center; @y: center ) {
+	position: relative;
+	background-size: 0 0;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: inherit;
+		background-repeat: no-repeat;
+		background-position: @x @y;
+		background-size: @size;
+		filter: invert( 1 );
+		pointer-events: none;
+	}
+}

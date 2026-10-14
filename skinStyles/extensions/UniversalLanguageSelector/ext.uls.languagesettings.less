@@ -1,0 +1,114 @@
+/**
+ * ULS — the language-settings dialog (⚙ under the header's language selector)
+ *
+ * The frame — header palette, geometry, the close glyph — comes from jquery.uls.less, as the
+ * dialog is a `.uls-menu.notheme.skin-invert` panel too. This file repaints what ULS draws
+ * inside it from its legacy token file (literal hex), and moves its type onto the design
+ * system's steps: ULS sets sizes in pt off a `medium` base (21.3 / 17.3 / 13.3px …); here the
+ * card's 14 is the base, the title is .ak-dialog__title's 18 bold, section labels are the
+ * reading-preferences panel's 14 bold (.ak-pref__label), descriptions are .ak-help's 12.
+ *
+ * Scoped by ULS's own marker, which is on every instance of this dialog.
+ */
+@import '../../../resources/skins.arknights.styles/mixins.less';
+
+.language-settings-dialog.notheme.skin-invert {
+	// Two tones, as ULS draws it: the dialog's ground (sidebar and button row; #f8f9fa) one step
+	// off the panel the settings sit on (#fff). Here the ground is lifted a step off the card.
+	background: linear-gradient( var( --ak-bg-surface-2 ), var( --ak-bg-surface-2 ) ), var( --ak-bg-surface );
+	font-size: var( --ak-fs-sm );
+
+	.uls-language-settings-close-block,
+	#languagesettings-settings-panel {
+		background: var( --ak-bg-surface );
+		color: var( --ak-fg );
+	}
+
+	.languagesettings-menu h1 {
+		font-size: var( --ak-fs-body-lg );
+		font-weight: bold;
+		line-height: 1.4;
+		color: var( --ak-fg );
+	}
+
+	// 显示 / 输入. Hover and the active one join the panel's surface, as ULS has them; the active
+	// one's bar is the accent. Their icon is ULS's black artwork on the row's own background.
+	.languagesettings-menu .menu-section {
+		color: var( --ak-fg-secondary );
+		.ak-invert-bg-icon( 20px; 15px; 6px );
+
+		&:hover,
+		&.active {
+			background-color: var( --ak-bg-surface );
+			color: var( --ak-fg );
+		}
+
+		&.active {
+			border-left-color: var( --ak-accent );
+
+			// ULS shifts its icon 2px left on the active row to absorb the 3px bar; so does this.
+			&::before {
+				background-position: 13px 6px;
+			}
+		}
+
+		&:focus {
+			border-color: var( --ak-focus );
+		}
+
+		.settings-title {
+			font-size: var( --ak-fs-sm );
+			font-weight: bold;
+		}
+
+		.settings-text {
+			font-size: var( --ak-fs-xs );
+			font-weight: normal;
+			color: var( --ak-fg-muted );
+		}
+
+		&:hover .settings-text {
+			color: var( --ak-fg-secondary );
+		}
+	}
+
+	#languagesettings-settings-panel h3 {
+		font-size: var( --ak-fs-body );
+		font-weight: bold;
+		line-height: 1.5;
+		color: var( --ak-fg );
+	}
+
+	#languagesettings-settings-panel h4 {
+		font-size: var( --ak-fs-sm );
+		font-weight: bold;
+		color: var( --ak-fg );
+	}
+
+	.uls-ui-languages p {
+		font-size: var( --ak-fs-xs );
+		color: var( --ak-fg-muted );
+	}
+
+	.checkbox {
+		font-size: var( --ak-fs-sm );
+		color: var( --ak-fg-muted );
+
+		strong {
+			color: var( --ak-fg );
+		}
+	}
+
+	// The tab switcher (语言 / 字体) and the language buttons: the selected one in the accent,
+	// as a segmented control's selected cell (components/seg.css). ULS hard-codes Codex's
+	// legacy progressive--active blue with white text.
+	#languagesettings-panels .uls-cdx-button-pressed {
+		background-color: var( --ak-accent );
+		border-color: var( --ak-accent );
+		color: var( --ak-accent-fg );
+	}
+
+	.language-settings-buttons {
+		border-top-color: var( --ak-border );
+	}
+}

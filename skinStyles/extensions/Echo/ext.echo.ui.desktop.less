@@ -6,45 +6,118 @@
  * not in `ext.echo.styles.notifications`, where these overrides used to sit unloaded.
  * See ext.echo.ui.less for the full story.
  *
- * The rows inside are styled there; this file is only the frame around them.
+ * The rows inside are styled there; this file is the frame around them. The two popups are
+ * header overlays — the same family as the user menu and the reading-preferences panel
+ * (prts-design /chrome/header「拉下来的浮层」) — and are written the same way:
+ *   · the header's palette, black in either theme;
+ *   · the .ak-menu frame: a 1px line and the big shadow, no accent bar on top, no notch;
+ *   · hung from the header's bottom line with the right edge on the tools column — the reading
+ *     preferences panel's geometry (chrome/prefs.css);
+ *   · the open one is marked on its bell (ext.echo.styles.badge.less), not by a notch.
  */
-@import '../../../resources/skins.arknights.styles/mixins.less';
+@import '../../../resources/skins.arknights.styles/chrome-palette.generated.less';
 
-.mw-echo-ui-notificationBadgeButtonPopupWidget-popup {
-	.oo-ui-popupWidget-popup {
-		background: var( --ak-bg-surface );
-		.ak-bar-top( 2px );
-		box-shadow: var( --ak-shadow-lg );
-		color: var( --ak-fg );
+@echo-popup: ~'.mw-echo-ui-notificationBadgeButtonPopupWidget-popup';
+// Each row's "…" menu. Echo puts it in a container of its own next to the popup in the overlay,
+// not inside it, so it needs the palette separately.
+@echo-popup-menus: ~'.mw-echo-ui-NotificationBadgeWidget-overlay-menu';
+
+/**
+ * Palette.
+ *
+ * Upstream puts .ak-prefs-panel on the header palette by listing it beside .ak-header in the
+ * token remap. Echo builds these popups at the end of <body>, where no class of ours can reach,
+ * so the same declarations come in through the generated mixin — together with the Codex bridge,
+ * because Echo's and OOUI's own rules read var( --background-color-base, … ), and those would
+ * otherwise stay resolved against :root, i.e. the page theme.
+ *
+ * Glyphs follow from that: OOUI's icons and Echo's uncoloured notification icons (the
+ * `.skin-invert` ones — the alert "!", the revert pen …) are black artwork that oojs-ui-core.less
+ * and dark-compat.less only invert under the night theme. Inside the palette they need it in both:
+ * same filter, same exemptions (the progressive / destructive / -invert variants carry their own
+ * colour).
+ */
+@{echo-popup},
+@{echo-popup-menus} {
+	.ak-chrome-palette();
+
+	.oo-ui-iconElement-icon:not( .oo-ui-image-progressive ):not( .oo-ui-image-destructive ):not( .oo-ui-image-invert ):not( .mw-no-invert ),
+	.oo-ui-indicatorElement-indicator,
+	.mw-echo-ui-notificationItemWidget-icon.skin-invert {
+		filter: invert( 1 ) hue-rotate( 180deg );
 	}
+}
 
-	// The little triangle pointing back up at the bell is drawn as two stacked borders:
-	// the outer one is the frame's line, the inner one has to match the surface exactly
-	// or the notch reads as a nick in the top bar.
-	.oo-ui-popupWidget-anchor::before,
-	.oo-ui-popupWidget-anchor::after {
-		border-bottom-color: var( --ak-border );
+/**
+ * Geometry.
+ *
+ * OOUI places the popup in JS: centred on its own bell and pushed down 9px for the notch, as an
+ * inline left / top in document coordinates. That left the two popups in two different places,
+ * the frame 2px into the header, and past 1680px well outside the tools column the other two
+ * cards line up with. Take the prefs panel's rule instead — fixed, because the header is sticky
+ * and the popup hangs from it; inline styles only give way to !important. Echo's overlay is a
+ * z-index: 1 stacking context, under the sticky rails; lift it to where the prefs panel sits.
+ */
+.mw-echo-ui-overlay {
+	z-index: calc( var( --ak-z-header ) + 1 );
+}
+
+// max() escaped: less.php has a max() of its own, and this is the CSS one.
+/* stylelint-disable declaration-no-important */
+.mw-echo-ui-overlay @{echo-popup} {
+	position: fixed !important;
+	top: calc( var( --ak-header-h ) + 1px ) !important;
+	right: ~'max( var( --ak-gutter ), calc( ( 100vw - 1680px ) / 2 + var( --ak-gutter ) ) )' !important;
+	left: auto !important;
+	margin: 0;
+
+	.oo-ui-popupWidget-anchor {
+		display: none;
 	}
+}
+/* stylelint-enable declaration-no-important */
 
-	.oo-ui-popupWidget-anchor::after {
-		border-bottom-color: var( --ak-bg-surface );
-	}
+// Selectors below follow Echo's own child chain (popup > popup > head > label, 0-4-0) so they
+// outrank it rather than tie with it.
+@{echo-popup} > .oo-ui-popupWidget-popup {
+	background: var( --ak-bg-surface );
+	border: 1px solid var( --ak-border );
+	box-shadow: var( --ak-shadow-lg );
+	color: var( --ak-fg );
 
-	// "常规通知" / "重要通知" header strip and the "所有通知" footer link.
-	.oo-ui-popupWidget-head {
-		background: var( --ak-bg-surface-2 );
+	// "常规通知" / "重要通知": the card's head, as .ak-menu__head draws it — no fill of its own,
+	// a line underneath, the title at the card's 14px in bold. Echo sets it at 1.2em (16.8px) with
+	// the line-height derived from that; the 44px row is kept, the leading follows the new size.
+	> .oo-ui-popupWidget-head {
+		background: none;
 		border-color: var( --ak-border );
 		color: var( --ak-fg );
 
-		.oo-ui-labelElement-label {
+		> .oo-ui-labelElement-label {
+			margin-left: 8px;
+			font-size: var( --ak-fs-sm );
+			line-height: 43px;
 			color: var( --ak-fg );
+		}
+	}
+
+	// "标记全部通知为已读" is a secondary action next to the title: the card's small size, not a
+	// second bold label competing with it.
+	> .oo-ui-popupWidget-head .mw-echo-ui-notificationsWidget-markAllReadButton > .oo-ui-buttonElement-button {
+		font-size: var( --ak-fs-xs );
+		font-weight: normal;
+		color: var( --ak-fg-secondary );
+
+		&:hover {
+			color: var( --ak-accent );
 		}
 	}
 }
 
+// "所有通知" / "参数设置": no fill either, a line on top.
 .mw-echo-ui-notificationsWidget-loading,
 .mw-echo-ui-notificationBadgeButtonPopupWidget-footer {
-	background: var( --ak-bg-surface-2 );
+	background: none;
 	border-color: var( --ak-border );
 	color: var( --ak-fg );
 }

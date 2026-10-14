@@ -1,0 +1,58 @@
+/**
+ * ULS — the language-settings dialog's panels: 显示 › 字体 and 输入 (ext.uls.displaysettings
+ * carries both stylesheets). Same treatment as ext.uls.languagesettings.less: ULS's literal
+ * greys repainted from tokens, its pt sizes moved onto the design system's steps.
+ */
+.language-settings-dialog.notheme.skin-invert {
+	.uls-sub-panel {
+		border-top-color: var( --ak-border );
+	}
+
+	// 字体: one row per script with its font picker.
+	.uls-font-item {
+		background: var( --ak-bg-surface-2 );
+		border-color: var( --ak-border );
+	}
+
+	.uls-font-label,
+	.uls-font-select,
+	#uls-display-settings-anon-log-in-cta {
+		font-size: var( --ak-fs-xs );
+	}
+
+	.uls-font-label {
+		color: var( --ak-fg-muted );
+
+		strong {
+			color: var( --ak-fg );
+		}
+	}
+
+	// 需要时下载字体: Codex draws the checkmark as a white image on the checked fill. The fill is the
+	// accent here — the header's cyan, which takes black, as every other accent fill in these panels.
+	.cdx-checkbox__input:checked + .cdx-checkbox__icon::before {
+		filter: invert( 1 );
+	}
+
+	// 输入: the input-method radios and the status lines.
+	.imelabel {
+		font-size: var( --ak-fs-sm );
+		line-height: 1.5;
+	}
+
+	.uls-input-settings-disable-info,
+	.uls-input-settings-no-inputmethods {
+		font-size: var( --ak-fs-xs );
+		color: var( --ak-fg-muted );
+	}
+
+	// The input-method list hangs under the language button that opened it, with a caret drawn
+	// in the list's own colour.
+	.uls-input-settings .uls-input-settings-inputmethods-list {
+		background: var( --ak-bg-surface-2 );
+	}
+
+	.down + .uls-input-settings-caret {
+		border-bottom-color: var( --ak-bg-surface-2 );
+	}
+}

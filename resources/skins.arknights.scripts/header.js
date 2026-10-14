@@ -93,6 +93,21 @@ function initNotificationLinks() {
 	}, true );
 }
 
+/**
+ * Which bell's popup is open is shown on the bell, the way the glasses (.is-open) and the user
+ * menu (details[open]) keep their hover wash while their card is out: the popups no longer
+ * carry OOUI's notch (ext.echo.ui.desktop.less), and with two bells side by side a notch was a
+ * weak pointer anyway. Echo puts nothing on the badge while its popup is open, so mirror the
+ * popup's own toggle event; ext.echo.styles.badge.less paints the class.
+ */
+function initNotificationPopups() {
+	mw.hook( 'ext.echo.NotificationBadgeWidget.onInitialize' ).add( ( widget ) => {
+		widget.popup.on( 'toggle', ( open ) => {
+			widget.$element.toggleClass( 'is-open', open );
+		} );
+	} );
+}
+
 function init() {
 	const header = document.querySelector( '.ak-header' );
 	if ( !header ) {
@@ -103,6 +118,7 @@ function init() {
 		initNavScreen( navToggle );
 	}
 	initNotificationLinks();
+	initNotificationPopups();
 
 	let ticking = false;
 
