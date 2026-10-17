@@ -84,7 +84,12 @@ html.skin-theme-clientpref-night .uls-menu .uls-icon-close {
  * ext.uls.displaysettings.less, whose modules arrive later in the cascade. .notheme still lays the
  * light set for the tokens the palette leaves alone (status colours, canvas …); none are read here.
  */
-@uls-header-panels: ~'.uls-menu.notheme.skin-invert, .uls-menu:has( .uls-search-wrapper-wrapper )';
+// One :is(), not a bare list: LESS interpolates the variable as a single selector, so with a plain
+// comma the rules nested below descended from its second half only — `.uls-menu.notheme.skin-invert,
+// .uls-menu:has(…) .uls-search-label` — and the panel itself took the icons' invert() and the region
+// titles' overline, rendering the whole menu flipped to light. :is() also lifts the second form to
+// the first one's 0-3-0.
+@uls-header-panels: ~':is( .uls-menu.notheme.skin-invert, .uls-menu:has( .uls-search-wrapper-wrapper ) )';
 
 @{uls-header-panels} {
 	.ak-chrome-palette();

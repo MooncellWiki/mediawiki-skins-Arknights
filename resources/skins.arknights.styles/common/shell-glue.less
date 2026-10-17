@@ -32,8 +32,8 @@
 		font: inherit;
 		font-size: var( --ak-fs-sm );
 		color: var( --ak-fg );
-		background: var( --ak-bg-surface-2 );
-		border: 1px solid var( --ak-chrome-line );
+		background: var( --ak-chrome-field );
+		border: 1px solid var( --ak-chrome-line-strong );
 		border-radius: 0;
 		transition: border-color var( --ak-dur-fast ), background var( --ak-dur-fast ), box-shadow var( --ak-dur-fast );
 		appearance: none;
@@ -44,17 +44,17 @@
 			-webkit-appearance: none;
 		}
 
-		// --ak-fg-muted, not -subtle: this text is re-read as the trigger button's label
+		// The trigger's label colour (--ak-fg-secondary, white .74): this text is re-read as its label
 		&::placeholder {
-			color: var( --ak-fg-muted );
-		}
-
-		&:hover::placeholder {
 			color: var( --ak-fg-secondary );
 		}
 
+		&:hover::placeholder {
+			color: var( --ak-fg );
+		}
+
 		&:hover {
-			border-color: var( --ak-border-strong );
+			border-color: var( --ak-chrome-fg-muted );
 		}
 
 		// After :hover, so a hovered *and* focused field still reads as focused
@@ -66,8 +66,8 @@
 		}
 	}
 
-	// The icon well: a darker square at the left end carrying the magnifier in the event
-	// colour (the icon slot on the game's HUD panels). Inset by a pixel on each side because
+	// The icon well: a solid square of the event colour at the left end, the magnifier on it in
+	// the event colour's foreground (the icon slot / selected block on the game's HUD panels). Inset by a pixel on each side because
 	// these offsets resolve against the form, which has no border, while the field does.
 	// components/form.css positions .ak-search__icon itself; here the label is the box and
 	// the icon sits in its grid.
@@ -79,8 +79,8 @@
 		width: 32px;
 		display: grid;
 		place-items: center;
-		background: rgba( 0, 0, 0, 0.35 );
-		color: var( --ak-theme-accent );
+		background: var( --ak-theme-accent );
+		color: var( --ak-theme-accent-fg );
 		pointer-events: none;
 	}
 
@@ -89,7 +89,7 @@
 		transform: none;
 		width: 16px;
 		height: 16px;
-		color: var( --ak-theme-accent );
+		color: var( --ak-theme-accent-fg );
 	}
 
 	// right: 9px — the trigger's 8px padding plus one border's worth, since this offset

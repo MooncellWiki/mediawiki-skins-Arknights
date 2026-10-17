@@ -20,7 +20,6 @@ use MediaWiki\Skins\Arknights\Menu\FooterLinksParser;
 use MediaWiki\Skins\Arknights\Menu\MenuItemDecorator;
 use MediaWiki\Skins\Arknights\Menu\WikitextMenuParser;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use SkinMustache;
 use SkinTemplate;
@@ -46,7 +45,6 @@ class SkinArknights extends SkinMustache {
 	public function __construct(
 		private readonly PermissionManager $permissionManager,
 		private readonly UrlUtils $urlUtils,
-		private readonly UserOptionsLookup $userOptionsLookup,
 		array $options = []
 	) {
 		if ( !isset( $options['name'] ) ) {
@@ -65,7 +63,8 @@ class SkinArknights extends SkinMustache {
 
 	/**
 	 * Add the reading preference classes (theme, sections, text sizes) and feature flags to
-	 * <html>. These are the defaults, or for logged-in users what they saved without JS; the
+	 * <html>. These are the defaults, or for logged-in users what they saved without JS (a
+	 * cookie, see ReadingPreferences); the
 	 * inline script added in SkinHooks::onBeforePageDisplay swaps in what the visitor picked in
 	 * this browser before the first paint.
 	 *
@@ -78,7 +77,7 @@ class SkinArknights extends SkinMustache {
 		// `<feature>-clientpref-<value>`, shared with Vector 2022 / Minerva for the theme so
 		// on-wiki CSS can target one selector
 		$prefs = $this->getReadingPreferences();
-		$classes = $prefs->getHtmlClasses( $this->getUser() );
+		$classes = $prefs->getHtmlClasses( $this->getUser(), $this->getRequest() );
 		$themeDefault = $prefs->getDefault( 'skin-theme' );
 		if ( $themeDefault !== 'os' ) {
 			// Read by resources/design-system/client-prefs.js: what "restore defaults" goes back to
@@ -291,7 +290,7 @@ class SkinArknights extends SkinMustache {
 	}
 
 	private function getReadingPreferences(): ReadingPreferences {
-		$this->readingPreferences ??= new ReadingPreferences( $this->getConfig(), $this->userOptionsLookup );
+		$this->readingPreferences ??= new ReadingPreferences( $this->getConfig() );
 		return $this->readingPreferences;
 	}
 
@@ -309,7 +308,7 @@ class SkinArknights extends SkinMustache {
 		$form = new ArknightsComponentReadingPreferences(
 			$this->getContext(),
 			$prefs,
-			$prefs->getValues( $this->getUser() ),
+			$prefs->getValues( $this->getUser(), $this->getRequest() ),
 			$href
 		);
 		return [

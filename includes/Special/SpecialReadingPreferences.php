@@ -10,7 +10,6 @@ use MediaWiki\Skins\Arknights\Components\ArknightsComponentReadingPreferences;
 use MediaWiki\Skins\Arknights\ReadingPreferences;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Title\Title;
-use MediaWiki\User\Options\UserOptionsManager;
 
 /**
  * Special:ReadingPreferences — the reading preferences on a page of their own: where the
@@ -22,24 +21,17 @@ use MediaWiki\User\Options\UserOptionsManager;
  * defaults" resets in place and "back" goes back in history.
  *
  * Without JS the form posts here, as Special:MobileOptions does. Logged-in users get the
- * values saved as user options, which the skin renders server-side
- * (ReadingPreferences::getValues()). Logged-out visitors have nowhere to keep them but the
- * browser — a cookie read on the server would split the CDN cache of every page — so they get
- * an explanation instead.
+ * values saved in a cookie on this device — the same "feature-clientpref-value,…" string the
+ * panel keeps in localStorage — which the skin renders server-side
+ * (ReadingPreferences::getValues()); their pages bypass the CDN anyway. Not as user options:
+ * these settings follow the screen, and an option would carry a text size picked on a desktop
+ * over to a phone. Logged-out visitors have nowhere to keep them but the browser — reading a
+ * cookie for them would split the CDN cache of every page — so they get an explanation instead.
  */
 class SpecialReadingPreferences extends UnlistedSpecialPage {
 
-	public function __construct(
-		private readonly UserOptionsManager $userOptionsManager
-	) {
+	public function __construct() {
 		parent::__construct( 'ReadingPreferences' );
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function doesWrites() {
-		return true;
 	}
 
 	/**
@@ -49,7 +41,7 @@ class SpecialReadingPreferences extends UnlistedSpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 		$out = $this->getOutput();
-		$prefs = new ReadingPreferences( $this->getConfig(), $this->userOptionsManager );
+		$prefs = new ReadingPreferences( $this->getConfig() );
 
 		if ( $this->getRequest()->wasPosted() ) {
 			$error = $this->submit( $prefs );
@@ -69,7 +61,7 @@ class SpecialReadingPreferences extends UnlistedSpecialPage {
 		$form = new ArknightsComponentReadingPreferences(
 			$this->getContext(),
 			$prefs,
-			$prefs->getValues( $this->getUser() ),
+			$prefs->getValues( $this->getUser(), $request ),
 			$this->getPageTitle()->getLocalURL(),
 			[
 				'token' => $this->getUser()->getEditToken(),
@@ -100,23 +92,27 @@ class SpecialReadingPreferences extends UnlistedSpecialPage {
 		if ( !$user->matchEditToken( $request->getVal( 'wpEditToken' ) ) ) {
 			return 'sessionfailure';
 		}
-		$this->checkReadOnly();
 
-		$reset = $request->getCheck( 'reset' );
-		$current = $prefs->getValues( $user );
-		foreach ( array_keys( $prefs->getOfferedFeatures() ) as $feature ) {
-			if ( $reset ) {
-				$this->userOptionsManager->setOption( $user, $feature, null );
-				continue;
+		$response = $request->response();
+		if ( $request->getCheck( 'reset' ) ) {
+			$response->clearCookie( ReadingPreferences::COOKIE );
+		} else {
+			$stored = ReadingPreferences::decode(
+				(string)$request->getCookie( ReadingPreferences::COOKIE, null, '' )
+			);
+			$current = $prefs->getValues( $user, $request );
+			foreach ( array_keys( $prefs->getOfferedFeatures() ) as $feature ) {
+				// Only what was changed: an untouched field stays unset and keeps following the
+				// site default. Section collapsing left on `auto` checks no radio and so does not
+				// arrive at all.
+				$value = $request->getRawVal( $feature );
+				if ( ReadingPreferences::isValid( $feature, $value ) && $value !== $current[$feature] ) {
+					$stored[$feature] = $value;
+				}
 			}
-			// Only what was changed: an untouched field stays unset and keeps following the
-			// site default
-			$value = $request->getRawVal( $feature );
-			if ( ReadingPreferences::isValid( $feature, $value ) && $value !== $current[$feature] ) {
-				$this->userOptionsManager->setOption( $user, $feature, $value );
-			}
+			// Expires after $wgCookieExpiration, like core's clientprefs cookie
+			$response->setCookie( ReadingPreferences::COOKIE, ReadingPreferences::encode( $stored ) );
 		}
-		$this->userOptionsManager->saveOptions( $user );
 
 		$this->getOutput()->redirect(
 			$this->getReturnUrl() ?? $this->getPageTitle()->getFullURL( [ 'saved' => 1 ] )

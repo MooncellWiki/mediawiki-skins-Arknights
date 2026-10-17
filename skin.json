@@ -30,8 +30,7 @@
 			"class": "MediaWiki\\Skins\\Arknights\\SkinArknights",
 			"services": [
 				"PermissionManager",
-				"UrlUtils",
-				"UserOptionsLookup"
+				"UrlUtils"
 			],
 			"args": [
 				{
@@ -135,15 +134,11 @@
 	},
 	"SpecialPages": {
 		"ReadingPreferences": {
-			"class": "MediaWiki\\Skins\\Arknights\\Special\\SpecialReadingPreferences",
-			"services": [
-				"UserOptionsManager"
-			]
+			"class": "MediaWiki\\Skins\\Arknights\\Special\\SpecialReadingPreferences"
 		}
 	},
 	"Hooks": {
 		"BeforePageDisplay": "SkinHooks",
-		"GetPreferences": "SkinHooks",
 		"OutputPageAfterGetHeadLinksArray": "SkinHooks",
 		"SkinPageReadyConfig": "SkinHooks"
 	},

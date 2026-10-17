@@ -78,16 +78,18 @@ $wgArknightsMenuSidebar = true;
 | 偏好（`<html>` 类 `<feature>-clientpref-<value>`） | 值（**粗体**为默认） | 作用 |
 |---|---|---|
 | `skin-theme` | **`os`**（`ThemeDefault`，不是 `os` 时另写 `<html data-akds-theme-default>` 给「恢复默认设置」用）/ `day` / `night` | 外观 |
-| `ak-sections-on` | **`mobile`**（只在 ≤639）/ `all` / `off` | 章节折叠在哪开 |
+| `ak-sections-on` | `on` / `off`；没设过是 **`auto`**（只在 ≤639 开，桌面 / 平板不出开关，Minerva 的范围） | 章节折叠开 / 关。面板上只有「开启 / 关闭」两格：设置存本机，手机上开、电脑上关各点各的；`auto` 没有自己的格，服务端不预勾，`client-prefs.js` 按当前视口亮其中一格，点了才存成 `on` / `off`。老值 `mobile` / `all` 读成 `auto` / `on` |
 | `ak-sections` | **`expand`** / `collapse` | 开着时打开页面是展开还是收起（窄屏 + 收起 = 原 Minerva 的行为） |
 | `ak-font-size` | `xsmall` 12 / `small` 14 / **`regular`** 16 / `large` 20 | `.mw-body-content` 里的字号令牌整体换档，页眉 / 侧栏 / 目录不动 |
 | `ak-table-font-size` | **`auto`** / `xsmall` 12 | 表格单独一档（原手机版「正文正常、表格更小」） |
 
 **值存在哪**：与主题一样，所有访客（登录与否）的选择都存在本机 `localStorage['mwclientpreferences']`（核心 clientPrefs cookie 的同一格式），`inline.js` 首帧前打到 `<html>` 上。面板与表单是上游共用的 `design-system/client-prefs.js`；它遇到 `<html>` 上已有该项的类时会交给 `mw.user.clientPrefs`，而本皮肤没开 `clientPrefEnabled`（核心不会把 cookie 读回来），登录用户调用还会直接抛错，所以 `clientPrefs.js` 把 `mw.user.clientPrefs.set` 换成写同一处 `localStorage` 的实现——小工具调用它也一样落到这里。
 
-**服务端**只给默认值，以及登录用户在无 JS 时提交 `Special:ReadingPreferences` 存下的用户选项（键 = 偏好名，`GetPreferences` 里登记为隐藏的 `api` 项、不设默认值）；本机 `localStorage` 里有值时以它为准。匿名访客的页面因此永远是默认类、照常进 CDN 缓存；匿名且无 JS 提交表单时只给一句说明（无处可存）。原手机版的 `mf-font-size` **不迁移**：它的 `small` 是 MF 的「标准」档，三档都只改 `<p>` 的字号、只在手机版生效，`ak-font-size` 换的是整块正文的字号令牌、桌面也生效，几档对不上，迁过来反而会让在手机上调过字号的人桌面突然变样。
+**存本机、不跟账号**（上游 /chrome/prefs「为什么存本机、不跟账号」）：这几项都是跟着这块屏幕的——字号在手机和大显示器上要的不是同一档，表格字号只在手机上才想缩，章节折叠在窄屏是导航、在宽屏是多余，「跟随系统」本身就只对当前设备有意义；Minerva 手机版的展开章节与字号本来也在 `localStorage`。所以登录了也不写用户选项（那会跨设备同步）。
 
-`Special:ReadingPreferences`（`includes/Special/`，不列在特殊页面列表里）：面板那份表单的完整版，同一个组件 + `templates/ReadingPreferences.mustache` 渲染。有 JS 时改了即生效、「保存」藏起，「恢复默认设置」就地重置、「返回」同源来路时 `history.back()`；无 JS 时真提交，登录用户只写改过的项，302 回 `returnto` / `returntoquery`。
+**服务端**只给默认值，以及登录用户在无 JS 时提交 `Special:ReadingPreferences` 存下的 `mwclientpreferences` cookie（带 `$wgCookiePrefix`，与 `localStorage` 同一条 "feature-clientpref-value,…" 字符串，仍只在这个浏览器里）；本机 `localStorage` 里有值时以它为准。匿名访客不读 cookie，页面永远是默认类、照常进 CDN 缓存（登录用户的页面本来就不进 CDN 缓存）；匿名且无 JS 提交表单时只给一句说明（无处可存）。此前版本把无 JS 的提交存成了隐藏用户选项，现在不再读、也不再登记（`GetPreferences` 钩子已去掉），存下的值留在库里无害。原手机版的 `mf-font-size` **不迁移**：它的 `small` 是 MF 的「标准」档，三档都只改 `<p>` 的字号、只在手机版生效，`ak-font-size` 换的是整块正文的字号令牌、桌面也生效，几档对不上，迁过来反而会让在手机上调过字号的人桌面突然变样。
+
+`Special:ReadingPreferences`（`includes/Special/`，不列在特殊页面列表里）：面板那份表单的完整版，同一个组件 + `templates/ReadingPreferences.mustache` 渲染。有 JS 时改了即生效、「保存」藏起，「恢复默认设置」就地重置、「返回」同源来路时 `history.back()`；无 JS 时真提交，登录用户只把改过的项写进 cookie（章节折叠停在 `auto` 时两格都没勾、不会提交），「恢复默认设置」清掉 cookie，302 回 `returnto` / `returntoquery`。
 
 **章节折叠**是上游共用的 `design-system/sections.js`：`.mw-parser-output` 顶层每个 `.mw-heading2` 之后的内容包进 `section.ak-section`，标题文字前插一枚 + / −，收起 = `hidden="until-found"`（Ctrl+F、目录、页内锚点都能找到并自动展开）。关着时（默认的桌面 / 平板）照样包节，只是 `.mw-parser-output.ak-sections--off` 藏起开关、全部展开——**靠 `.mw-parser-output > X` 直接子选择器找内容的 Gadget / 页面样式要留意**。不折的页面：没有顶层 h2 的、首页、`.mw-parser-output[data-ak-sections="off"]`、`body.ak-no-sections`。编辑预览 / VE 保存后的重新渲染由 `sectionCollapse.js` 在 `wikipage.content` 钩子里再 `init`。需要 `$wgParserEnableLegacyHeadingDOM = false`（见「安装」）。
 
@@ -172,7 +174,7 @@ $wgFooterIcons = [
 skin.json                         注册：ValidSkinNames / ResourceModules / skinStyles / config
 includes/
   SkinArknights.php               SkinMustache 子类：模板数据、<html> 阅读设置类、watch 星标搬到 views、菜单图标
-  ReadingPreferences.php          阅读设置的登记表（偏好 / 值 / 消息 / 默认）与服务端取值（默认值 / 登录用户的用户选项）
+  ReadingPreferences.php          阅读设置的登记表（偏好 / 值 / 消息 / 默认）与服务端取值（默认值 / 登录用户无 JS 时存的 cookie）
   Special/SpecialReadingPreferences.php  Special:ReadingPreferences（无 JS 兜底的表单页）
   Components/*.php                每块 UI 一个组件（Citizen 风格）：MainMenu / MenuSidebar / UserMenu /
                                   PageHeading / PageTools / TableOfContents / PageFooter / Footer / Menu / ReadingPreferences
@@ -180,7 +182,7 @@ includes/
   Menu/MenuItemDecorator.php      把核心的 icon 键变成 <span class="ak-icon ak-icon--x">
   Menu/SearchShortcutsParser.php  MediaWiki:Arknights-search-shortcuts → 搜索面板空态的快捷入口
   Menu/FooterLinksParser.php      MediaWiki:Arknights-footer-links → 页脚「关于」列之前的链接列
-  Hooks/SkinHooks.php             BeforePageDisplay（内联主题脚本）/ viewport / GetPreferences（阅读设置的隐藏用户选项）
+  Hooks/SkinHooks.php             BeforePageDisplay（内联主题脚本）/ viewport / SkinPageReadyConfig
   Hooks/ResourceLoaderHooks.php   config.json / searchConfig.json
   Api/ApiArknightsSearchIndex.php 搜索面板的本地索引（Cargo → JSON，含服务端拼音）
 templates/*.mustache              skin · Header · Header__logo · Search · ReadingPreferences · UserMenu · Menu ·
@@ -406,7 +408,7 @@ $wgArknightsSearchIndex = [
 
 - 骨架样式就是 prts-design 的 `packages/css/src/chrome/`（文档站「皮肤骨架」），经 `skins.arknights.shell` 逐文件加载；`templates/*.mustache` 按它的 DOM 契约输出（文档站 /guide/skin-template）。**在 wiki 上发现的视觉问题先看规则属于哪边**：能用类名和令牌描述的改上游 `chrome/` 再同步；只对 MediaWiki 的 DOM 或某个扩展才成立的，进 `common/shell-glue.less`。MW 皮肤比预览骨架多出来的几样（`.ak-page-heading` 包装 + tagline、`.mw-indicators`、diff 页放回「阅读」、目录折叠钮、抽屉抬头 `.ak-sidebar__head`、Echo 徽标 `.ak-header__notifications`、页脚列数由内容定）已经写进上游。
 - **页眉主行（≥1120）**是 `var(--ak-sidebar-w) minmax(0,1fr) auto` 三列网格，`gap` 与 `.ak-layout` 同为 `--ak-gutter`：品牌盖着侧栏列，搜索从正文列左缘起（≤560px，与面包屑/标题同线），工具靠右。因此 ≥1680 的 `--ak-sidebar-w / --ak-toc-w: 268px` 覆盖写在 `:root` 而不是 `.ak-layout` 上，页眉与布局共用。页眉不放站点级主导航——它需要正文列，而侧栏在任何宽度下都已经渲染了一份。
-- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`chrome/header.css` 在 `.ak-header` 内把语义令牌重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …），页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。从工具区拉下、但挂在页眉外面的浮层也是页眉配色（上游文档站 /chrome/header「拉下来的浮层」）：阅读设置面板由上游在同一条重映射里点名；Echo 的两个通知弹层由 Echo 的 JS 建在 `<body>` 末尾、加不上类，`skinStyles/extensions/Echo/ext.echo.ui.desktop.less` 用同步脚本生成的 `.ak-chrome-palette()`（这条重映射 + Codex 令牌桥接——Echo / OOUI 自己的规则读 `var(--background-color-base, …)`，不在弹层上重新声明就还是 `:root` 上按页面主题解析好的值）套到它们的选择器上，框与位置也照阅读设置面板：1px 框 + 大阴影、不画顶部亮线、没有 OOUI 的小三角，贴页眉底线挂下来、右缘对齐工具区；开着的那个铃铛保持悬停底色（`header.js` 跟着弹层的 toggle 事件给它加 `.is-open`）。用户菜单「中文（中国大陆）」拉出的 ULS 语言菜单、它 ⚙ 打开的语言设置、设置里「…」再开的语言列表也一样（`skinStyles/extensions/UniversalLanguageSelector/`）：ULS 用 Codex 的 legacy 令牌（写死的十六进制，不读 CSS 变量），并给这几个面板打 `notheme skin-invert`（T365990），本皮肤对它的处理是「亮色令牌 + 暗色主题整块 invert()」；这里撤掉翻转、套 `.ak-chrome-palette()`，写死的颜色逐个改读令牌，pt 字号换到设计系统的字号阶梯上。只认这几个面板（ULS 自己的标记 / 「…」那层的 `.uls-search-wrapper-wrapper`），参数设置页、VisualEditor 里的 ULS 照旧跟主题。活动主题的接口见上文「活动主题」。
+- **页眉 / 页脚是黑色的「框」**，不随明暗主题变：`tokens.css` 先把 2c 终端（暗）整套令牌也挂在 `.ak-header` / `.ak-prefs-panel` 上，`chrome/header.css` 再把其中一部分重映射到 `--ak-chrome-*`（`--ak-fg` → `--ak-chrome-fg`、`--ak-accent` → `--ak-theme-accent` …）——重映射没点名的令牌（画布、状态色、红链、选区 …）因此也是暗色的值，不会从 `:root` 继承页面主题的；页眉里的按钮、搜索触发器、Echo 徽标、用户菜单、窄屏工具卡片因此自动是页眉配色，不必逐个写；页脚直接读 `--ak-chrome-bg-solid / -fg`。从工具区拉下、但挂在页眉外面的浮层也是页眉配色（上游文档站 /chrome/header「拉下来的浮层」）：阅读设置面板由上游在同一条重映射里点名；Echo 的两个通知弹层由 Echo 的 JS 建在 `<body>` 末尾、加不上类，`skinStyles/extensions/Echo/ext.echo.ui.desktop.less` 用同步脚本生成的 `.ak-chrome-palette()`（2c 暗色令牌 + 这条重映射 + Codex 令牌桥接；桥接也要重新声明，因为 Echo / OOUI 自己的规则读 `var(--background-color-base, …)`，不在弹层上重新声明就还是 `:root` 上按页面主题解析好的值）套到它们的选择器上——只抄重映射不够，亮色主题下展开的打包通知曾落回浅灰画布、白字看不清。框与位置也照阅读设置面板：1px 框 + 大阴影、不画顶部亮线、没有 OOUI 的小三角，贴页眉底线挂下来、右缘对齐工具区；开着的那个铃铛保持悬停底色（`header.js` 跟着弹层的 toggle 事件给它加 `.is-open`）。用户菜单「中文（中国大陆）」拉出的 ULS 语言菜单、它 ⚙ 打开的语言设置、设置里「…」再开的语言列表也一样（`skinStyles/extensions/UniversalLanguageSelector/`）：ULS 用 Codex 的 legacy 令牌（写死的十六进制，不读 CSS 变量），并给这几个面板打 `notheme skin-invert`（T365990），本皮肤对它的处理是「亮色令牌 + 暗色主题整块 invert()」；这里撤掉翻转、套 `.ak-chrome-palette()`，写死的颜色逐个改读令牌，pt 字号换到设计系统的字号阶梯上。只认这几个面板（ULS 自己的标记 / 「…」那层的 `.uls-search-wrapper-wrapper`），参数设置页、VisualEditor 里的 ULS 照旧跟主题。Echo 的通知行（`ext.echo.ui.less`）：未读 = 淡青底、已读 = 卡片底，弹层与 `Special:Notifications`（跟页面主题）同一套规则；打包通知（「…在 3 个页面被链接」「2 人感谢了您」、讨论页留言）展开后的子列表里，指针下只亮那一行，外面那条不跟着亮；空列表是卡片上一行居中的次要色字。活动主题的接口见上文「活动主题」。
 - **页眉各宽度都只有一行**，始终贴顶、不随滚动收起：`.ak-local-nav`（「菜单」<1120、手机 ≤639 上多一个「本页目录」）不另起一行——上游只改 CSS，<1120 时 `.ak-header__inner` 与 `.ak-local-nav` 都 `display:contents`，子项排进 `.ak-header` 这一行，所以 `Header.mustache` 的 DOM 不动。1120–1400 与 ≥1400 是同一套三列网格（640–1400 目录入口不在页眉里，见下）；<1120 是 flex：◧ 菜单 · 品牌 · 搜索 · ⋮。代价是 Tab / 读屏顺序仍按 DOM（品牌 → 搜索 → 工具或 ⋮ → 菜单），与视觉顺序不一致。`common/shell-glue.less` 不给 `#searchform` 写 `margin: 0`——<1120 时上游用左右外边距把搜索框与品牌 / ⋮ 隔开，这里排在后面，一写就把它盖掉。
 - **<1120 页眉**里的阅读设置（眼镜）、Echo 徽标、用户菜单收进 ⋮ 卡片。三者包在 `.ak-header__screen` 里：桌面 `display:contents`（子项直接进主行网格），窄屏变成 ⋮ 拉下、贴页眉右下沿的卡片（宽度随内容，最窄 240px）：第一行是眼镜 · 通知徽标（点眼镜开面板时卡片收起），下面用户菜单平铺、恒展开（`header.js` 在这一档把它的 `<details>` 置 `open` 并标 `data-ak-flat`，`dropdown.js` 据此不再把它当下拉收起；无 JS 时由 `::details-content` 桥接）。用户卡片的抬头 `a.ak-menu__head#pt-userpage` 就是去用户页的链接——`userpage` 一项在 `runOnSkinTemplateNavigationHooks()` 里从 `user-menu` 提出来，「个人工具」里不再重复，用户名只出现一次。开合是纯 CSS 的 `input.ak-nav-cb` + `label.ak-header__burger`（同目录按钮的 `.ak-toc-cb` 做法），所以无 JS 也能用；`header.js` 只补 Esc / 点卡片外 / 回到 ≥1120 时收起。这一档里点通知徽标不开 Echo 弹层（它挂在 `<body>` 的浮层里，会被卡片盖住），而是直接去 Special:Notifications：`header.js` 在捕获阶段拦下点击、不让它到达 Echo，徽标本来就是指向该页的链接。DOM 只有一份，`#p-personal` 与 `#pt-notifications-*` 不会重复。
 - **<640 页眉**（52px）全是图标：◧ 菜单 · 品牌 ……… 目录 · 搜索 · ⋮。目录入口在手机上留在页眉里（`Header.mustache` 的 `label.ak-local-nav__toc[for=ak-toc-toggle]`，方点列表图标），不出浮动按钮——44px 的方块在这个宽度上会一直压着正文右上角；浮层固定在页眉下沿、拉满宽度，开着时锁页面滚动。它开合的是正文 `.ak-toc-dock` 里同一个 checkbox。
@@ -422,7 +424,7 @@ $wgArknightsSearchIndex = [
 scripts/sync-design-system.sh [path/to/prts-design]   # 同步设计系统；不给路径时在皮肤/MediaWiki 的相邻目录里找 prts-design
 ```
 
-同步脚本做这几件事：整目录替换 `resources/design-system/`（上游 `packages/css/src/`，含 `chrome/`，不含示例活动主题 `demo-theme.css`）；按上游 `index.css` 展开的顺序重写 `skin.json` 里 `skins.arknights.base / components / fonts / shell / tokens` 的文件列表（模块定义与 `SkinModule` 特性仍手写；`shell` 只装脚本里 `ADOPTED_CHROME` 列出的 `chrome/` 文件）；从上游 `skin/templates/skin.mustache` 抽出 SVG sprite 写成 `templates/IconSprite.mustache`；由 `tokens.css` §2b 与 `bridge-codex.css` 生成 `common/notheme.generated.less`，由 `chrome/header.css` 里那条页眉配色重映射与 `bridge-codex.css` 生成 `chrome-palette.generated.less`（`.ak-chrome-palette()` mixin）。上游增删文件后只要重跑即可。
+同步脚本做这几件事：整目录替换 `resources/design-system/`（上游 `packages/css/src/`，含 `chrome/`，不含示例活动主题 `demo-theme.css`）；按上游 `index.css` 展开的顺序重写 `skin.json` 里 `skins.arknights.base / components / fonts / shell / tokens` 的文件列表（模块定义与 `SkinModule` 特性仍手写；`shell` 只装脚本里 `ADOPTED_CHROME` 列出的 `chrome/` 文件）；从上游 `skin/templates/skin.mustache` 抽出 SVG sprite 写成 `templates/IconSprite.mustache`；由 `tokens.css` §2b 与 `bridge-codex.css` 生成 `common/notheme.generated.less`，由 `tokens.css` §2c / §2a′（挂着 `.ak-header` 的那两块）、`chrome/header.css` 里那条页眉配色重映射与 `bridge-codex.css` 依次生成 `chrome-palette.generated.less`（`.ak-chrome-palette()` mixin）。上游增删文件后只要重跑即可。
 
 本地验证：把仓库放到 MediaWiki 的 `skins/Arknights`，`wfLoadSkin( 'Arknights' )`，打开 `?debug=2` 查看未压缩的 LESS 输出。改骨架前后可以拍计算样式快照比对（沙盒 prts-sandbox 直接挂载本仓库，Playwright 从旁边的 prts-design 里借）：
 

@@ -77,20 +77,41 @@
 }
 
 /**
- * Resting background per read state.
+ * An expanded bundle ("your page was linked from 3 pages", a cross-wiki group) is one row that
+ * holds a list of its own: the sub-list is a child of the bundle's element, so pointing at a
+ * sub-row is :hover on the bundle as well. That lit two accent bars side by side — the bundle's
+ * running the full height of the group — and the bundle's own wash, for what is one row under
+ * the pointer. While the pointer is inside the group, only the sub-row answers.
+ */
+.mw-echo-ui-bundleNotificationItemWidget:has( > .mw-echo-ui-bundleNotificationItemWidget-group:hover ),
+.mw-echo-ui-crossWikiNotificationItemWidget:has( > .mw-echo-ui-crossWikiNotificationItemWidget-group:hover ) {
+	background-image: none;
+	border-left-color: transparent;
+}
+
+/**
+ * Resting background per read state — in the popup and on Special:Notifications alike.
  *
  * Unread carries the design system's "highlighted row" tint — the same language as
  * `tr.is-hl` / `:target` / `<mark>`. Echo has this inverted: its unread colour is
  * `--background-color-base` while *read* rows get `--background-color-neutral`, which in
- * the terminal theme left unread rows (#1a1b1c) *darker* than read ones (#232425).
+ * the terminal theme left unread rows (#1a1b1c) *darker* than read ones (#232425). The special
+ * page used to be covered by a rule in ext.echo.special.less keyed on a container Echo no longer
+ * outputs (…-main-notifications), so there the rows had Echo's inverted colours all along; the
+ * page's list is .mw-echo-ui-datedNotificationsWidget, the popup's .mw-echo-ui-notificationsListWidget.
  *
- * Scoped through the list widget purely for weight. Echo repaints the background again on
- * hover — a hardcoded `#ececec`, plus per-theme copies at 0-3-0 — and those would drop an
- * unread row back to grey the moment it is pointed at, throwing away the tint the hover
- * wash is supposed to sit on top of. One extra ancestor clears the whole family.
+ * Scoped through the list purely for weight. Echo repaints the background again on hover —
+ * a hardcoded `#ececec` at 0-2-0, plus per-theme copies (.skin-theme-clientpref-night /
+ * -os … :hover) at 0-3-0 — and those would drop a row to grey the moment it is pointed at,
+ * throwing away the colour the hover wash is supposed to sit on top of. Both rules here are
+ * 0-3-0 and come later, which clears the whole family; the read one gets there with
+ * :not( -unread ) — a bare ancestor + class (0-2-0) lost to the per-theme copies, so in the
+ * dark theme a read row still turned grey under the pointer.
  */
-.mw-echo-ui-notificationsListWidget .mw-echo-ui-notificationItemWidget {
-	background-color: var( --ak-bg-surface );
+:is( .mw-echo-ui-notificationsListWidget, .mw-echo-ui-datedNotificationsWidget ) .mw-echo-ui-notificationItemWidget {
+	&:not( .mw-echo-ui-notificationItemWidget-unread ) {
+		background-color: var( --ak-bg-surface );
+	}
 
 	&.mw-echo-ui-notificationItemWidget-unread {
 		background-color: var( --ak-accent-subtle );
@@ -110,12 +131,27 @@
  * Pinning the row colour on both sides of that rule removes the flicker.
  *
  * The same declaration also holds off the skin's global `a:hover` (0-1-1), which was
- * repainting the entire hovered row — title, excerpt and timestamp — in link cyan.
+ * repainting the entire hovered row — title, excerpt and timestamp — in link cyan. On
+ * Special:Notifications that one still got through: the action labels (查看链入页面 …) inherit
+ * the row's colour and turned link-blue with the row.
  */
-.mw-echo-ui-notificationsListWidget a.mw-echo-ui-notificationItemWidget,
-.mw-echo-ui-notificationsListWidget a.mw-echo-ui-notificationItemWidget:hover,
-.mw-echo-ui-notificationsListWidget a.mw-echo-ui-notificationItemWidget:visited {
-	color: var( --ak-fg );
+:is( .mw-echo-ui-notificationsListWidget, .mw-echo-ui-datedNotificationsWidget ) a.mw-echo-ui-notificationItemWidget {
+	&,
+	&:hover,
+	&:visited {
+		color: var( --ak-fg );
+	}
+}
+
+/**
+ * "没有收到通知。" — Echo paints the empty list in the read rows' old grey
+ * (--background-color-neutral), a lighter band across the card. It is the card saying it has
+ * nothing: a quiet centred line on the card itself, in the muted text .ak-empty uses.
+ */
+.mw-echo-ui-placeholderItemWidget {
+	background-color: var( --ak-bg-surface );
+	color: var( --ak-fg-muted );
+	text-align: center;
 }
 
 /**
