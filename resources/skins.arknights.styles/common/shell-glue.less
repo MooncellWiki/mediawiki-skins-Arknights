@@ -151,6 +151,18 @@
 	}
 }
 
+/* ═══ Header: the user menu button (chrome/header.css pads it for a 28px .ak-avatar) ═══
+ *
+ * UserMenu.mustache puts a bare 20px userAvatar glyph in summary.ak-header__user instead of
+ * the design system's .ak-avatar circle. The upstream 4px left padding suits the circle; next
+ * to the tray it left the glyph 4px closer than the header icons sit to one another. 8px plus
+ * the 1px border is the 9px inset of .ak-btn--icon, and matches the padding on the right.
+ * Below 1120px chrome/responsive.css re-pads the button for the tools card and still wins.
+ */
+.ak-header__user {
+	padding-left: 8px;
+}
+
 /* ═══ Menu cards (components/dropdown.css + chrome/header.css / page-header.css) ═══ */
 .ak-menu__group {
 	li {

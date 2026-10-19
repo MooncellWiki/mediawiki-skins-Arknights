@@ -6,10 +6,14 @@
 		margin: 0;
 	}
 
+	// 38px, the outer size of .ak-btn--icon (36px plus its 1px transparent border each side):
+	// the 20px glyph then sits 9px in from either edge like the glasses' does, and the hover
+	// wash is the same square. At 36px the bell was 8px in, so the glasses-to-bell gap came out
+	// wider than the bell-to-tray one.
 	#pt-notifications-alert .mw-echo-notifications-badge,
 	#pt-notifications-notice .mw-echo-notifications-badge {
-		width: 36px;
-		height: 36px;
+		width: 38px;
+		height: 38px;
 		margin: 0;
 		background-size: 20px;
 		background-position: center;
@@ -45,11 +49,12 @@
 		//     digit floating in the middle looking off-centre);
 		//   · padding-bottom 1px offsets Source Han Sans' asymmetric hhea metrics (1160/288),
 		//     which otherwise drop the digit ~0.7px below the box centre at line-height 1;
-		//   · anchored top/right 2px rather than left 50%, so the 18px circle sits on the
-		//     glyph's top-right corner instead of spreading across it.
+		//   · anchored top/right rather than left 50%, so the 18px circle sits on the glyph's
+		//     top-right corner instead of spreading across it; 3px, not .ak-badge's 2px, because
+		//     that 2px is measured inside .ak-btn's 1px border and this badge has none.
 		&::after {
-			top: 2px;
-			right: 2px;
+			top: 3px;
+			right: 3px;
 			left: auto;
 			display: flex;
 			align-items: center;
