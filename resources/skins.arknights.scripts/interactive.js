@@ -3,8 +3,8 @@
  * .ak-tabs[data-tabs] · .ak-panel--collapsible · .ak-chip · .ak-btn-group / .ak-phase-tabs /
  * .ak-skill-levels (+ data-bind-* / data-show-*) · [data-dialog-open] / [data-dialog-close] ·
  * .ak-voice__play · input[data-toggle-class] · .ak-skill-matrix column highlight ·
- * [data-ak-tip] accessibility. Mirrors prts-design skin/resources/skin.js (and preview.js) so
- * templates behave the same on-wiki as in the design-system preview / docs.
+ * [data-ak-tip] accessibility and edge fitting. Mirrors prts-design skin/resources/skin.js (and
+ * preview.js) so templates behave the same on-wiki as in the design-system preview / docs.
  *
  * Every state-changing delegation skips elements inside [data-no-toggle]: the Vue components
  * (prts-widgets) own their state and mark themselves, otherwise both sides would toggle once.
@@ -118,6 +118,32 @@ function bindTips( root ) {
 }
 
 /**
+ * Pure-CSS tooltips that would stick out past the viewport's left / right edge are slid back in
+ * (components/tooltip.css reads --ak-tip-dx as margin-left): the bubble is centred on its
+ * trigger, and a long tip on a button at the right edge of a phone screen otherwise widens the
+ * layout viewport and zooms the whole page out. Measured on hover / focus from the shown
+ * bubble's used width (getComputedStyle on ::after), keeping 8px from either edge. Delegated on
+ * document, so tips rendered later by widgets are covered too. Enclosing tips are measured as
+ * well: they are hovered too, and --ak-tip-dx inherits into nested tips, so each writes its own.
+ *
+ * @param {Event} e
+ */
+function fitTips( e ) {
+	const vw = document.documentElement.clientWidth;
+	let el = e.target instanceof Element ? e.target.closest( '[data-ak-tip]' ) : null;
+	while ( el ) {
+		const cs = getComputedStyle( el, '::after' );
+		const r = el.getBoundingClientRect();
+		const pad = cs.boxSizing === 'border-box' ? 0 : parseFloat( cs.paddingLeft ) + parseFloat( cs.paddingRight );
+		const w = parseFloat( cs.width ) + pad;
+		const left = r.left + r.width / 2 - w / 2;
+		const dx = Math.max( 8 - left, Math.min( 0, vw - 8 - left - w ) );
+		el.style.setProperty( '--ak-tip-dx', Math.round( dx ) + 'px' );
+		el = el.parentElement && el.parentElement.closest( '[data-ak-tip]' );
+	}
+}
+
+/**
  * Per-element setup for content that arrived after load as well (preview, VE save, lazy widgets).
  *
  * @param {ParentNode} root
@@ -149,6 +175,8 @@ function init() {
 	mw.hook( 'wikipage.content' ).add( ( $content ) => {
 		enhance( $content && $content[ 0 ] ? $content[ 0 ] : document );
 	} );
+	document.addEventListener( 'mouseover', fitTips, { passive: true } );
+	document.addEventListener( 'focusin', fitTips );
 
 	document.addEventListener( 'click', ( e ) => {
 		const target = e.target;
