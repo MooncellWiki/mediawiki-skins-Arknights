@@ -125,6 +125,11 @@ function bindTips( root ) {
  * bubble's used width (getComputedStyle on ::after), keeping 8px from either edge. Delegated on
  * document, so tips rendered later by widgets are covered too. Enclosing tips are measured as
  * well: they are hovered too, and --ak-tip-dx inherits into nested tips, so each writes its own.
+ * Listens to pointerover, not just mouseover: on an iOS tap :hover already applies at touchstart
+ * and the tip shows right away, with only pointerover fired; mouseover and the other compatibility
+ * mouse events wait until the tap completes and never come for a long press or press-and-slide
+ * (checked in the iOS 26 simulator). mouseover stays as a fallback for browsers that only enter
+ * :hover after the tap (Android Chrome), where the bubble is not shown yet at pointerover.
  *
  * @param {Event} e
  */
@@ -175,6 +180,7 @@ function init() {
 	mw.hook( 'wikipage.content' ).add( ( $content ) => {
 		enhance( $content && $content[ 0 ] ? $content[ 0 ] : document );
 	} );
+	document.addEventListener( 'pointerover', fitTips, { passive: true } );
 	document.addEventListener( 'mouseover', fitTips, { passive: true } );
 	document.addEventListener( 'focusin', fitTips );
 
