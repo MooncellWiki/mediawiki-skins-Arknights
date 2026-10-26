@@ -342,6 +342,7 @@ $wgArknightsSearchIndex = [
 		'tables' => 'item',
 		'orderBy' => 'sortId',
 		'fields' => [ 'title' => '_pageName', 'rarity' => 'rarity' ],
+		'rarityOffset' => 1,
 	],
 ];
 ```
